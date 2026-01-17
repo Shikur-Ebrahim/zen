@@ -49,7 +49,7 @@ export default function ServicePage() {
         {
             title: "Official Company",
             description: "Direct line to our main corporate account",
-            image: "/logo.png",
+            image: "/zen-3d-logo.png",
             colorClass: "bg-emerald-600",
             shadowClass: "shadow-emerald-500/30",
             textClass: "text-emerald-600",
@@ -61,7 +61,7 @@ export default function ServicePage() {
         {
             title: "Team Support",
             description: "Contact our dedicated team for assistance",
-            image: "/telegram team.jpg",
+            image: "/telegram.jpg",
             colorClass: "bg-purple-600",
             shadowClass: "shadow-purple-500/30",
             textClass: "text-purple-600",
@@ -86,43 +86,46 @@ export default function ServicePage() {
 
     if (!mounted || loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+            <div className="min-h-screen flex items-center justify-center bg-gray-950">
+                <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 relative overflow-hidden">
+        <div className="min-h-screen bg-gray-950 relative overflow-hidden font-sans selection:bg-blue-500/30">
             {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-32 -mt-32 backdrop-blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -ml-32 -mb-32 backdrop-blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px] -mr-40 -mt-20 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] -ml-40 -mb-20 pointer-events-none"></div>
 
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl z-40 px-6 py-6 flex items-center gap-4 border-b border-gray-100">
+            <header className="fixed top-0 left-0 right-0 bg-gray-950/80 backdrop-blur-xl z-50 px-6 py-5 flex items-center gap-4 border-b border-white/5">
                 <button
                     onClick={() => router.back()}
-                    className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors shadow-sm"
+                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/5 active:scale-95"
                 >
-                    <ChevronLeft size={20} className="text-gray-700" />
+                    <ChevronLeft size={20} className="text-white" />
                 </button>
-                <h1 className="text-xl font-black text-gray-900 uppercase tracking-tight">Customer Service</h1>
+                <h1 className="text-lg font-black text-white uppercase tracking-widest text-shadow-sm">Customer Service</h1>
             </header>
 
-            <main className="pt-28 px-6 max-w-md mx-auto space-y-8 pb-44">
+            <main className="pt-28 px-6 max-w-lg mx-auto space-y-8 pb-32">
                 {/* Intro Section */}
-                <div className="text-center space-y-3 px-4">
-                    <div className="w-20 h-20 bg-blue-600 rounded-[2rem] mx-auto flex items-center justify-center shadow-xl shadow-blue-500/20 mb-4 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <MessageCircle size={36} className="text-white" />
+                <div className="text-center space-y-4 px-2">
+                    <div className="relative w-20 h-20 mx-auto mb-6 group">
+                        <div className="absolute inset-0 bg-blue-500 rounded-[2rem] blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
+                        <div className="relative w-full h-full bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 transform rotate-6 group-hover:rotate-0 transition-transform duration-500">
+                            <MessageCircle size={32} className="text-white drop-shadow-md" />
+                        </div>
                     </div>
-                    <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">How can we help?</h2>
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
-                        Connect with us through our official channels for 24/7 priority support
+                    <h2 className="text-3xl font-black text-white tracking-tight uppercase">How can we help?</h2>
+                    <p className="text-sm font-medium text-gray-400 leading-relaxed max-w-xs mx-auto">
+                        Connect with our official support channels for 24/7 priority assistance and updates.
                     </p>
                 </div>
 
                 {/* Contact Options Grid */}
-                <div className="space-y-5">
+                <div className="space-y-4">
                     {contactOptions.map((option, idx) => (
                         <button
                             key={idx}
@@ -137,42 +140,27 @@ export default function ServicePage() {
                                     console.error("Navigation error:", e);
                                 }
                             }}
-                            className="group relative block w-full bg-white rounded-[2.5rem] p-6 border border-gray-100 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:shadow-gray-200 transition-all active:scale-[0.98] overflow-hidden"
+                            className="group relative block w-full bg-white/5 hover:bg-white/10 rounded-[2rem] p-5 border border-white/5 transition-all duration-300 active:scale-[0.98] overflow-hidden"
                         >
-                            {/* Accent Glow */}
-                            <div className={`absolute top-0 right-0 w-32 h-32 ${option.glowClass} rounded-full blur-3xl -mr-16 -mt-16 ${option.hoverGlowClass} transition-colors`}></div>
+                            {/* Hover Gradient */}
+                            <div className={`absolute inset-0 bg-gradient-to-r ${option.colorClass.replace('bg-', 'from-')}/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
 
-                            <div className="flex items-center gap-5">
-                                <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-100 shadow-sm relative overflow-hidden">
+                            <div className="flex items-center gap-5 relative z-10">
+                                <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 relative overflow-hidden backdrop-blur-sm">
                                     <img
                                         src={encodeURI(option.image)}
                                         alt={option.title}
-                                        className="w-10 h-10 object-contain relative z-10"
+                                        className="w-10 h-10 object-contain drop-shadow-lg"
                                     />
-                                    {/* Subtle inner background */}
-                                    <div className="absolute inset-0 bg-gray-50 opacity-50"></div>
                                 </div>
-                                <div className="flex-1 text-left">
-                                    <h3 className="text-sm font-black text-gray-900 mb-0.5 uppercase tracking-wide">{option.title}</h3>
-                                    <p className="text-[10px] text-gray-500 font-medium leading-relaxed max-w-[180px]">
+                                <div className="flex-1 text-left min-w-0">
+                                    <h3 className="text-base font-black text-white mb-1 uppercase tracking-wide truncate">{option.title}</h3>
+                                    <p className="text-xs text-gray-400 font-medium leading-relaxed truncate">
                                         {option.description}
                                     </p>
                                 </div>
-                                <div className={`w-10 h-10 rounded-full ${option.colorClass} text-white flex items-center justify-center shadow-lg ${option.shadowClass} group-hover:translate-x-1 transition-transform`}>
+                                <div className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 text-gray-400 group-hover:text-white flex items-center justify-center group-hover:translate-x-1 transition-all`}>
                                     <ExternalLink size={18} />
-                                </div>
-                            </div>
-
-                            <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center">
-                                <span className={`text-[10px] font-black ${option.textClass} uppercase tracking-[0.2em]`}>
-                                    {option.label}
-                                </span>
-                                <div className="flex -space-x-2">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="w-5 h-5 rounded-full border-2 border-white bg-gray-100 overflow-hidden">
-                                            <div className="w-full h-full bg-gray-50 animate-pulse"></div>
-                                        </div>
-                                    ))}
                                 </div>
                             </div>
                         </button>
@@ -180,23 +168,23 @@ export default function ServicePage() {
                 </div>
 
                 {/* Trust Badge */}
-                <div className="pt-6">
-                    <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                            <ShieldCheck className="text-white" size={24} />
+                <div className="pt-4">
+                    <div className="bg-emerald-500/5 rounded-3xl p-6 border border-emerald-500/10 flex items-center gap-4 backdrop-blur-sm">
+                        <div className="w-12 h-12 shrink-0 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <ShieldCheck size={24} />
                         </div>
                         <div>
-                            <h4 className="text-xs font-black text-emerald-900 uppercase tracking-wider mb-0.5">Verified Corporate Support</h4>
-                            <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-widest opacity-70">
-                                100% Secure communication with encrypted protocols
+                            <h4 className="text-sm font-black text-emerald-400 uppercase tracking-widest mb-1">Official Support</h4>
+                            <p className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-wider leading-relaxed">
+                                End-to-end encrypted • Verified Agents
                             </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer Disclaimer */}
-                <p className="text-center text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] px-10 leading-loose">
-                    For your security, only use links from this official app section. We never ask for your password.
+                <p className="text-center text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em] px-8 leading-relaxed opacity-50">
+                    Secure Channel • No Password Required
                 </p>
             </main>
         </div>

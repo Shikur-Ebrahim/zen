@@ -251,34 +251,34 @@ export default function UserChatPage() {
 
     if (!mounted || loading || !user) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-                <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+            <div className="min-h-screen flex items-center justify-center bg-[#1c1c1e]">
+                <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
             </div>
         );
     }
 
     return (
-        <div className="h-screen bg-zinc-50 flex flex-col max-w-lg mx-auto shadow-2xl overflow-hidden relative border-x border-zinc-100">
+        <div className="h-screen bg-[#0e0e0e] flex flex-col max-w-lg mx-auto shadow-2xl overflow-hidden relative border-x border-[#1c1c1e]">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-100 px-6 py-5 flex items-center justify-between shrink-0">
+            <header className="sticky top-0 z-50 bg-[#1c1c1e]/90 backdrop-blur-xl border-b border-[#2c2c2e] px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
-                        className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 active:scale-90 transition-transform"
+                        className="w-10 h-10 rounded-full bg-[#2c2c2e] flex items-center justify-center text-gray-300 hover:text-white active:scale-90 transition-transform"
                     >
                         <ChevronLeft size={24} />
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <div className="w-11 h-11 rounded-3xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                <img src="/logo.png" className="w-7 h-7 object-contain" alt="Support" />
+                            <div className="w-10 h-10 rounded-full bg-[#2c2c2e] flex items-center justify-center overflow-hidden border border-[#3a3a3c]">
+                                <img src="/zen-3d-logo.png" className="w-full h-full object-cover" alt="Support" />
                             </div>
-                            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#1c1c1e] rounded-full"></div>
                         </div>
                         <div>
-                            <h1 className="text-sm font-black text-gray-900 leading-none mb-1 uppercase tracking-tight">Support Staff</h1>
+                            <h1 className="text-sm font-bold text-white leading-none mb-1 tracking-wide">Customer Support</h1>
                             <div className="flex items-center gap-1.5">
-                                <span className="text-[9px] font-bold text-green-600 uppercase tracking-widest">Active Now</span>
+                                <span className="text-[10px] font-medium text-blue-400">online</span>
                             </div>
                         </div>
                     </div>
@@ -288,16 +288,19 @@ export default function UserChatPage() {
             {/* Messages Area */}
             <main
                 ref={scrollRef}
-                className="flex-1 px-5 overflow-y-auto space-y-4 py-6"
+                className="flex-1 px-4 overflow-y-auto space-y-2 py-4 custom-scrollbar"
+                style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("/assets/chat-bg-pattern.png")', backgroundBlendMode: 'overlay', backgroundSize: '300px' }}
             >
+                {/* Fallback pattern if image missing is just dark bg handled by parent class */}
+
                 {messages.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 animate-in fade-in duration-700">
-                        <div className="w-20 h-20 rounded-[2.5rem] bg-zinc-100 flex items-center justify-center text-zinc-300">
+                        <div className="w-20 h-20 rounded-[2.5rem] bg-[#1c1c1e] flex items-center justify-center text-[#3a3a3c]">
                             <MessageSquare size={40} />
                         </div>
                         <div className="space-y-1">
-                            <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest">No Messages Yet</h2>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Send a message to start chatting</p>
+                            <h2 className="text-sm font-bold text-gray-200">No messages yet</h2>
+                            <p className="text-[11px] text-gray-500">Start the conversation</p>
                         </div>
                     </div>
                 )}
@@ -307,24 +310,24 @@ export default function UserChatPage() {
                     return (
                         <div key={msg.id || idx}>
                             <div
-                                className={`flex ${isMe ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300 mb-4 message-bubble`}
+                                className={`flex ${isMe ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-1 duration-200 mb-2 message-bubble`}
                             >
-                                <div className={`max-w-[80%] flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                <div className={`max-w-[85%] flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                                     <div className={`
-                                        px-5 py-3.5 rounded-[1.75rem] text-sm font-medium leading-relaxed
+                                        px-4 py-2 rounded-2xl text-[15px] leading-relaxed
                                         ${isMe
-                                            ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/10"
-                                            : "bg-white text-zinc-800 rounded-tl-none border border-zinc-100 shadow-sm"
+                                            ? "bg-[#8774e1] text-white rounded-tr-sm" // Telegram-ish purple/blue for self
+                                            : "bg-[#212121] text-white rounded-tl-sm" // Dark gray for other
                                         }
                                     `}>
                                         {msg.text}
                                     </div>
-                                    <div className="mt-1.5 flex items-center gap-1 px-1">
-                                        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+                                    <div className="mt-1 flex items-center gap-1 px-1 opacity-60">
+                                        <span className="text-[10px] text-gray-400">
                                             {formatTime(msg.timestamp)}
                                         </span>
                                         {isMe && (
-                                            <CheckCheck size={12} className="text-blue-500" />
+                                            <CheckCheck size={12} className="text-[#8774e1]" />
                                         )}
                                     </div>
                                 </div>
@@ -332,44 +335,42 @@ export default function UserChatPage() {
 
                             {/* Show Guidelines after the FIRST message ONLY */}
                             {idx === 0 && guidelines.length > 0 && (
-                                <div className="space-y-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                                    <div className="flex items-center gap-2 mb-4 px-1">
-                                        <div className="h-px bg-zinc-200 flex-1"></div>
-                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Official Support Guide</span>
-                                        <div className="h-px bg-zinc-200 flex-1"></div>
+                                <div className="space-y-4 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700 px-2">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="h-px bg-[#2c2c2e] flex-1"></div>
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">FAQ</span>
+                                        <div className="h-px bg-[#2c2c2e] flex-1"></div>
                                     </div>
                                     {guidelines.map((guide) => (
-                                        <div key={guide.id} className="bg-white rounded-3xl border border-zinc-100 shadow-sm overflow-hidden border-l-4 border-l-blue-600">
+                                        <div key={guide.id} className="bg-[#1c1c1e] rounded-xl overflow-hidden border border-[#2c2c2e]">
                                             {guide.imageUrl && (
-                                                <div className="w-full aspect-video overflow-hidden">
+                                                <div className="w-full h-32 overflow-hidden relative">
                                                     <img
                                                         src={guide.imageUrl}
                                                         alt={guide.id}
-                                                        className="w-full h-full object-cover"
+                                                        className="w-full h-full object-cover opacity-80"
                                                     />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] to-transparent"></div>
                                                 </div>
                                             )}
-                                            <div className="p-5 space-y-2">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                                                    <h3 className="text-xs font-black text-gray-900 uppercase tracking-tight">
-                                                        {guide.id === 'welcome' ? 'Welcome Message' :
-                                                            guide.id === 'goal' ? 'Company Goal' :
-                                                                guide.id === 'recharge' ? 'How to Recharge' :
-                                                                    guide.id === 'product' ? 'How to Buy Product' :
-                                                                        guide.id === 'invite' ? 'How to Invite User' : guide.id}
-                                                    </h3>
-                                                </div>
-                                                <p className="text-[11px] text-zinc-600 font-medium leading-relaxed whitespace-pre-wrap">
+                                            <div className="p-4 space-y-1">
+                                                <h3 className="text-sm font-bold text-gray-200">
+                                                    {guide.id === 'welcome' ? 'Welcome' :
+                                                        guide.id === 'goal' ? 'Our Goal' :
+                                                            guide.id === 'recharge' ? 'Recharge Guide' :
+                                                                guide.id === 'product' ? 'Buying Products' :
+                                                                    guide.id === 'invite' ? 'Inviting Friends' : guide.id}
+                                                </h3>
+                                                <p className="text-xs text-gray-400 leading-relaxed whitespace-pre-wrap">
                                                     {guide.text}
                                                 </p>
                                             </div>
                                         </div>
                                     ))}
-                                    <div className="flex items-center gap-2 mt-8 px-1">
-                                        <div className="h-px bg-zinc-200 flex-1"></div>
-                                        <span className="text-[10px] font-black text-zinc-300 uppercase tracking-[0.2em]">Chat History</span>
-                                        <div className="h-px bg-zinc-200 flex-1"></div>
+                                    <div className="flex items-center gap-3 mt-4">
+                                        <div className="h-px bg-[#2c2c2e] flex-1"></div>
+                                        <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">History</span>
+                                        <div className="h-px bg-[#2c2c2e] flex-1"></div>
                                     </div>
                                 </div>
                             )}
@@ -379,25 +380,25 @@ export default function UserChatPage() {
             </main>
 
             {/* Input Area */}
-            <div className="sticky bottom-0 bg-white/90 backdrop-blur-xl border-t border-zinc-100 p-4 pb-8 z-50 shrink-0">
+            <div className="sticky bottom-0 bg-[#1c1c1e] border-t border-[#2c2c2e] p-3 safe-area-bottom z-50 shrink-0">
                 <form
                     onSubmit={handleSendMessage}
-                    className="max-w-lg mx-auto flex items-center gap-3"
+                    className="flex items-end gap-2"
                 >
                     <button
                         type="button"
-                        className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-400 hover:bg-zinc-100 transition-colors shrink-0"
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors shrink-0"
                     >
-                        <Paperclip size={20} />
+                        <Paperclip size={22} />
                     </button>
 
-                    <div className="flex-1 relative">
+                    <div className="flex-1 bg-[#101010] rounded-[1.25rem] min-h-[44px] flex items-center px-4 border border-[#2c2c2e]">
                         <input
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Type your message..."
-                            className="w-full h-12 pl-5 pr-12 rounded-2xl bg-zinc-100 border-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all text-sm font-medium text-zinc-800"
+                            placeholder="Message..."
+                            className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500 text-[15px]"
                         />
                     </div>
 
@@ -405,17 +406,17 @@ export default function UserChatPage() {
                         type="submit"
                         disabled={!newMessage.trim() || sending}
                         className={`
-                            w-12 h-12 rounded-2xl flex items-center justify-center transition-all shrink-0
+                            w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0
                             ${newMessage.trim() && !sending
-                                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30 active:scale-95"
-                                : "bg-zinc-100 text-zinc-400"
+                                ? "bg-[#8774e1] text-white active:scale-95"
+                                : "text-[#8774e1] bg-transparent opacity-50"
                             }
                         `}
                     >
                         {sending ? (
-                            <Loader2 className="animate-spin" size={20} />
+                            <Loader2 className="animate-spin" size={24} />
                         ) : (
-                            <Send size={20} className={newMessage.trim() ? "translate-x-0.5 -translate-y-0.5" : ""} />
+                            <Send size={24} className={newMessage.trim() ? "" : "ml-0.5"} />
                         )}
                     </button>
                 </form>
