@@ -40,20 +40,38 @@ export default function DownloadAppPage() {
     }, []);
 
     const handleDownload = async () => {
-        // Force simulation for demo
-        setInstallStatus('installing');
+        if (!deferredPrompt) {
+            // If no install prompt is available, show manual installation instructions
+            setShowInstruction(true);
+            return;
+        }
 
-        // Simulate download/install progress
-        let currentProgress = 0;
-        const interval = setInterval(() => {
-            currentProgress += Math.floor(Math.random() * 5) + 2; // Random increment
-            if (currentProgress > 100) {
-                currentProgress = 100;
-                clearInterval(interval);
-                setTimeout(() => setInstallStatus('installed'), 500);
+        try {
+            // Show the install prompt
+            setInstallStatus('installing');
+            deferredPrompt.prompt();
+
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+                setInstallStatus('installed');
+            } else {
+                console.log('User dismissed the install prompt');
+                setInstallStatus('idle');
+                // Show manual instructions as fallback
+                setShowInstruction(true);
             }
-            setProgress(currentProgress);
-        }, 150); // Updates every 150ms
+
+            // Clear the deferredPrompt
+            setDeferredPrompt(null);
+        } catch (error) {
+            console.error('Error during installation:', error);
+            setInstallStatus('idle');
+            // Show manual instructions as fallback
+            setShowInstruction(true);
+        }
     };
 
 
@@ -127,17 +145,12 @@ export default function DownloadAppPage() {
                     )}
 
                     {installStatus === 'installing' && (
-                        <div className="w-full py-5 bg-gray-50 rounded-[1.5rem] border border-gray-200 relative overflow-hidden flex items-center justify-center shadow-inner">
-                            <div
-                                className="absolute inset-y-0 left-0 bg-emerald-100/50 transition-all duration-300 ease-linear"
-                                style={{ width: `${progress}%` }}
-                            ></div>
+                        <div className="w-full py-5 bg-emerald-50 rounded-[1.5rem] border border-emerald-200 relative overflow-hidden flex items-center justify-center shadow-inner">
                             <div className="relative flex items-center gap-3 z-10">
                                 <Loader2 size={22} className="text-emerald-600 animate-spin" />
                                 <span className="text-lg font-black text-emerald-700 tracking-widest uppercase">
-                                    {progress < 40 ? "Verifying..." : progress < 80 ? "Installing..." : "Finalizing..."}
+                                    Installing...
                                 </span>
-                                <span className="text-sm font-bold text-emerald-600/80 w-10 text-right">{progress}%</span>
                             </div>
                         </div>
                     )}
@@ -152,6 +165,69 @@ export default function DownloadAppPage() {
                     )}
 
                 </section>
+
+                {/* Manual Installation Instructions Modal */}
+                {showInstruction && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                        <div className="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl relative">
+                            <button
+                                onClick={() => setShowInstruction(false)}
+                                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                                <ChevronLeft size={20} className="rotate-180" />
+                            </button>
+
+                            <div className="space-y-6">
+                                <div className="text-center">
+                                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <Smartphone size={32} className="text-blue-600" />
+                                    </div>
+                                    <h2 className="text-xl font-black text-gray-900 mb-2">Install Zen App</h2>
+                                    <p className="text-sm text-gray-600">Follow these steps to install the app on your device:</p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                            <span className="text-sm font-black text-blue-600">1</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-900 mb-1">Tap the Share button</p>
+                                            <p className="text-xs text-gray-600">Look for <Share2 size={12} className="inline" /> or <MoreVertical size={12} className="inline" /> in your browser</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                            <span className="text-sm font-black text-blue-600">2</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-900 mb-1">Select "Add to Home Screen"</p>
+                                            <p className="text-xs text-gray-600">Scroll down in the menu to find this option</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                                            <span className="text-sm font-black text-blue-600">3</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-gray-900 mb-1">Tap "Add" to confirm</p>
+                                            <p className="text-xs text-gray-600">The app will appear on your home screen</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowInstruction(false)}
+                                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-black uppercase tracking-wider transition-colors"
+                                >
+                                    Got it!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
 
         </div>

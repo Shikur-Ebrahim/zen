@@ -158,22 +158,22 @@ export default function WalletPage() {
     }
 
     return (
-        <div className="h-screen bg-slate-50 flex flex-col overflow-hidden text-slate-900 select-none font-sans">
+        <div className="h-screen bg-pink-50 flex flex-col overflow-hidden text-slate-900 select-none font-sans">
             {/* Header */}
             <header className="px-6 pt-12 pb-2 flex items-center justify-between z-20">
                 <button
                     onClick={() => router.back()}
-                    className="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-600 active:scale-95 transition-all"
+                    className="w-10 h-10 rounded-full bg-pink-100 shadow-sm border border-pink-200 flex items-center justify-center text-[#3E2723] active:scale-95 transition-all"
                 >
                     <ChevronLeft size={20} />
                 </button>
                 <div className="flex flex-col items-center">
-                    <span className="text-sm font-bold text-slate-900 tracking-wide uppercase">My Wallet</span>
+                    <span className="text-sm font-bold text-[#3E2723] tracking-wide uppercase">My Wallet</span>
                 </div>
                 <button
                     onClick={handleRefresh}
                     disabled={refreshing}
-                    className="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-600 active:scale-95 transition-all disabled:opacity-50"
+                    className="w-10 h-10 rounded-full bg-pink-100 shadow-sm border border-pink-200 flex items-center justify-center text-[#3E2723] active:scale-95 transition-all disabled:opacity-50"
                 >
                     <RefreshCcw size={20} className={refreshing ? "animate-spin" : ""} />
                 </button>
@@ -213,7 +213,7 @@ export default function WalletPage() {
                                 {/* Optional: Indicators could go here if needed, but keeping it clean for now */}
                             </div>
                         ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 z-0"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#3E2723] via-[#5D4037] to-[#6D4C41] z-0"></div>
                         )}
 
                         {/* Decorative elements (only if NO image) */}
@@ -255,15 +255,15 @@ export default function WalletPage() {
                         onClick={() => router.push("/users/recharge")}
                         className="flex flex-col items-center gap-3 group"
                     >
-                        <div className="w-20 h-20 rounded-[1.8rem] bg-white shadow-xl shadow-indigo-100 border border-white flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
-                            <div className="absolute inset-0 bg-indigo-50/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
+                        <div className="w-20 h-20 rounded-[1.8rem] bg-pink-100 shadow-xl shadow-pink-200 border border-pink-200 flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
+                            <div className="absolute inset-0 bg-pink-200/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
                             <img
                                 src="/assets/wallet_recharge_3d.png"
                                 alt="Recharge"
                                 className="w-14 h-14 object-contain drop-shadow-md transform group-hover:scale-110 transition-transform duration-500"
                             />
                         </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-wide">Recharge</span>
+                        <span className="text-xs font-bold text-[#3E2723] tracking-wide">Recharge</span>
                     </button>
 
                     {/* Withdraw */}
@@ -271,15 +271,15 @@ export default function WalletPage() {
                         onClick={() => router.push("/users/withdraw")}
                         className="flex flex-col items-center gap-3 group"
                     >
-                        <div className="w-20 h-20 rounded-[1.8rem] bg-white shadow-xl shadow-indigo-100 border border-white flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
-                            <div className="absolute inset-0 bg-slate-50/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
+                        <div className="w-20 h-20 rounded-[1.8rem] bg-pink-100 shadow-xl shadow-pink-200 border border-pink-200 flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
+                            <div className="absolute inset-0 bg-pink-200/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
                             <img
                                 src="/assets/wallet_withdraw_3d.png"
                                 alt="Withdraw"
                                 className="w-14 h-14 object-contain drop-shadow-md transform group-hover:scale-110 transition-transform duration-500"
                             />
                         </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-wide">Withdraw</span>
+                        <span className="text-xs font-bold text-[#3E2723] tracking-wide">Withdraw</span>
                     </button>
 
                     {/* Exchange */}
@@ -287,29 +287,29 @@ export default function WalletPage() {
                         onClick={() => router.push("/users/exchange")}
                         className="flex flex-col items-center gap-3 group"
                     >
-                        <div className="w-20 h-20 rounded-[1.8rem] bg-white shadow-xl shadow-indigo-100 border border-white flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
-                            <div className="absolute inset-0 bg-violet-50/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
+                        <div className="w-20 h-20 rounded-[1.8rem] bg-pink-100 shadow-xl shadow-pink-200 border border-pink-200 flex items-center justify-center relative overflow-hidden group-active:scale-95 transition-all duration-300">
+                            <div className="absolute inset-0 bg-pink-200/50 opacity-0 group-active:opacity-100 transition-opacity"></div>
                             <img
                                 src="/assets/wallet_exchange_3d.png"
                                 alt="Exchange"
                                 className="w-14 h-14 object-contain drop-shadow-md transform group-hover:rotate-180 transition-transform duration-700"
                             />
                         </div>
-                        <span className="text-xs font-bold text-slate-700 tracking-wide">Exchange</span>
+                        <span className="text-xs font-bold text-[#3E2723] tracking-wide">Exchange</span>
                     </button>
                 </section>
 
                 {/* 3. Detailed Income Stats */}
                 <section className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Financial Insights</h3>
+                    <h3 className="text-xs font-black text-[#3E2723]/60 uppercase tracking-widest pl-2">Financial Insights</h3>
 
                     {/* Team Revenue */}
                     {/* Team Revenue - Advanced Card */}
-                    <div className="bg-white rounded-[2rem] p-5 shadow-xl shadow-orange-500/10 border border-orange-50 flex items-center justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-orange-500/10"></div>
+                    <div className="bg-[#3E2723] rounded-[2rem] p-5 shadow-xl shadow-[#3E2723]/30 border border-[#3E2723] flex items-center justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-white/10"></div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                            <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center p-2 shadow-sm">
+                            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center p-2 shadow-sm">
                                 <img
                                     src="/assets/team_income_3d.png"
                                     alt="Team"
@@ -319,7 +319,7 @@ export default function WalletPage() {
                             <div className="flex flex-col gap-1">
                                 <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Team Income</span>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-slate-900">
+                                    <span className="text-2xl font-black text-white">
                                         {Number(userData?.teamIncome || 0).toLocaleString()}
                                     </span>
                                     <div className="w-6 h-6 relative perspective-1000">
@@ -333,23 +333,23 @@ export default function WalletPage() {
                             </div>
                         </div>
 
-                        <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                            <ArrowRight size={18} className="text-orange-500 group-hover:translate-x-1 transition-transform" />
+                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                            <ArrowRight size={18} className="text-white group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
 
                     {/* Task Revenue - Advanced Card (Fixed Icons) */}
-                    <div className="bg-white rounded-[2rem] p-5 shadow-xl shadow-emerald-500/10 border border-emerald-50 flex items-center justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-emerald-500/10"></div>
+                    <div className="bg-[#3E2723] rounded-[2rem] p-5 shadow-xl shadow-[#3E2723]/30 border border-[#3E2723] flex items-center justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-white/10"></div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-500">
+                            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-emerald-400 shadow-sm group-hover:scale-110 transition-transform duration-500">
                                 <ClipboardList size={32} />
                             </div>
                             <div className="flex flex-col gap-1">
                                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Zen Stars</span>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-slate-900">
+                                    <span className="text-2xl font-black text-white">
                                         {Number(userData?.stars || 0).toLocaleString()}
                                     </span>
                                     {/* Rotating Transparent Star */}
@@ -358,17 +358,17 @@ export default function WalletPage() {
                             </div>
                         </div>
 
-                        <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                            <ArrowRight size={18} className="text-emerald-500 group-hover:translate-x-1 transition-transform" />
+                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                            <ArrowRight size={18} className="text-white group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
 
                     {/* Exchange Rate Card (New) */}
                     <div
                         onClick={() => router.push("/users/currency-rates")}
-                        className="bg-white rounded-[2rem] p-5 shadow-xl shadow-violet-500/10 border border-violet-50 flex items-center justify-between relative overflow-hidden group cursor-pointer active:scale-95 transition-all"
+                        className="bg-[#3E2723] rounded-[2rem] p-5 shadow-xl shadow-[#3E2723]/30 border border-[#3E2723] flex items-center justify-between relative overflow-hidden group cursor-pointer active:scale-95 transition-all"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-violet-500/10"></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10 transition-colors group-hover:bg-white/10"></div>
 
                         {/* Notification Badge */}
                         {hasRateUpdate && (
@@ -385,7 +385,7 @@ export default function WalletPage() {
                         <div className="flex items-center gap-4 relative z-10">
                             {/* Icon Stack */}
                             <div className="w-16 h-16 relative">
-                                <div className="absolute inset-0 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 shadow-sm z-10">
+                                <div className="absolute inset-0 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-violet-400 shadow-sm z-10">
                                     <ArrowLeftRight size={32} />
                                 </div>
                                 {/* Floating Background Elements representing assets */}
@@ -405,17 +405,17 @@ export default function WalletPage() {
                                     )}
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-sm font-bold text-slate-600">ETB</span>
-                                    <span className="text-slate-300">•</span>
-                                    <span className="text-sm font-bold text-slate-600">Coin</span>
-                                    <span className="text-slate-300">•</span>
-                                    <span className="text-sm font-bold text-slate-600">Star</span>
+                                    <span className="text-sm font-bold text-white">ETB</span>
+                                    <span className="text-white/40">•</span>
+                                    <span className="text-sm font-bold text-white">Coin</span>
+                                    <span className="text-white/40">•</span>
+                                    <span className="text-sm font-bold text-white">Star</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="w-10 h-10 rounded-full bg-violet-50 flex items-center justify-center group-hover:bg-violet-100 transition-colors">
-                            <ArrowRight size={18} className="text-violet-500 group-hover:translate-x-1 transition-transform" />
+                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                            <ArrowRight size={18} className="text-white group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
                 </section>

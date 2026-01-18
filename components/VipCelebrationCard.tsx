@@ -97,7 +97,7 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                 >
                     {/* Immersive Backdrop with Dynamic Glow */}
                     <div
-                        className="absolute inset-0 bg-[#020617]/90 backdrop-blur-3xl"
+                        className="absolute inset-0 bg-[#EADBC8]/90 backdrop-blur-3xl"
                         onClick={onClose}
                     >
                         <motion.div
@@ -140,7 +140,7 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                             />
 
                             {/* Layered Overlays for Depth */}
-                            <div className={`absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/20`} />
+                            <div className={`absolute inset-0 bg-gradient-to-t from-[#EADBC8] via-transparent to-black/20`} />
                             <div className={`absolute inset-0 bg-gradient-to-br ${theme.primary} mix-blend-overlay opacity-40`} />
 
                             {/* Animated Level Badge */}
@@ -193,18 +193,18 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.6 }}
-                                className="inline-flex items-center gap-3 px-6 py-2 rounded-xl bg-slate-50 border border-slate-100 shadow-sm"
+                                className="inline-flex items-center gap-3 px-6 py-2 rounded-xl bg-[#F5E6D3] border border-[#7B3F00]/20 shadow-sm"
                             >
                                 <PartyPopper className={theme.accent.split(' ')[0].replace('text-', 'text-')} size={16} />
-                                <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em]">{theme.label}</span>
+                                <span className="text-[10px] font-black text-[#7B3F00] uppercase tracking-[0.4em]">{theme.label}</span>
                             </motion.div>
 
                             <div className="space-y-4">
-                                <h1 className="text-4xl font-black text-slate-900 tracking-tight flex flex-col leading-none">
-                                    <span className="text-sm font-black text-slate-400 uppercase tracking-[0.5em] mb-3">Distinction Achieved</span>
+                                <h1 className="text-4xl font-black text-[#3E2723] tracking-tight flex flex-col leading-none">
+                                    <span className="text-sm font-black text-[#7B3F00] uppercase tracking-[0.5em] mb-3">Distinction Achieved</span>
                                     YOU ARE UNSTOPPABLE!
                                 </h1>
-                                <p className="text-slate-600 font-bold leading-relaxed text-base px-4">
+                                <p className="text-[#3E2723]/70 font-bold leading-relaxed text-base px-4">
                                     {text}
                                 </p>
                             </div>
