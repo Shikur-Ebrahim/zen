@@ -26,7 +26,8 @@ import {
     Gamepad2,
     Crown,
     PartyPopper,
-    BarChart3
+    BarChart3,
+    Users
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -99,6 +100,7 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         { id: "rules", label: "Platform Rules", icon: BookOpen, path: "/admin/rules" },
         { id: "daily-tasks", label: "Daily Tasks", icon: Gamepad2, path: "/admin/daily-tasks" },
         { id: "settings", label: "Settings", icon: Settings, path: "/admin/settings" },
+        { id: "users", label: "Users", icon: Users, path: "/admin/users" },
     ];
 
     const handleLogout = async () => {

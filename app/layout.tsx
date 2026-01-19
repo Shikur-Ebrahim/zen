@@ -18,10 +18,15 @@ export const metadata: Metadata = {
   title: "Zen Boss",
   description: "Zen Boss Application",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/zen-3d-logo-v2.png",
+    apple: "/zen-3d-logo-v2.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Zen Boss",
+    startupImage: "/zen-3d-logo-v2.png"
   },
   formatDetection: {
     telephone: false,
