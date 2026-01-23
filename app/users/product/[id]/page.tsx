@@ -278,7 +278,7 @@ export default function UserProductDetailPage() {
                     </div>
                 </motion.div>
 
-                {/* Details Card Section */}
+                {/* Details Card Section - Gold Theme */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -286,30 +286,31 @@ export default function UserProductDetailPage() {
                     className="space-y-6"
                 >
                     <header className="flex items-center gap-4 px-2">
-                        <h2 className="text-[11px] font-black tracking-[0.3em] text-blue-400/50 uppercase">Spec</h2>
-                        <div className="h-px flex-1 bg-blue-500/10"></div>
+                        <h2 className="text-[11px] font-black tracking-[0.3em] text-[#D4AF37]/60 uppercase">System Spec</h2>
+                        <div className="h-px flex-1 bg-[#D4AF37]/10"></div>
                     </header>
 
-                    <div className="bg-slate-900/60 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-blue-500/20 shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px] -mr-24 -mt-24 group-hover:bg-blue-500/15 transition-all duration-700"></div>
+                    <div className="bg-[#0A0A0A] p-10 rounded-[2.5rem] border border-[#D4AF37]/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+                        {/* Gold Ambient Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
 
-                        <div className="flex items-center gap-4 text-white mb-10">
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-[0_0_15px_#60A5FA]"></div>
-                            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-blue-100/80">Details</span>
+                        <div className="flex items-center gap-3 text-white mb-10">
+                            <div className="w-2 h-2 rounded-full bg-[#D4AF37] shadow-[0_0_15px_#D4AF37]"></div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37]">Execution Details</span>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-10 gap-y-10">
+                        <div className="space-y-6">
                             {[
-                                { label: "Price", value: `${product.price?.toLocaleString()} ETB`, blue: true },
-                                { label: "Daily Money", value: `${product.dailyIncome?.toLocaleString()} ETB` },
-                                { label: "Total Days", value: `${product.contractPeriod} Days` },
-                                { label: "Rate", value: `${product.dailyRate}%` },
-                                { label: "Total Money", value: `${product.totalProfit?.toLocaleString()} ETB`, glow: true },
-                                { label: "Limit", value: `${product.purchaseLimit || 1} UNIT` }
+                                { label: "Purchase Price", value: `${product.price?.toLocaleString()} ETB`, gold: true },
+                                { label: "Daily Settlement", value: `${product.dailyIncome?.toLocaleString()} ETB` },
+                                { label: "Contract Period", value: `${product.contractPeriod} Days` },
+                                { label: "Daily Growth Rate", value: `${product.dailyRate}%` },
+                                { label: "Total Yield", value: `${product.totalProfit?.toLocaleString()} ETB`, highlight: true },
+                                { label: "Unit Limit", value: `${product.purchaseLimit || 1} UNIT` }
                             ].map((spec, i) => (
-                                <div key={i} className="flex flex-col gap-2.5 border-b border-blue-500/5 pb-4 last:border-0 group/item">
-                                    <span className="text-[9px] font-black text-blue-300/30 uppercase tracking-[0.3em] group-hover/item:text-blue-400/50 transition-colors">{spec.label}</span>
-                                    <span className={`text-[13px] font-black uppercase tracking-tight ${spec.blue ? "text-blue-400" : spec.glow ? "text-blue-100" : "text-white/80"}`}>
+                                <div key={i} className="flex items-center justify-between py-4 border-b border-white/5 last:border-0 group/item">
+                                    <span className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.2em] group-hover/item:text-[#D4AF37]/60 transition-colors uppercase">{spec.label}</span>
+                                    <span className={`text-[13px] font-black tracking-widest uppercase ${spec.gold ? "text-[#D4AF37]" : spec.highlight ? "text-white" : "text-white/60"}`}>
                                         {spec.value}
                                     </span>
                                 </div>
@@ -395,25 +396,27 @@ export default function UserProductDetailPage() {
                                         )}
                                     </motion.div>
                                 ) : (
-                                    <div className="space-y-8">
-                                        <div className="bg-slate-900/50 rounded-[3rem] p-10 border border-blue-500/10 space-y-8 relative overflow-hidden group">
-                                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl -mr-20 -mb-20"></div>
+                                    <div className="space-y-6">
+                                        <div className="bg-[#0A0A0A] rounded-[2.5rem] p-8 border border-[#D4AF37]/20 space-y-6 relative overflow-hidden group">
+                                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-20 -mb-20"></div>
 
                                             {[
-                                                { label: "NAME", value: product.name },
-                                                { label: "PRICE", value: `${product.price?.toLocaleString()} ETB`, highlight: true },
-                                                { label: "TOTAL DAYS", value: `${product.contractPeriod} DAYS` },
+                                                { label: "Product Name", value: product.name },
+                                                { label: "Execution Price", value: `${product.price?.toLocaleString()} ETB`, gold: true },
+                                                { label: "Settlement Period", value: `${product.contractPeriod} Days` },
                                             ].map((item, idx) => (
-                                                <div key={idx} className="flex flex-col gap-2 border-b border-blue-500/5 pb-6 last:border-0 last:pb-0 relative z-10 group">
-                                                    <span className="text-[9px] font-black text-blue-300/20 uppercase tracking-[0.3em] group-hover:text-blue-400/40 transition-colors">{item.label}</span>
-                                                    <span className={`text-[15px] font-black tracking-tighter uppercase ${item.highlight ? "text-blue-400" : "text-white"}`}>{item.value}</span>
+                                                <div key={idx} className="flex items-center justify-between pb-6 border-b border-white/5 last:border-0 last:pb-0 relative z-10">
+                                                    <span className="text-[9px] font-black text-[#D4AF37]/30 uppercase tracking-[0.3em]">{item.label}</span>
+                                                    <span className={`text-[14px] font-black tracking-widest uppercase ${item.gold ? "text-[#D4AF37]" : "text-white"}`}>{item.value}</span>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        <div className="flex justify-between items-center px-6 text-white">
-                                            <span className="text-[11px] font-black tracking-[0.4em] text-blue-100/30 uppercase">Total</span>
-                                            <span className="text-3xl font-black tracking-tighter">{product.price?.toLocaleString()} <span className="text-[10px] text-blue-400 ml-1 uppercase">ETB</span></span>
+                                        <div className="flex justify-between items-center px-8">
+                                            <span className="text-[10px] font-black tracking-[0.5em] text-[#D4AF37]/30 uppercase">Total Committal</span>
+                                            <span className="text-3xl font-black tracking-tighter text-white">
+                                                {product.price?.toLocaleString()} <span className="text-[10px] text-[#D4AF37] ml-1">ETB</span>
+                                            </span>
                                         </div>
                                     </div>
                                 )}

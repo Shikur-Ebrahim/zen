@@ -74,7 +74,7 @@ export default function AdminChatDashboard() {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
             setAdmin(user);

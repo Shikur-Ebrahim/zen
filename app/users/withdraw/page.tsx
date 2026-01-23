@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, collection, query, where, getDocs, limit } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import {
     ChevronLeft,
@@ -13,8 +13,22 @@ import {
     ChevronRight,
     Loader2,
     Lock,
-    XCircle
+    XCircle,
+    CheckCircle2,
+    Clock,
+    Info,
+    ArrowRight
 } from "lucide-react";
+
+const DAYS_MAP: Record<number, string> = {
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
+    0: "Sun"
+};
 
 export default function WithdrawalPage() {
     const router = useRouter();
@@ -23,7 +37,14 @@ export default function WithdrawalPage() {
     const [loading, setLoading] = useState(true);
     const [amount, setAmount] = useState("");
     const [linkedBank, setLinkedBank] = useState<any>(null);
-    const [showBankDetails, setShowBankDetails] = useState(false);
+    const [withdrawalSettings, setWithdrawalSettings] = useState<any>({
+        minAmount: 300,
+        maxAmount: 40000,
+        activeDays: [1, 2, 3, 4, 5, 6],
+        startTime: "08:00",
+        endTime: "17:00",
+        frequency: 1,
+    });
 
     // Error Modal State
     const [errorModal, setErrorModal] = useState<{ show: boolean, message: string } | null>(null);
@@ -48,12 +69,45 @@ export default function WithdrawalPage() {
             const bankRef = doc(db, "Bank", currentUser.uid);
             const unsubscribeBank = onSnapshot(bankRef, (doc) => {
                 setLinkedBank(doc.exists() ? doc.data() : null);
+            });
+
+            // Fetch Global Withdrawal Settings
+            const settingsRef = doc(db, "GlobalSettings", "withdrawal");
+            const unsubscribeSettings = onSnapshot(settingsRef, (doc) => {
+                if (doc.exists()) {
+                    setWithdrawalSettings(doc.data());
+                }
                 setLoading(false);
+            });
+
+            // Fetch Withdrawal Rules for this user
+            const qRules = query(
+                collection(db, "withdrawal_rules"),
+                where("active", "==", true)
+            );
+            const unsubscribeRules = onSnapshot(qRules, (snapshot) => {
+                if (!snapshot.empty) {
+                    // Check if any rule targets this user or is a global rule
+                    const applicableRule = snapshot.docs.find(doc => {
+                        const data = doc.data();
+                        return data.targetAll === true || (data.targetUsers && data.targetUsers.includes(currentUser.uid));
+                    });
+
+                    if (applicableRule) {
+                        const ruleData = applicableRule.data();
+                        setErrorModal({
+                            show: true,
+                            message: ruleData.message || "Please read the withdrawal rules before proceeding."
+                        });
+                    }
+                }
             });
 
             return () => {
                 unsubscribeUser();
                 unsubscribeBank();
+                unsubscribeRules();
+                unsubscribeSettings();
             };
         });
 
@@ -74,13 +128,33 @@ export default function WithdrawalPage() {
             return;
         }
 
-        if (numAmount < 300) {
-            setErrorModal({ show: true, message: "Minimum withdrawal amount is 300 ETB." });
+        if (numAmount < withdrawalSettings.minAmount) {
+            setErrorModal({ show: true, message: `Minimum withdrawal amount is ${withdrawalSettings.minAmount} ETB.` });
             return;
         }
 
-        if (numAmount > 40000) {
-            setErrorModal({ show: true, message: "Maximum single withdrawal is 40,000 ETB." });
+        if (numAmount > withdrawalSettings.maxAmount) {
+            setErrorModal({ show: true, message: `Maximum single withdrawal is ${withdrawalSettings.maxAmount.toLocaleString()} ETB.` });
+            return;
+        }
+
+        // Check Schedule
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+
+        const [startH, startM] = withdrawalSettings.startTime.split(":").map(Number);
+        const [endH, endM] = withdrawalSettings.endTime.split(":").map(Number);
+        const startTotal = startH * 60 + startM;
+        const endTotal = endH * 60 + endM;
+
+        if (!withdrawalSettings.activeDays.includes(currentDay)) {
+            setErrorModal({ show: true, message: "Withdrawals are not available today." });
+            return;
+        }
+
+        if (currentTime < startTotal || currentTime > endTotal) {
+            setErrorModal({ show: true, message: `Withdrawals are only available between ${withdrawalSettings.startTime} and ${withdrawalSettings.endTime}.` });
             return;
         }
 
@@ -100,42 +174,43 @@ export default function WithdrawalPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+            <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-[#D4AF37] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#F8F9FB] text-slate-900 font-sans pb-10 relative">
+        <div className="min-h-screen bg-[#0A0A0A] text-white font-sans pb-32 relative selection:bg-[#D4AF37]/30">
+            {/* Background Decorative Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#9A7B4F]/5 blur-[100px] rounded-full" />
+            </div>
 
             {/* Advanced Error Modal */}
             {errorModal?.show && (
-                <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
-                        {/* Decorative Background */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full -mr-16 -mt-16 blur-xl"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-50 rounded-full -ml-16 -mb-16 blur-xl"></div>
+                <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+                    <div className="bg-[#1A1A1A] w-full max-w-xs rounded-[3rem] p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-red-500/20 relative overflow-hidden animate-in zoom-in-95 duration-500">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
 
-                        <div className="relative z-10 flex flex-col items-center text-center gap-6">
-                            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-2 shadow-inner">
-                                <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center shadow-sm">
-                                    <XCircle size={32} className="text-red-500" />
-                                </div>
+                        <div className="relative z-10 flex flex-col items-center text-center gap-8">
+                            <div className="w-24 h-24 rounded-[2rem] bg-red-500/10 flex items-center justify-center animate-pulse">
+                                <XCircle size={48} strokeWidth={1.5} className="text-red-500" />
                             </div>
 
-                            <div className="space-y-2">
-                                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Request Alert</h3>
-                                <p className="text-xs font-bold text-slate-500 leading-relaxed px-2">
+                            <div className="space-y-3">
+                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Access Alert</h3>
+                                <p className="text-sm font-medium text-white/40 leading-relaxed px-2">
                                     {errorModal.message}
                                 </p>
                             </div>
 
                             <button
                                 onClick={() => setErrorModal(null)}
-                                className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-[2rem] text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-900/10 active:scale-95 transition-all"
+                                className="w-full py-5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg"
                             >
-                                OK, Matches Rule
+                                Continue
                             </button>
                         </div>
                     </div>
@@ -143,146 +218,233 @@ export default function WithdrawalPage() {
             )}
 
             {/* Header */}
-            <header className="px-6 pt-8 pb-6 flex items-center gap-4 bg-white sticky top-0 z-50 border-b border-gray-100">
+            <header className="fixed top-0 left-0 right-0 bg-[#0A0A0A]/60 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-[#D4AF37]/10">
                 <button
                     onClick={() => router.back()}
-                    className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 text-[#D4AF37] active:scale-90 transition-all shadow-lg shadow-black/50"
                 >
-                    <ChevronLeft size={24} className="text-slate-700" />
+                    <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-xl font-black uppercase tracking-tight text-slate-900">Withdrawal</h1>
+                <h1 className="text-xl font-black tracking-[0.2em] uppercase bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                    Withdrawal
+                </h1>
+                <div className="w-12" /> {/* Spacer */}
             </header>
 
-            <main className="p-6 space-y-6">
-                {/* Amount Input Card */}
-                <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-600/20 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+            <main className="pt-32 p-6 space-y-10 max-w-lg mx-auto relative z-10">
+                {/* Withdrawal Schedule Status */}
+                <div className="animate-in fade-in slide-in-from-top-4 duration-700">
+                    {(() => {
+                        const now = new Date();
+                        const currentDay = now.getDay();
+                        const currentTime = now.getHours() * 60 + now.getMinutes();
+                        const [startH, startM] = withdrawalSettings.startTime.split(":").map(Number);
+                        const [endH, endM] = withdrawalSettings.endTime.split(":").map(Number);
+                        const startTotal = startH * 60 + startM;
+                        const endTotal = endH * 60 + endM;
 
-                    <p className="text-sm font-bold opacity-80 mb-4 uppercase tracking-wider">Withdrawal Amount</p>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            placeholder="0"
-                            className="w-full bg-transparent text-5xl font-black placeholder:text-white/20 outline-none border-none p-0 z-10 relative"
-                        />
-                        {amount && <div className="absolute left-0 bottom-1 w-0.5 h-8 bg-white animate-pulse"></div>}
-                    </div>
-                    {/* Add visual line if needed or keep clean */}
+                        const isOpenToday = withdrawalSettings.activeDays.includes(currentDay);
+                        const isWithinHours = currentTime >= startTotal && currentTime <= endTotal;
+
+                        if (!isOpenToday || !isWithinHours) {
+                            return (
+                                <div className="bg-[#1A1A1A] border border-amber-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 animate-pulse">
+                                        <Clock size={28} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] opacity-80">Withdrawals Closed</p>
+                                        <p className="text-sm font-black text-white/90 uppercase tracking-tighter">
+                                            Opens {withdrawalSettings.startTime} tomorrow
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        }
+                        return (
+                            <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                                    <CheckCircle2 size={28} />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] opacity-80">Withdrawals Active</p>
+                                    <p className="text-sm font-black text-white uppercase tracking-tighter">
+                                        Window Closes: {withdrawalSettings.endTime}
+                                    </p>
+                                </div>
+                                <div className="w-3 h-3 bg-[#D4AF37] rounded-full animate-ping opacity-30"></div>
+                            </div>
+                        );
+                    })()}
                 </div>
 
+                {/* Amount Input Card */}
+                <section className="relative group animate-in fade-in slide-in-from-top-6 duration-700 delay-100">
+                    <div className="bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-[2.5rem] p-1 shadow-[0_20px_50px_rgba(212,175,55,0.25)]">
+                        <div className="bg-[#0A0A0A] rounded-[2.3rem] p-10 relative overflow-hidden h-full flex flex-col justify-center">
+                            {/* Metallic Shine Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+
+                            <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-70">Withdrawal Amount</p>
+                            <div className="flex items-baseline gap-4">
+                                <input
+                                    type="number"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    placeholder="0"
+                                    className="w-full bg-transparent text-6xl font-black text-white placeholder:text-white/5 outline-none border-none p-0 z-10 relative tabular-nums"
+                                />
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-black uppercase tracking-widest text-base shrink-0">ETB</span>
+                            </div>
+
+                            <div className="mt-8 flex gap-1">
+                                {[...Array(12)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-0.5 flex-1 rounded-full transition-all duration-700 ${amount && i < Math.min(amount.length * 2, 12) ? "bg-[#D4AF37]" : "bg-white/5"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Info Card */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 space-y-4">
-                    <div className="flex justify-between items-center p-3 rounded-2xl bg-slate-50">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Available Balance</span>
-                        <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-6 shadow-xl relative overflow-hidden group/info">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover/info:bg-[#D4AF37]/10 transition-all duration-500"></div>
+
+                    <div className="flex justify-between items-center p-5 rounded-[1.5rem] bg-[#0A0A0A] border border-[#D4AF37]/5 group-hover/info:border-[#D4AF37]/20 transition-all">
+                        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Balance</span>
+                        <span className="text-lg font-black text-[#D4AF37] tabular-nums">
                             {Number(userData?.balance || 0).toLocaleString()}
                         </span>
                     </div>
 
-                    <div className="flex justify-between items-center px-2">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Single Fee</span>
-                        <span className="text-xs font-black text-white bg-blue-400 px-2 py-0.5 rounded-md">5%</span>
+                    <div className="flex justify-between items-center px-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Platform Fee</span>
+                            <div className="px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-400">5%</div>
+                        </div>
+                        <span className="text-xs font-black text-white/40 tabular-nums">-{fee.toLocaleString()}</span>
                     </div>
 
-                    <div className="pt-4 border-t border-dashed border-gray-200 flex justify-between items-center">
-                        <span className="text-sm font-black text-slate-900 uppercase tracking-wide">Actual Receipt</span>
-                        <div className="flex items-center gap-1">
-                            <div className="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center text-amber-900 font-bold text-xs">$</div>
-                            <span className="text-2xl font-black text-indigo-700">{actualReceipt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <div className="pt-6 border-t border-[#D4AF37]/10 flex justify-between items-end">
+                        <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-1.5">You Receive</span>
+                        <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-2">
+                                <span className="text-4xl font-black text-white tabular-nums tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                                    {actualReceipt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                </span>
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-bold text-xs">ETB</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 {/* Bank Selection */}
-                <div className="space-y-3">
-                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-wide ml-2">Select Withdrawal Account</h3>
+                <section className="space-y-5 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+                    <div className="flex items-center gap-2 px-1">
+                        <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
+                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Receiving Account</h2>
+                    </div>
 
                     {linkedBank ? (
-                        <div
-                            className="bg-white rounded-[2rem] p-5 shadow-sm border border-indigo-500 ring-4 ring-indigo-500/5 relative overflow-hidden"
-                        >
-                            <div className="flex items-center gap-4 mb-4 relative z-10">
-                                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center p-1 border border-gray-100 shadow-sm">
-                                    {linkedBank.bankLogoUrl ? (
-                                        <img src={linkedBank.bankLogoUrl} alt={linkedBank.bankName} className="w-full h-full object-contain" />
-                                    ) : (
-                                        <Wallet className="text-slate-400" />
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="text-lg font-black text-slate-900 truncate tracking-tight">{linkedBank.accountNumber} Account</h4>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{linkedBank.holderName}</p>
-                                </div>
-                                <div className="text-indigo-200">
-                                    <ChevronRight size={20} className="rotate-90" />
-                                </div>
-                            </div>
+                        <div className="bg-[#1A1A1A] rounded-[2.5rem] p-1 border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 transition-all group/bank shadow-xl">
+                            <div className="p-8 relative overflow-hidden flex flex-col gap-8">
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover/bank:bg-[#D4AF37]/10 transition-all"></div>
 
-                            {/* Permanently Visible Details */}
-                            <div className="pt-4 border-t border-dashed border-indigo-100 space-y-3 bg-slate-50/50 -mx-5 -mb-5 p-5">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Bank</span>
-                                    <span className="text-[11px] font-bold text-slate-700">{linkedBank.bankName}</span>
+                                <div className="flex items-center gap-6 relative z-10">
+                                    <div className="w-16 h-16 rounded-2xl bg-[#0A0A0A] border border-[#D4AF37]/20 flex items-center justify-center p-2 shadow-inner group-hover/bank:scale-105 transition-all">
+                                        {linkedBank.bankLogoUrl ? (
+                                            <img src={linkedBank.bankLogoUrl} alt={linkedBank.bankName} className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(212,175,55,0.2)]" />
+                                        ) : (
+                                            <Wallet className="text-[#D4AF37]" size={32} />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="text-xl font-black text-white truncate tracking-tight uppercase">{linkedBank.bankName}</h4>
+                                        <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] truncate mt-1">{linkedBank.holderName}</p>
+                                    </div>
+                                    <div className="text-[#D4AF37]/20 group-hover/bank:text-[#D4AF37] transition-all">
+                                        <ChevronRight size={24} />
+                                    </div>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Holder</span>
-                                    <span className="text-[11px] font-bold text-slate-700">{linkedBank.holderName}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Number</span>
-                                    <span className="text-[11px] font-bold text-slate-700 tracking-wider font-mono">{linkedBank.accountNumber}</span>
+
+                                <div className="pt-8 border-t border-[#D4AF37]/10 grid grid-cols-2 gap-6 relative z-10">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Account Number</p>
+                                        <p className="text-sm font-black text-white tracking-widest font-mono truncate">{linkedBank.accountNumber}</p>
+                                    </div>
+                                    <div className="space-y-1 text-right">
+                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Status</p>
+                                        <div className="flex items-center justify-end gap-1.5">
+                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                                            <p className="text-xs font-black text-emerald-500 uppercase tracking-tighter">Verified</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
                         <div
                             onClick={() => router.push('/users/bank')}
-                            className="bg-white rounded-[2rem] p-6 text-center border-2 border-dashed border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/10 transition-colors cursor-pointer"
+                            className="bg-[#1A1A1A] rounded-[2.5rem] p-10 text-center border-2 border-dashed border-[#D4AF37]/10 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/5 transition-all cursor-pointer group/add shadow-xl"
                         >
-                            <CreditCard className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                            <p className="text-xs font-bold text-gray-500 uppercase">No Bank Linked</p>
-                            <p className="text-[10px] text-indigo-600 font-black uppercase tracking-wider mt-1">Tap to Connect Account</p>
+                            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-6 group-hover/add:scale-110 transition-all">
+                                <CreditCard className="text-[#D4AF37]" size={32} />
+                            </div>
+                            <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-2">No Account Linked</p>
+                            <p className="text-sm text-white/50 font-medium tracking-tight">Tap to add your receiving bank details</p>
                         </div>
                     )}
-                </div>
+                </section>
 
                 {/* Usage Tips */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100">
-                    <div className="flex items-center gap-2 mb-4">
-                        <AlertCircle size={18} className="text-slate-400" />
-                        <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">Withdrawal Rules</h4>
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-8 shadow-xl relative overflow-hidden group/rules">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
+                            <AlertCircle size={22} />
+                        </div>
+                        <h3 className="text-xs font-black text-[#D4AF37] uppercase tracking-[0.2em]">Settlement Policy</h3>
                     </div>
-                    <ul className="space-y-3">
-                        <li className="flex gap-3 text-xs text-gray-500 font-medium">
-                            <span className="font-bold text-slate-900">1.</span>
-                            Withdrawal time is from 8 am to 5 pm from Monday to Friday.
-                        </li>
-                        <li className="flex gap-3 text-xs text-gray-500 font-medium">
-                            <span className="font-bold text-slate-900">2.</span>
-                            Single withdrawal is 300-40000 Br.
-                        </li>
-                        <li className="flex gap-3 text-xs text-gray-500 font-medium">
-                            <span className="font-bold text-slate-900">3.</span>
-                            Withdrawal will arrive in your account in 2-72 hours.
-                        </li>
-                        <li className="flex gap-3 text-xs text-gray-500 font-medium">
-                            <span className="font-bold text-slate-900">4.</span>
-                            One person can only use one bank card to withdraw money.
-                        </li>
+
+                    <ul className="space-y-5">
+                        {[
+                            `Window: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
+                            `Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} Br per request`,
+                            `Frequency: Once every ${withdrawalSettings.frequency} day(s) (Reset at 00:00)`,
+                            "Processing: Funds typically arrive within 2-72 business hours",
+                            "Security: Account holder MUST match identity of the registered user"
+                        ].map((rule, i) => {
+                            const [label, ...val] = rule.split(": ");
+                            return (
+                                <li key={i} className="flex gap-4 items-start group/tip">
+                                    <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-[#D4AF37]/20 transition-all">
+                                        <span className="text-[10px] font-black text-[#D4AF37]">{i + 1}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[11px] font-bold text-white/80 leading-relaxed group-hover/tip:text-white transition-all uppercase tracking-tighter">
+                                            <span className="text-white/30 mr-1">{label}:</span> {val.join(": ")}
+                                        </p>
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
-                </div>
+                </section>
             </main>
 
             {/* Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white p-6 pb-8 border-t border-gray-100 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+            <div className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 pb-10 border-t border-[#D4AF37]/10 shadow-[0_-20px_40px_rgba(0,0,0,0.5)] relative z-[60]">
                 <button
                     onClick={handleWithdrawClick}
-                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-[2rem] text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                 >
-                    <Lock size={16} />
-                    Withdraw Funds
+                    <Lock size={18} className="opacity-70 group-hover:scale-110 transition-transform" />
+                    <span>Confirm Settlement</span>
                 </button>
             </div>
         </div>

@@ -4,7 +4,18 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { db, auth } from "@/lib/firebase";
 import { doc, getDoc, addDoc, collection } from "firebase/firestore";
-import { ChevronLeft, Copy, Loader2, ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
+import {
+    ChevronLeft,
+    Copy,
+    Loader2,
+    ShieldCheck,
+    Lock,
+    CheckCircle2,
+    ShieldAlert,
+    Activity,
+    Shield,
+    ArrowRight
+} from "lucide-react";
 import { toast } from "sonner";
 
 function SecureContent() {
@@ -27,7 +38,7 @@ function SecureContent() {
                 const docRef = doc(db, "paymentMethods", methodId);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) setMethod(docSnap.data());
-            } catch (error) { toast.error("Failed to load"); }
+            } catch (error) { toast.error("SECURE_ACCESS_ERROR"); }
             finally { setLoading(false); }
         };
         fetchMethod();
@@ -42,8 +53,9 @@ function SecureContent() {
     const { m, s } = { m: Math.floor(timeLeft / 60), s: timeLeft % 60 };
 
     const handleCopy = (text: string, type: 'account' | 'name') => {
+        if (!text) return;
         navigator.clipboard.writeText(text);
-        toast.success("Copied secure data");
+        toast.success("SECUREly_COPIED");
 
         if (type === 'account') {
             setCopiedAccount(true);
@@ -56,18 +68,17 @@ function SecureContent() {
 
     const handleSubmit = async () => {
         if (!smsContent.trim()) {
-            toast.error("Please enter SMS content or FT code");
+            toast.error("DATA_REQUIRED");
             return;
         }
 
         try {
             const user = auth.currentUser;
             if (!user) {
-                toast.error("Please login first");
+                toast.error("SESSION_INVALID");
                 return;
             }
 
-            // Fetch phone number from users collection
             const userDocRef = doc(db, "users", user.uid);
             const userDocSnap = await getDoc(userDocRef);
             const userPhone = userDocSnap.exists() ? userDocSnap.data()?.phoneNumber : "";
@@ -85,145 +96,163 @@ function SecureContent() {
                 timestamp: new Date()
             });
 
-            toast.success("Submitted successfully! Under review.");
+            toast.success("TRANSACTION_LOGGED");
             router.push("/users/transaction-pending?theme=secure");
         } catch (error) {
-            console.error("Submission error:", error);
-            toast.error("Failed to submit. Please try again.");
+            console.error(error);
+            toast.error("UPLINK_FAILURE");
         }
     };
 
-    if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="animate-spin text-blue-900" /></div>;
+    if (loading) return <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center"><Loader2 className="animate-spin text-[#FDD017]" /></div>;
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-44">
+        <div className="min-h-screen bg-[#0A0A0A] text-[#F0F0F0] font-sans pb-44 selection:bg-[#FDD017]/30 relative overflow-x-hidden">
+            {/* Security Backdrop */}
+            <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,rgba(253,208,23,0.05),transparent_70%)] pointer-events-none"></div>
 
-            <header className="bg-blue-900 text-white px-6 pt-6 pb-12 rounded-b-[2.5rem] shadow-lg relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                    <ShieldCheck size={140} />
-                </div>
+            {/* Advanced Header */}
+            <header className="bg-black border-b border-white/10 px-6 pt-12 pb-14 relative z-50">
+                <div className="max-w-lg mx-auto flex items-center justify-between">
+                    <button onClick={() => router.back()} className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-[#FDD017] hover:bg-white/10 transition-all active:scale-90 border border-white/10">
+                        <ChevronLeft size={24} strokeWidth={2} />
+                    </button>
 
-                <div className="relative z-10">
-                    <div className="flex justify-between items-center mb-6">
-                        <button onClick={() => router.back()} className="bg-blue-800/50 p-2 rounded-lg hover:bg-blue-800 transition-colors">
-                            <ChevronLeft size={20} />
-                        </button>
-                        <div className="flex items-center gap-2 bg-blue-800/50 px-3 py-1 rounded-full text-xs font-medium">
-                            <Lock size={12} />
-                            Encrypted 256-bit
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#FDD017] animate-pulse"></div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FDD017]">Protected Zone</span>
                         </div>
+                        <h1 className="text-xl font-black uppercase tracking-tight text-white italic">Vault.Secure</h1>
                     </div>
 
-                    <div className="flex items-end justify-between">
-                        <div>
-                            <p className="text-blue-200 text-xs uppercase tracking-wide mb-1">Session Expires</p>
-                            <h2 className="text-3xl font-mono font-bold tracking-tight">{String(m).padStart(2, '0')}:{String(s).padStart(2, '0')}</h2>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-blue-200 text-xs uppercase tracking-wide mb-1">Total</p>
-                            <h2 className="text-2xl font-bold tracking-tight">ETB {Number(amount).toLocaleString()}</h2>
-                        </div>
+                    <div className="w-12 h-12 bg-[#FDD017]/10 rounded-2xl flex items-center justify-center text-[#FDD017]">
+                        <ShieldCheck size={24} />
                     </div>
                 </div>
             </header>
 
-            <main className="px-5 -mt-8 relative z-20 space-y-6 max-w-md mx-auto">
-                <div>
-                    <div className="flex items-center gap-2 mb-3 px-1">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                        <h3 className="font-bold text-xs text-blue-200 uppercase tracking-wider">Step 1 Copy account for payment</h3>
+            <main className="px-6 -mt-6 relative z-10 max-w-lg mx-auto space-y-10">
+                {/* Timer & Amount - Luxury Secure Card */}
+                <section className="animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-white/10 shadow-2xl flex flex-col items-center gap-6">
+                        <div className="flex items-center gap-4 bg-black/40 px-6 py-2 rounded-full border border-white/5">
+                            <Activity size={12} className="text-green-500" />
+                            <span className="text-sm font-mono font-bold text-white tracking-widest tabular-nums">
+                                {String(m).padStart(2, '0')}:{String(s).padStart(2, '0')}
+                            </span>
+                        </div>
+
+                        <div className="text-center group">
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Total Amount</p>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-6xl font-black tracking-tighter text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                                    {Number(amount).toLocaleString()}
+                                </span>
+                                <span className="text-[#FDD017] font-black text-xs uppercase tracking-widest">ETB</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="bg-white rounded-2xl shadow-xl p-6 border border-slate-100 space-y-6">
-                        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                            <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-700">
-                                {method?.bankLogoUrl ? <img src={method.bankLogoUrl} className="w-6 h-6 object-contain" /> : <ShieldCheck size={20} />}
+                </section>
+
+                {/* Secure Data Cluster */}
+                <section className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                    <div className="flex items-center gap-3 px-2">
+                        <Lock size={16} className="text-[#FDD017]" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Encryption Mapping</h2>
+                    </div>
+
+                    <div className="bg-[#1A1A1A] rounded-[3rem] p-8 border border-white/10 shadow-2xl space-y-8">
+                        {/* Bank Identification */}
+                        <div className="flex items-center gap-5 pb-8 border-b border-white/5">
+                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center p-2.5 shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
+                                {method?.bankLogoUrl ? (
+                                    <img src={method.bankLogoUrl} className="w-full h-full object-contain" alt="Institution" />
+                                ) : (
+                                    <Shield size={32} className="text-black/20" />
+                                )}
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-slate-900">{method?.bankName}</div>
-                                <div className="text-xs text-slate-500">Verified Institution</div>
+                                <p className="text-[9px] font-black text-[#FDD017] uppercase tracking-widest mb-1">Target Authority</p>
+                                <p className="text-xl font-bold text-white tracking-tight uppercase italic">{method?.bankName || "Unknown"}</p>
                             </div>
-                            <CheckCircle2 size={16} className="text-green-500 ml-auto" />
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="space-y-1 group cursor-pointer">
-                                <label className="text-xs text-slate-500 uppercase font-semibold">Account Number</label>
-                                <div className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 group-hover:border-blue-500 transition-colors gap-3">
-                                    <span className="font-mono text-lg font-bold text-slate-800 tracking-wider">{method?.accountNumber}</span>
-                                    <button
-                                        onClick={() => handleCopy(method?.accountNumber, 'account')}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${copiedAccount
-                                            ? 'bg-emerald-100 text-emerald-600 border border-emerald-200'
-                                            : 'bg-blue-100 text-blue-600 border border-blue-200 hover:bg-blue-200'
-                                            }`}
-                                    >
-                                        {copiedAccount ? 'Copied!' : 'copy'}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-1 group cursor-pointer">
-                                <label className="text-xs text-slate-500 uppercase font-semibold">Beneficiary Name</label>
-                                <div className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 group-hover:border-blue-500 transition-colors gap-3">
-                                    <span className="font-medium text-slate-800 flex-1">{method?.holderName}</span>
+                        {/* Nodes */}
+                        <div className="space-y-8">
+                            {/* Beneficiary Node */}
+                            <div className="space-y-3">
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-1"># Beneficiary_ID</p>
+                                <div className="bg-black/40 rounded-2xl p-6 flex items-center justify-between border border-white/5 group hover:border-[#FDD017]/30 transition-all">
+                                    <span className="font-bold text-white tracking-wide truncate pr-4">{method?.holderName || "ROOT_HOLDER"}</span>
                                     <button
                                         onClick={() => handleCopy(method?.holderName, 'name')}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${copiedName
-                                            ? 'bg-emerald-100 text-emerald-600 border border-emerald-200'
-                                            : 'bg-blue-100 text-blue-600 border border-blue-200 hover:bg-blue-200'
-                                            }`}
+                                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${copiedName ? 'bg-green-500 text-black shadow-lg shadow-green-500/20' : 'bg-white/5 text-[#FDD017] border border-[#FDD017]/20 hover:bg-[#FDD017]/10'}`}
                                     >
-                                        {copiedName ? 'Copied!' : 'copy'}
+                                        {copiedName ? 'Saved' : 'copy'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Account Node - No Truncation */}
+                            <div className="space-y-3">
+                                <p className="text-[8px] font-black text-[#FDD017]/30 uppercase tracking-[0.4em] ml-1"># Secure_Address</p>
+                                <div className="bg-white rounded-3xl p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-black/5 rounded-full blur-2xl"></div>
+                                    <div className="flex items-center justify-between relative z-10">
+                                        <p className="text-3xl font-black text-black tracking-widest tabular-nums break-all leading-tight">
+                                            {method?.accountNumber || "00000000"}
+                                        </p>
+                                        <button
+                                            onClick={() => handleCopy(method?.accountNumber, 'account')}
+                                            className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shrink-0 ${copiedAccount ? 'bg-[#FDD017] text-black shadow-lg' : 'bg-black text-[#FDD017] hover:scale-110 active:scale-95'}`}
+                                        >
+                                            {copiedAccount ? <CheckCircle2 size={24} strokeWidth={3} /> : <Copy size={24} strokeWidth={1.5} />}
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopy(method?.accountNumber, 'account')}
+                                        className="w-full py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] bg-black text-white shadow-xl hover:bg-[#FDD017] hover:text-black transition-all"
+                                    >
+                                        Extract Address
                                     </button>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="pt-2 text-center">
-                            <p className="text-xs text-slate-400">
-                                Please ensure exact amount transfer to avoid delays.
-                            </p>
-                        </div>
                     </div>
-                </div>
+                </section>
 
-                <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-                    <div className="bg-slate-50 border-b border-slate-100 p-3 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                            <h3 className="font-bold text-xs text-slate-500 uppercase tracking-wider">Paste payment sms Or enter TID: FT*****</h3>
-                        </div>
-                        <Lock size={12} className="text-slate-400" />
+                {/* Input Protocol */}
+                <section className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 pb-20">
+                    <div className="flex items-center gap-3 px-2">
+                        <ShieldAlert size={16} className="text-[#FDD017]" />
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Transmission Proof</h2>
                     </div>
 
-                    <div className="p-1">
+                    <div className="relative">
                         <textarea
                             value={smsContent}
                             onChange={(e) => setSmsContent(e.target.value)}
-                            className="w-full h-28 p-4 text-sm focus:outline-none transition-all placeholder:text-slate-300 text-slate-700 resize-none font-mono"
-                            placeholder="// Paste transaction ID or SMS confirmation here..."
+                            placeholder="PASTE_TRANSACTION_ID_OR_SMS_HERE_FOR_FINAL_COMMITTAL..."
+                            className="w-full h-40 bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-white/5 text-white placeholder:text-white/10 focus:outline-none focus:border-[#FDD017]/30 transition-all shadow-lg text-sm font-medium leading-relaxed resize-none font-mono"
                         />
                     </div>
-
-                    <div className="bg-slate-50 border-t border-slate-100 p-2 text-right">
-                        <span className="text-[10px] text-slate-400 font-mono">ENCRYPTED INPUT ZONE</span>
-                    </div>
-                </div>
+                </section>
             </main>
 
-            <div className="bg-white border-t border-slate-100 p-4">
-                <div className="max-w-md mx-auto">
+            {/* Fixed Action Control */}
+            <div className="fixed bottom-0 left-0 right-0 p-8 pb-12 bg-gradient-to-t from-black via-black/80 to-transparent z-[60]">
+                <div className="max-w-lg mx-auto">
                     <button
                         onClick={handleSubmit}
                         disabled={!smsContent.trim()}
-                        className={`w-full font-bold h-12 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 ${!smsContent.trim()
-                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-70'
-                            : 'bg-blue-900 hover:bg-blue-800 text-white shadow-md'
-                            }`}
+                        className="w-full h-22 bg-[#FDD017] hover:bg-white text-black rounded-[2.2rem] font-black uppercase tracking-[0.4em] text-[11px] shadow-[0_15px_40px_rgba(253,208,23,0.2)] transition-all active:scale-[0.97] flex items-center justify-center gap-6 disabled:opacity-20 disabled:grayscale"
                     >
-                        <Lock size={16} />
-                        Confirm Secure Transaction
+                        <Lock size={20} strokeWidth={3} />
+                        <span>Commit Settlement</span>
+                        <ArrowRight size={20} className="opacity-40" />
                     </button>
+                    <p className="text-[7px] font-black tracking-[0.6em] text-white/20 uppercase text-center mt-10">Structural Security Protocol • Zen Vault V4.2</p>
                 </div>
             </div>
 
@@ -238,64 +267,35 @@ function WelcomeNotification({ method }: { method: any }) {
 
     const handleDismiss = () => {
         setAnimateOut(true);
-        setTimeout(() => setShow(false), 300);
+        setTimeout(() => setShow(false), 500);
     };
 
     if (!show) return null;
 
     return (
-        <div className={`fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-blue-900/50 via-slate-900/50 to-teal-900/50 backdrop-blur-xl transition-opacity duration-300 ${animateOut ? 'opacity-0' : 'opacity-100'}`}>
-            <div className={`relative bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-3xl border border-white/30 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] max-w-sm w-full shadow-2xl shadow-blue-500/30 text-center space-y-6 sm:space-y-8 transform transition-all duration-300 overflow-hidden ${animateOut ? 'scale-95 translate-y-4' : 'scale-100 translate-y-0'} animate-in zoom-in-95`}>
-                {/* Animated Background Blobs */}
-                <div className="absolute top-[-30%] left-[-30%] w-[60%] h-[60%] bg-blue-500/30 rounded-full blur-[60px] pointer-events-none animate-pulse"></div>
-                <div className="absolute bottom-[-30%] right-[-30%] w-[60%] h-[60%] bg-teal-500/30 rounded-full blur-[60px] pointer-events-none"></div>
-                <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-cyan-500/20 rounded-full blur-[50px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-                {/* Security Badge with Animation */}
-                <div className="relative z-10">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-xl shadow-blue-500/40 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent"></div>
-                        <div className="absolute inset-0 border-4 border-blue-300/30 rounded-2xl sm:rounded-3xl animate-[spin_3s_linear_infinite]"></div>
-                        <div className="absolute inset-0 bg-blue-400/20 animate-pulse"></div>
-                        <Lock size={36} className="text-white relative z-10" />
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-3 sm:space-y-4 relative z-10">
-                    <h3 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-cyan-200 to-teal-200 tracking-tight leading-tight">Verified Access</h3>
-
-                    <div className="space-y-2 text-left bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                        <p className="text-blue-200 text-xs sm:text-sm leading-relaxed font-medium">
-                            <span className="text-cyan-400 font-mono">{`> `}</span>
-                            Welcome to <span className="font-bold text-white">Secure Zen</span>
-                        </p>
-                        <p className="text-blue-200 text-xs sm:text-sm leading-relaxed font-medium">
-                            <span className="text-cyan-400 font-mono">{`> `}</span>
-                            Secure Perfume Partner
-                        </p>
-                        <p className="text-blue-200 text-xs sm:text-sm leading-relaxed font-medium">
-                            <span className="text-cyan-400 font-mono">{`> `}</span>
-                            Thank you for selecting the <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-teal-300">Secure Payment Method</span>
-                        </p>
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-3xl transition-opacity duration-700 ${animateOut ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`bg-[#1A1A1A] rounded-[4rem] p-12 max-w-sm w-full border border-white/10 shadow-2xl relative overflow-hidden transition-all duration-700 ${animateOut ? 'scale-110 opacity-0 blur-lg' : 'scale-100 opacity-100 animate-in zoom-in-95'}`}>
+                <div className="relative z-10 flex flex-col items-center text-center gap-10">
+                    <div className="w-24 h-24 bg-gradient-to-br from-[#FDD017] to-[#D4A18F] rounded-[2.5rem] flex items-center justify-center text-black shadow-2xl shadow-[#FDD017]/20 transform -rotate-6">
+                        <Lock size={44} strokeWidth={2.5} />
                     </div>
 
-                    <p className="text-blue-100/80 text-xs sm:text-sm leading-relaxed font-light px-2">
-                        You are entering the <span className="font-bold text-white">{method?.bankDetailType || "Secure"} Portal</span>.
-                        <br />
-                        All transaction data is encrypted with 256-bit security.
+                    <div className="space-y-4">
+                        <h3 className="text-[10px] font-black text-[#FDD017] uppercase tracking-[0.5em]">Auth: Secure_Sector</h3>
+                        <p className="text-3xl font-black text-white tracking-tighter uppercase italic leading-none">Mainframe.Access</p>
+                    </div>
+
+                    <p className="text-[#E1E4E8]/60 text-[11px] font-medium leading-relaxed italic px-2">
+                        Welcome to <span className="text-white font-bold tracking-widest italic">Zen.Vault</span>. You've entered a high-security settlement zone. Please verify all nodes to finalize your transfer.
                     </p>
-                </div>
 
-                {/* Enhanced Secure Button */}
-                <button
-                    onClick={handleDismiss}
-                    className="relative z-10 w-full bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white font-bold h-14 sm:h-16 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.6)] transition-all active:scale-95 flex items-center justify-center gap-2 overflow-hidden group"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    <ShieldCheck size={20} className="relative z-10 group-hover:scale-110 transition-transform" />
-                    <span className="relative z-10 text-base sm:text-lg tracking-wide uppercase font-black">Enter Secure Zone</span>
-                </button>
+                    <button
+                        onClick={handleDismiss}
+                        className="w-full h-18 bg-[#FDD017] text-black font-black uppercase tracking-[0.4em] text-[10px] rounded-3xl transition-all active:scale-95 shadow-2xl"
+                    >
+                        Initialize Authorize
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -303,7 +303,7 @@ function WelcomeNotification({ method }: { method: any }) {
 
 export default function SecureBankDetailPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="animate-spin text-blue-900" /></div>}>
+        <Suspense fallback={<div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center"><Loader2 className="animate-spin text-[#FDD017]" /></div>}>
             <SecureContent />
         </Suspense>
     );

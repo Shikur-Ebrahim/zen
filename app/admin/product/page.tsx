@@ -32,14 +32,14 @@ import {
 } from "firebase/firestore";
 import AdminSidebar from "@/components/AdminSidebar";
 
-const CATEGORIES = ["LEVEL A", "LEVEL B", "LEVEL C", "VIP"];
+const CATEGORIES = ["Level 1", "Level 2", "Level 3", "VIP"];
 
 export default function AdminProductsPage() {
     // --- State ---
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [activeFilter, setActiveFilter] = useState("LEVEL A");
+    const [activeFilter, setActiveFilter] = useState("Level 1");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Modal State
@@ -53,10 +53,11 @@ export default function AdminProductsPage() {
         price: 0,
         dailyIncome: 0,
         contractPeriod: 0,
-        category: "LEVEL A",
+        category: "Level 1",
         description: "",
         purchaseLimit: 1,
-        imageUrl: ""
+        imageUrl: "",
+        salesTracked: 0
     });
 
     // Calculated Fields (displayed in UI)
@@ -180,7 +181,8 @@ export default function AdminProductsPage() {
             category: product.category,
             description: product.description || "",
             purchaseLimit: product.purchaseLimit || 1,
-            imageUrl: product.imageUrl || ""
+            imageUrl: product.imageUrl || "",
+            salesTracked: product.salesTracked || 0
         });
         setModalMode("edit");
         setIsModalOpen(true);
@@ -192,10 +194,11 @@ export default function AdminProductsPage() {
             price: 0,
             dailyIncome: 0,
             contractPeriod: 0,
-            category: "LEVEL A",
+            category: "Level 1",
             description: "",
             purchaseLimit: 1,
-            imageUrl: ""
+            imageUrl: "",
+            salesTracked: 0
         });
         setEditingProduct(null);
         setModalMode("create");
@@ -203,7 +206,7 @@ export default function AdminProductsPage() {
     };
 
     const filteredProducts = products.filter(p => {
-        const matchesCat = (p.category || "LEVEL A") === activeFilter;
+        const matchesCat = (p.category || "Level 1") === activeFilter;
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesCat && matchesSearch;
     });
@@ -533,6 +536,23 @@ export default function AdminProductsPage() {
                                                 className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-lg"
                                             />
                                         </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Sales Tracked (%)</label>
+                                            <input
+                                                type="number"
+                                                name="salesTracked"
+                                                required
+                                                min={0}
+                                                max={100}
+                                                value={formData.salesTracked}
+                                                onChange={handleInputChange}
+                                                placeholder="0-100"
+                                                className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-lg"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-8">
                                         <div className="space-y-4">
                                             <label className="text-xs font-bold text-slate-700 uppercase tracking-widest px-1">Visual Representation</label>
                                             <div className="flex items-center gap-4">

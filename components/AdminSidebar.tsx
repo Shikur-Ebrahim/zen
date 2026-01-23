@@ -21,14 +21,14 @@ import {
     Settings,
     LogOut,
     UserX,
+    Users,
     DollarSign,
     Package,
     Gamepad2,
     Crown,
     PartyPopper,
     BarChart3,
-    Users,
-    CreditCard
+    TrendingUp
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -80,6 +80,7 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
 
     const navigation = [
         { id: "recharge", label: "Recharge Wallet", icon: ShieldCheck, path: "/admin/recharge-verification" },
+        { id: "recharge-tracking", label: "Recharge Users", icon: TrendingUp, path: "/admin/recharge-tracking" },
         { id: "withdrawal-wallet", label: "Withdrawal Wallet", icon: Banknote, path: "/admin/withdrawal-wallet" },
         { id: "financials", label: "Financial Stats", icon: BarChart3, path: "/admin/financials" },
         { id: "vip-upgrade", label: "VIP Upgrade", icon: ShieldCheck, path: "/admin/vip-upgrade" },
@@ -88,10 +89,10 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         { id: "payment-methods", label: "Payment Methods", icon: Banknote, path: "/admin/payment-methods" },
         { id: "currency-rates", label: "Currency Rates", icon: DollarSign, path: "/admin/currency-rates" },
         { id: "withdrawal-banks", label: "Withdrawal Banks", icon: Building2, path: "/admin/withdrawal-banks" },
+        { id: "withdrawal-rules", label: "Withdrawal Rules", icon: BookOpen, path: "/admin/withdrawal-rules" },
         { id: "unlink-account", label: "Unlink Account", icon: UserX, path: "/admin/unlink-account" },
         { id: "notifications", label: "Withdrawal Alerts", icon: Bell, path: "/admin/notifications" },
         { id: "products", label: "Products", icon: Package, path: "/admin/product" },
-        { id: "product-tracked", label: "Product Tracked", icon: BarChart3, path: "/admin/product-tracked" },
         { id: "referral", label: "Referral Rule", icon: Percent, path: "/admin/referral-settings" },
         { id: "vip-rules", label: "VIP Rules", icon: Crown, path: "/admin/vip-rules" },
         { id: "vip-notifications", label: "VIP Celebration", icon: PartyPopper, path: "/admin/vip-notifications" },
@@ -99,16 +100,17 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         { id: "chats", label: "Live Support", icon: MessageSquare, path: "/admin/chats" },
         { id: "guidelines", label: "Chat Guidelines", icon: BookOpen, path: "/admin/guidelines" },
         { id: "rules", label: "Platform Rules", icon: BookOpen, path: "/admin/rules" },
+        { id: "platform-notifications", label: "Platform Alerts", icon: Bell, path: "/admin/platform-notifications" },
         { id: "daily-tasks", label: "Daily Tasks", icon: Gamepad2, path: "/admin/daily-tasks" },
-        { id: "settings", label: "Settings", icon: Settings, path: "/admin/settings" },
+        { id: "team-search", label: "Team Search", icon: Users, path: "/admin/team-search" },
         { id: "users", label: "Users", icon: Users, path: "/admin/users" },
-        { id: "recharge-users", label: "Recharge Users", icon: CreditCard, path: "/admin/recharge-users" },
+        { id: "settings", label: "Settings", icon: Settings, path: "/admin/settings" },
     ];
 
     const handleLogout = async () => {
         localStorage.removeItem("admin_session");
         await signOut(auth);
-        router.push("/admin");
+        router.replace("/");
     };
 
     // Helper to determine active state
@@ -152,7 +154,7 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
                         <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
                             <LayoutDashboard size={20} />
                         </div>
-                        <h1 className="text-xl font-black text-gray-900 tracking-tight">Zen Boss</h1>
+                        <h1 className="text-xl font-black text-gray-900 tracking-tight">Turner Boss</h1>
                     </div>
 
                     <nav className="flex-1 space-y-2 overflow-y-auto pr-2 custom-scrollbar">

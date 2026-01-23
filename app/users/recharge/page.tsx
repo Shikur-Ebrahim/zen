@@ -1,27 +1,88 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 import {
     ChevronLeft,
     AlertCircle,
     CheckCircle2,
     CreditCard,
     Info,
-    ArrowRight
+    ArrowRight,
+    Loader2
 } from "lucide-react";
+import { doc, getDoc } from "firebase/firestore";
 
-const PRESET_AMOUNTS = [
-    700, 2500, 4000, 9000, 21000,
-    45000, 98000, 220000, 460000, 900000, 1400000
+// Default fallback in case Firestore fetch fails
+const DEFAULT_PRESETS = [
+    4500, 12550, 35500, 65550, 135550,
+    250500, 450500, 600550, 850500, 1500000, 3550050
 ];
 
-export default function RechargePage() {
+function RechargeContent() {
     const router = useRouter();
-    const [amount, setAmount] = useState<string>("2500");
+    const searchParams = useSearchParams();
+    const [amount, setAmount] = useState<string>("0");
     const [customAmount, setCustomAmount] = useState<string>("");
+    const [minRecharge, setMinRecharge] = useState<number>(4500);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const [presetAmounts, setPresetAmounts] = useState<number[]>(DEFAULT_PRESETS);
+    const [fetchingPresets, setFetchingPresets] = useState(true);
+    useEffect(() => {
+        const fetchProductPrices = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "Products"));
+                const prices: number[] = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.price) prices.push(Number(data.price));
+                });
+
+                // Filter unique values and sort ascending
+                const uniquePrices = Array.from(new Set(prices)).sort((a, b) => a - b);
+
+                if (uniquePrices.length > 0) {
+                    setPresetAmounts(uniquePrices);
+                }
+            } catch (error) {
+                console.error("Error fetching product prices:", error);
+            } finally {
+                setFetchingPresets(false);
+            }
+        };
+
+        const fetchSettings = async () => {
+            try {
+                const docRef = doc(db, "GlobalSettings", "recharge");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    if (settings.minAmount) {
+                        const min = Number(settings.minAmount);
+                        setMinRecharge(min);
+                        // If no amount in searchParams, use min
+                        if (!searchParams.get("amount")) {
+                            setAmount(min.toString());
+                        } else {
+                            setAmount(searchParams.get("amount")!);
+                        }
+                    }
+                } else {
+                    // Fallback to initial amount if no doc
+                    setAmount(searchParams.get("amount") || "4500");
+                }
+            } catch (error) {
+                console.error("Error fetching settings:", error);
+                setAmount(searchParams.get("amount") || "4500");
+            }
+        };
+
+        fetchProductPrices();
+        fetchSettings();
+    }, [searchParams]);
 
     const handleAmountSelect = (val: number) => {
         setAmount(val.toString());
@@ -38,8 +99,8 @@ export default function RechargePage() {
 
     const handleNext = () => {
         const numAmount = parseInt(amount);
-        if (isNaN(numAmount) || numAmount < 500) {
-            setErrorMsg("Minimum recharge amount is 500 ETB");
+        if (isNaN(numAmount) || numAmount < minRecharge) {
+            setErrorMsg(`Minimum recharge amount is ${minRecharge.toLocaleString()} ETB`);
             setShowErrorModal(true);
             return;
         }
@@ -47,144 +108,181 @@ export default function RechargePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 text-slate-900 pb-40 relative">
+        <div className="min-h-screen bg-[#0A0A0A] text-white pb-40 relative selection:bg-[#D4AF37]/30">
+            {/* Background Decorative Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#9A7B4F]/10 blur-[100px] rounded-full" />
+            </div>
+
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-600 backdrop-blur-xl z-50 px-6 py-5 flex items-center justify-between border-b border-yellow-600/20 shadow-lg shadow-amber-500/20">
+            <header className="fixed top-0 left-0 right-0 bg-[#0A0A0A]/60 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-[#D4AF37]/10">
                 <button
                     onClick={() => router.back()}
-                    className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 text-white active:scale-90 transition-all"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 text-[#D4AF37] active:scale-90 transition-all shadow-lg shadow-black/50"
                 >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-lg font-black tracking-tight uppercase text-white">Recharge</h1>
-                <div className="w-10" /> {/* Spacer */}
+                <h1 className="text-xl font-black tracking-[0.2em] uppercase bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                    Recharge
+                </h1>
+                <div className="w-12" /> {/* Spacer */}
             </header>
 
-            <main className="pt-28 px-6 space-y-8 max-w-lg mx-auto">
+            <main className="pt-32 px-6 space-y-10 max-w-lg mx-auto relative z-10">
                 {/* Amount Display Card */}
-                <section className="relative group animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 rounded-[2.5rem] p-10 shadow-2xl shadow-amber-600/40 relative overflow-hidden">
-                        {/* Decorative elements */}
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-300/30 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+                <section className="relative group animate-in fade-in slide-in-from-top-6 duration-700">
+                    <div className="bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-[2.5rem] p-1 shadow-[0_20px_50px_rgba(212,175,55,0.3)]">
+                        <div className="bg-[#0A0A0A] rounded-[2.3rem] p-10 relative overflow-hidden h-full flex flex-col justify-center">
+                            {/* Metallic Shine Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
 
-                        <p className="text-yellow-100 text-[10px] font-black uppercase tracking-[0.2em] mb-3 ml-1">Recharge Amount</p>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-white text-5xl font-black">{Number(amount).toLocaleString()}</span>
-                            <span className="text-yellow-100 font-bold uppercase tracking-widest text-sm">ETB</span>
-                        </div>
+                            <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-70">Recharge Amount</p>
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-white text-6xl font-black tracking-tighter tabular-nums drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                                    {Number(amount).toLocaleString()}
+                                </span>
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-black uppercase tracking-widest text-base">ETB</span>
+                            </div>
 
-                        <div className="mt-8 h-1 w-full bg-white/20 rounded-full overflow-hidden">
-                            <div className="h-full bg-white/50 w-2/3 rounded-full"></div>
+                            <div className="mt-8 flex gap-1">
+                                {[...Array(8)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-1 flex-1 rounded-full transition-all duration-500 ${i < 5 ? "bg-gradient-to-r from-[#BF953F] to-[#FCF6BA]" : "bg-white/5"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Preset Grid */}
                 <section className="space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Select Amount</h2>
+                        {fetchingPresets && <Loader2 size={14} className="animate-spin text-[#D4AF37]/40" />}
+                    </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {PRESET_AMOUNTS.map((val) => (
-                            <button
-                                key={val}
-                                onClick={() => handleAmountSelect(val)}
-                                className={`py-5 rounded-3xl font-black text-sm transition-all active:scale-95 ${amount === val.toString() && !customAmount
-                                    ? "bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-xl shadow-amber-500/30 border-2 border-amber-500"
-                                    : "bg-pink-100 text-slate-400 border border-pink-200 hover:border-pink-300"
-                                    }`}
-                            >
-                                {val.toLocaleString()}
-                            </button>
-                        ))}
+                        {presetAmounts.map((val) => {
+                            const isSelected = amount === val.toString() && !customAmount;
+                            return (
+                                <button
+                                    key={val}
+                                    onClick={() => handleAmountSelect(val)}
+                                    className={`relative py-6 rounded-[2rem] font-black text-sm transition-all active:scale-95 group overflow-hidden ${isSelected
+                                            ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black shadow-xl shadow-[#D4AF37]/20"
+                                            : "bg-[#1A1A1A] text-[#D4AF37]/60 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 shadow-none"
+                                        }`}
+                                >
+                                    {val.toLocaleString()}
+                                </button>
+                            );
+                        })}
                     </div>
                 </section>
 
                 {/* Custom Amount */}
-                <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+                <section className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                     <div className="flex items-center gap-2 px-1">
-                        <div className="w-1 h-3 bg-amber-500 rounded-full"></div>
-                        <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Custom Amount (Min. 500)</h2>
+                        <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
+                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Custom (Min. {minRecharge.toLocaleString()})</h2>
                     </div>
 
                     <div className="relative group">
-                        <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-600 transition-colors">
-                            <CreditCard size={20} />
+                        <div className="absolute left-7 top-1/2 -translate-y-1/2 text-[#D4AF37]/40 group-focus-within:text-[#D4AF37] transition-all duration-300">
+                            <CreditCard size={22} />
                         </div>
                         <input
                             type="text"
-                            placeholder="Enter amount..."
+                            placeholder="Enter custom amount..."
                             value={customAmount}
                             onChange={handleCustomAmountChange}
-                            className="w-full bg-pink-100 border border-pink-200 rounded-3xl py-6 pl-16 pr-8 text-xl font-black placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all"
+                            className="w-full bg-[#1A1A1A] border border-[#D4AF37]/10 rounded-[2rem] py-7 pl-16 pr-8 text-xl font-black text-white placeholder:text-white/10 focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/5 focus:border-[#D4AF37]/40 transition-all shadow-inner"
                         />
                     </div>
                 </section>
 
                 {/* Tips Section */}
-                <section className="bg-pink-100 rounded-[2.5rem] p-8 border border-pink-200 space-y-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-amber-50 rounded-xl text-amber-600">
-                            <Info size={20} />
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-8 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-[#D4AF37]/10 transition-all duration-500"></div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
+                            <Info size={22} />
                         </div>
-                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest leading-none">Important Tips</h3>
+                        <h3 className="text-xs font-black text-[#D4AF37] uppercase tracking-[0.2em]">Important Security</h3>
                     </div>
 
-                    <ul className="space-y-4">
+                    <ul className="space-y-5">
                         {[
-                            "Do not trust recharge account info from any unverified sources. Always use our official app.",
-                            "The receiving account changes periodically. Always copy the latest bank details before each recharge.",
-                            "After payment, you must provide the 12-digit transaction number to confirm your recharge."
+                            "Always verify recharge account info only from our official app interface.",
+                            "Account details rotate. Please refresh and copy the latest details for every recharge.",
+                            "Verification requires a valid 12-digit transaction ID provided after payment."
                         ].map((tip, i) => (
-                            <li key={i} className="flex gap-4 group">
-                                <div className="w-6 h-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-colors">
-                                    <span className="text-[10px] font-black text-slate-400 group-hover:text-indigo-600">{i + 1}</span>
+                            <li key={i} className="flex gap-4 items-start group/tip">
+                                <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-[#D4AF37]/20 transition-all">
+                                    <span className="text-[10px] font-black text-[#D4AF37]">{i + 1}</span>
                                 </div>
-                                <p className="text-xs font-medium text-slate-500 leading-relaxed">{tip}</p>
+                                <p className="text-[11px] font-medium text-white/50 leading-relaxed group-hover/tip:text-white/80 transition-all">{tip}</p>
                             </li>
                         ))}
                     </ul>
                 </section>
 
                 {/* Action Button */}
-                <div className="pt-4">
+                <div className="pt-6">
                     <button
                         onClick={handleNext}
-                        className="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-amber-600/30 active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
+                        className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                     >
                         <span>Select Payment Method</span>
-                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
                     </button>
                 </div>
             </main>
 
             {/* Premium Error Modal */}
             {showErrorModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-pink-50 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
-                        {/* Static light effect */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+                    <div className="bg-[#1A1A1A] w-full max-w-sm rounded-[3rem] p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-red-500/20 relative overflow-hidden animate-in zoom-in-95 duration-500">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
 
-                        <div className="flex flex-col items-center text-center gap-6 relative z-10">
-                            <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-red-500 animate-bounce">
-                                <AlertCircle size={40} />
+                        <div className="flex flex-col items-center text-center gap-8 relative z-10">
+                            <div className="w-24 h-24 bg-red-500/10 rounded-[2rem] flex items-center justify-center text-red-500 animate-pulse">
+                                <AlertCircle size={48} strokeWidth={1.5} />
                             </div>
 
-                            <div className="space-y-2">
-                                <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Access Restricted</h2>
-                                <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                            <div className="space-y-3">
+                                <h2 className="text-2xl font-black text-white uppercase tracking-tight">Security Alert</h2>
+                                <p className="text-white/40 text-sm font-medium leading-relaxed px-2">
                                     {errorMsg}
                                 </p>
                             </div>
 
                             <button
                                 onClick={() => setShowErrorModal(false)}
-                                className="w-full bg-red-500 hover:bg-red-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-red-500/30 active:scale-95 transition-all"
+                                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 py-5 rounded-[1.5rem] border border-red-500/20 font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95"
                             >
-                                OK, Understood
+                                Continue
                             </button>
                         </div>
                     </div>
                 </div>
             )}
         </div>
+    );
+}
+
+export default function RechargePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
+            </div>
+        }>
+            <RechargeContent />
+        </Suspense>
     );
 }

@@ -70,7 +70,7 @@ export default function AdminWithdrawalBanks() {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
             setLoading(false);
@@ -99,7 +99,7 @@ export default function AdminWithdrawalBanks() {
     const uploadToCloudinary = async (file: File) => {
         const uploadData = new FormData();
         uploadData.append("file", file);
-        uploadData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Zen");
+        uploadData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Turner");
 
         const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "deve0w9bt";
         const response = await fetch(

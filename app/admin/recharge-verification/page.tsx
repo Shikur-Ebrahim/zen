@@ -46,7 +46,7 @@ export default function RechargeVerificationPage() {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
             setLoading(false);
@@ -92,25 +92,33 @@ export default function RechargeVerificationPage() {
 
         try {
             await runTransaction(db, async (transaction) => {
-                const userDocRef = doc(db, "users", recharge.userId);
+                let userDocRef = doc(db, "users", recharge.userId);
+                let userDocSnap = await transaction.get(userDocRef);
 
-                // 1. Get User Data to find Inviters
-                const userDocSnap = await transaction.get(userDocRef);
+                // Fallback: If UID lookup fails, try phone number
                 if (!userDocSnap.exists()) {
-                    throw "User does not exist!";
+                    console.log("UID lookup failed, trying phone number fallback...");
+                    const q = query(collection(db, "users"), where("phoneNumber", "==", recharge.phoneNumber));
+                    const snap = await getDocs(q);
+                    if (!snap.empty) {
+                        userDocRef = doc(db, "users", snap.docs[0].id);
+                        userDocSnap = await transaction.get(userDocRef);
+                    }
                 }
+
+                if (!userDocSnap.exists()) {
+                    throw new Error("User does not exist!");
+                }
+
                 const userData = userDocSnap.data();
                 const amount = Number(recharge.amount);
 
-                // 1. Fetch Referral Settings (Dynamic)
-                const settingsSnap = await getDoc(doc(db, "settings", "referral"));
-
-                // Merge Db values with defaults for safety
+                // 2. Fetch Referral Settings (Dynamic)
+                const settingsSnap = await transaction.get(doc(db, "settings", "referral"));
                 const defaults = { levelA: 12, levelB: 7, levelC: 4, levelD: 2 };
                 const dbRates = settingsSnap.exists() ? settingsSnap.data() : {};
                 const rates = { ...defaults, ...dbRates };
 
-                // Convert percentage to decimal (Clean & Dynamic)
                 const pctA = Number(rates.levelA) / 100;
                 const pctB = Number(rates.levelB) / 100;
                 const pctC = Number(rates.levelC) / 100;
@@ -129,13 +137,9 @@ export default function RechargeVerificationPage() {
                 }));
 
                 const inviterSnaps = await Promise.all(inviterRefs.map(i => transaction.get(i.ref)));
-
-                // Check if this is the user's FIRST verified recharge to update investedTeamSize
                 const isFirstRecharge = (userData.totalRecharge || 0) === 0;
 
-                // 2. EXECUTE ALL WRITES
-
-                // Update User
+                // 3. Update User
                 transaction.update(userDocRef, {
                     totalRecharge: increment(amount),
                     Recharge: increment(amount)
@@ -148,68 +152,66 @@ export default function RechargeVerificationPage() {
                     verifiedAt: Timestamp.now()
                 });
 
-                // Update Inviters (using pre-fetched snapshots)
+                // Update Inviters
                 inviterSnaps.forEach((snap, index) => {
                     if (snap.exists()) {
                         const { ref, pct } = inviterRefs[index];
-                        const bonus = amount * pct;
                         const inviterData = snap.data();
-
                         const inviterUpdate: any = {
-                            teamIncome: increment(bonus),
                             teamAssets: increment(amount)
                         };
 
-                        // If it's the member's first recharge, increment inviter's investedTeamSize
                         if (isFirstRecharge) {
+                            const bonus = amount * pct;
+                            inviterUpdate.teamIncome = increment(bonus);
                             inviterUpdate.investedTeamSize = increment(1);
-                        }
 
-                        // Check for VIP Eligibility
-                        const currentInvestedSize = (inviterData.investedTeamSize || 0) + (isFirstRecharge ? 1 : 0);
-                        const currentTeamAssets = (inviterData.teamAssets || 0) + amount;
-                        const currentVip = inviterData.vip ?? 0;
-                        const currentVipNum = typeof currentVip === 'number'
-                            ? currentVip
-                            : parseInt(currentVip.toString().replace(/\D/g, '') || "0");
-                        const nextVipNum = currentVipNum + 1;
+                            // VIP Eligibility Check
+                            const currentInvestedSize = (inviterData.investedTeamSize || 0) + 1;
+                            const currentTeamAssets = (inviterData.teamAssets || 0) + amount;
+                            const currentVip = inviterData.vip ?? 0;
+                            const currentVipNum = typeof currentVip === 'number' ? currentVip : parseInt(currentVip.toString().replace(/\D/g, '') || "0");
+                            const nextVipNum = currentVipNum + 1;
 
-                        const nextRule = vipRules.find(r => {
-                            const rNum = parseInt(r.level?.replace(/\D/g, '') || "0");
-                            return rNum === nextVipNum;
-                        });
+                            const nextRule = vipRules.find(r => parseInt(r.level?.replace(/\D/g, '') || "0") === nextVipNum);
+                            if (nextRule && currentInvestedSize >= (Number(nextRule.investedTeamSize) || 0) && currentTeamAssets >= (Number(nextRule.totalTeamAssets) || 0)) {
+                                inviterUpdate.isVipEligible = true;
+                            }
 
-                        if (nextRule) {
-                            const sizeMet = currentInvestedSize >= (Number(nextRule.investedTeamSize) || 0);
-                            const assetsMet = currentTeamAssets >= (Number(nextRule.totalTeamAssets) || 0);
-                            if (sizeMet && assetsMet) {
+                            // Notification
+                            const levelLabels = ["Level A", "Level B", "Level C", "Level D"];
+                            const notifRef = doc(collection(db, "UserNotifications"));
+                            transaction.set(notifRef, {
+                                userId: snap.id,
+                                type: "reward",
+                                amount: bonus.toFixed(2),
+                                level: levelLabels[index],
+                                message: `Reward received: ${bonus.toFixed(2)} ETB from ${levelLabels[index]}.`,
+                                fromUser: userData.phoneNumber || "A team member",
+                                createdAt: Timestamp.now(),
+                                read: false
+                            });
+                        } else {
+                            const currentInvestedSize = inviterData.investedTeamSize || 0;
+                            const currentTeamAssets = (inviterData.teamAssets || 0) + amount;
+                            const currentVip = inviterData.vip ?? 0;
+                            const currentVipNum = typeof currentVip === 'number' ? currentVip : parseInt(currentVip.toString().replace(/\D/g, '') || "0");
+                            const nextVipNum = currentVipNum + 1;
+
+                            const nextRule = vipRules.find(r => parseInt(r.level?.replace(/\D/g, '') || "0") === nextVipNum);
+                            if (nextRule && currentInvestedSize >= (Number(nextRule.investedTeamSize) || 0) && currentTeamAssets >= (Number(nextRule.totalTeamAssets) || 0)) {
                                 inviterUpdate.isVipEligible = true;
                             }
                         }
-
                         transaction.update(ref, inviterUpdate);
-
-                        // 3. Create Reward Notification
-                        const levelLabels = ["Level A", "Level B", "Level C", "Level D"];
-                        const notifRef = doc(collection(db, "UserNotifications"));
-                        transaction.set(notifRef, {
-                            userId: snap.id,
-                            type: "reward",
-                            amount: bonus.toFixed(2),
-                            level: levelLabels[index],
-                            message: `Reward received: ${bonus.toFixed(2)} ETB from ${levelLabels[index]}.`,
-                            fromUser: userData.phoneNumber || "A team member",
-                            createdAt: Timestamp.now(),
-                            read: false
-                        });
                     }
                 });
             });
 
             toast.success(`Verified ETB ${recharge.amount} & Distributed Rewards`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Verification error:", error);
-            toast.error("Failed to verify transaction");
+            toast.error(error.message === "User does not exist!" ? "User not found in database" : "Failed to verify transaction");
         } finally {
             setVerifying(null);
         }
@@ -233,7 +235,7 @@ export default function RechargeVerificationPage() {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                <span className="text-slate-500 font-bold text-sm tracking-widest uppercase">Initializing...</span>
+                <span className="text-slate-500 font-bold text-sm tracking-tight">Initializing...</span>
             </div>
         );
     }
@@ -296,14 +298,14 @@ export default function RechargeVerificationPage() {
                         </button>
                         <div className="flex flex-col">
                             <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight leading-none">Transactions</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Verification Queue</p>
+                            <p className="text-[10px] font-bold text-slate-400 mt-1">Verification Queue</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <div className="hidden sm:flex px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl items-center gap-2">
                             <Clock size={16} className="text-blue-600" />
-                            <span className="text-[11px] font-black uppercase text-blue-600">Pending: {recharges.filter(r => r.status === 'Under Review').length}</span>
+                            <span className="text-[11px] font-black text-blue-600">Pending: {recharges.filter(r => r.status === 'Under Review').length}</span>
                         </div>
                         <button
                             onClick={() => window.location.reload()}
@@ -321,12 +323,12 @@ export default function RechargeVerificationPage() {
                             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-125 group-hover:rotate-12 transition-all duration-700">
                                 <CheckCircle2 size={60} className="text-emerald-500" />
                             </div>
-                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.25em] mb-2 drop-shadow-sm">Total Revenue</p>
+                            <p className="text-[10px] font-black text-emerald-600 mb-2 drop-shadow-sm">Total Revenue</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl font-black text-slate-900 tracking-tighter">
                                     {recharges.filter(r => r.status === 'verified').reduce((acc, curr) => acc + Number(curr.amount), 0).toLocaleString()}
                                 </span>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ETB</span>
+                                <span className="text-[10px] font-black text-slate-400">ETB</span>
                             </div>
                         </div>
 
@@ -334,12 +336,12 @@ export default function RechargeVerificationPage() {
                             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700">
                                 <Clock size={60} className="text-blue-500" />
                             </div>
-                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.25em] mb-2 drop-shadow-sm">Live Pipeline</p>
+                            <p className="text-[10px] font-black text-blue-600 mb-2 drop-shadow-sm">Live Pipeline</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl font-black text-slate-900 tracking-tighter">
                                     {recharges.filter(r => r.status === 'Under Review').reduce((acc, curr) => acc + Number(curr.amount), 0).toLocaleString()}
                                 </span>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ETB</span>
+                                <span className="text-[10px] font-black text-slate-400">ETB</span>
                             </div>
                         </div>
                     </div>
@@ -351,10 +353,10 @@ export default function RechargeVerificationPage() {
                         </div>
                         <input
                             type="text"
-                            placeholder="Universal Search (Phone or Payload)..."
+                            placeholder="Search (phone or FT)..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-16 pl-14 pr-6 bg-white/50 backdrop-blur-3xl border border-slate-200/60 rounded-[2rem] focus:outline-none focus:border-blue-500/50 focus:ring-8 focus:ring-blue-500/5 transition-all duration-300 text-sm font-bold shadow-xl shadow-slate-200/50 placeholder:text-slate-400 placeholder:font-black placeholder:uppercase placeholder:tracking-widest"
+                            className="w-full h-16 pl-14 pr-6 bg-white/50 backdrop-blur-3xl border border-slate-200/60 rounded-[2rem] focus:outline-none focus:border-blue-500/50 focus:ring-8 focus:ring-blue-500/5 transition-all duration-300 text-sm font-bold shadow-xl shadow-slate-200/50 placeholder:text-slate-400 placeholder:font-black"
                         />
                     </div>
 
@@ -379,7 +381,7 @@ export default function RechargeVerificationPage() {
                                         <div className="flex flex-col gap-8 relative z-10">
                                             {/* Status & Date */}
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                                                <div className={`w-fit px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] flex items-center gap-2.5 transition-all duration-500 border
+                                                <div className={`w-fit px-5 py-2 rounded-2xl text-[10px] font-black tracking-widest flex items-center gap-2.5 transition-all duration-500 border
                                                 ${recharge.status === 'verified'
                                                         ? 'bg-emerald-50/50 text-emerald-600 border-emerald-100/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]'
                                                         : 'bg-blue-50/50 text-blue-600 border-blue-100/50 shadow-[0_0_20px_rgba(37,99,235,0.1)]'} `}>
@@ -387,7 +389,7 @@ export default function RechargeVerificationPage() {
                                                     {recharge.status === 'verified' ? 'System Verified' : 'Live Review Queue'}
                                                 </div>
                                                 <div className="flex items-center gap-1.5 p-1 px-4 bg-slate-50/50 border border-slate-100/50 rounded-2xl backdrop-blur-md">
-                                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Entry</span>
+                                                    <span className="text-[10px] font-black text-slate-300 tracking-widest">Entry</span>
                                                     <span className="text-[10px] font-bold text-slate-500">
                                                         {recharge.timestamp?.toDate()?.toLocaleDateString()} • {recharge.timestamp?.toDate()?.toLocaleTimeString()}
                                                     </span>
@@ -396,28 +398,28 @@ export default function RechargeVerificationPage() {
 
                                             <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
                                                 <div className="space-y-3">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Terminal ID</p>
+                                                    <p className="text-[10px] font-black text-slate-400 leading-none">Terminal ID</p>
                                                     <p className="text-xl font-black text-slate-900 tracking-tighter leading-none">{recharge.phoneNumber}</p>
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Credit Amount</p>
+                                                    <p className="text-[10px] font-black text-slate-400 leading-none">Credit Amount</p>
                                                     <div className="flex items-baseline gap-2 leading-none">
                                                         <span className={`text-3xl font-black tracking-tighter transition-all duration-500 ${recharge.status === 'verified' ? 'text-emerald-600' : 'text-blue-600'}`}>{Number(recharge.amount).toLocaleString()}</span>
-                                                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">ETB</span>
+                                                        <span className="text-[10px] font-black text-slate-300">ETB</span>
                                                     </div>
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Transfer Metadata</p>
+                                                    <p className="text-[10px] font-black text-slate-400 leading-none">FT</p>
                                                     <div className="bg-slate-50/80 backdrop-blur-md border border-slate-100 p-4 rounded-3xl transition-all duration-500 group-hover:bg-white group-hover:border-blue-200 group-hover:shadow-lg group-hover:shadow-blue-500/5 group-hover:-translate-y-1">
-                                                        <p className="text-xs font-mono font-bold text-slate-600 break-all leading-relaxed line-clamp-2 uppercase italic tracking-wider">
+                                                        <p className="text-xs font-mono font-bold text-slate-600 break-all leading-relaxed tracking-wider">
                                                             {recharge.FTcode}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none">Auth Channel</p>
+                                                    <p className="text-[10px] font-black text-slate-400 leading-none">Auth Channel</p>
                                                     <div className="px-5 py-2.5 bg-slate-900 font-black rounded-2xl w-fit shadow-xl shadow-slate-900/10 hover:scale-105 transition-transform">
-                                                        <p className="text-[10px] text-white uppercase tracking-[0.25em]">{recharge.paymentMethod || 'Master'}</p>
+                                                        <p className="text-[10px] text-white tracking-widest">{recharge.paymentMethod || 'Master'}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -428,7 +430,7 @@ export default function RechargeVerificationPage() {
                                                     <button
                                                         onClick={() => setConfirmAction({ type: 'reject', data: recharge })}
                                                         disabled={verifying === recharge.id}
-                                                        className="h-14 px-8 rounded-2xl bg-white border-2 border-red-50 text-red-600 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-50 hover:border-red-100 transition-all active:scale-95 disabled:opacity-50"
+                                                        className="h-14 px-8 rounded-2xl bg-white border-2 border-red-50 text-red-600 font-black text-[10px] tracking-widest hover:bg-red-50 hover:border-red-100 transition-all active:scale-95 disabled:opacity-50"
                                                     >
                                                         Discard Entry
                                                     </button>
@@ -436,7 +438,7 @@ export default function RechargeVerificationPage() {
                                                 <button
                                                     onClick={() => recharge.status !== 'verified' && setConfirmAction({ type: 'verify', data: recharge })}
                                                     disabled={verifying === recharge.id || recharge.status === 'verified'}
-                                                    className={`flex-1 h-14 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 
+                                                    className={`flex-1 h-14 rounded-2xl font-black text-[10px] tracking-widest transition-all flex items-center justify-center gap-3 
                                                     ${recharge.status === 'verified'
                                                             ? 'bg-emerald-50 text-emerald-600 border-2 border-emerald-100'
                                                             : 'bg-blue-600 text-white shadow-[0_20px_40px_-15px_rgba(37,99,235,0.4)] hover:bg-blue-700 hover:shadow-blue-500/40 active:scale-[0.98] disabled:opacity-30'
@@ -461,8 +463,8 @@ export default function RechargeVerificationPage() {
                                     <ShieldCheck size={40} className="group-hover:text-blue-500 transition-colors" />
                                 </div>
                                 <div className="flex flex-col items-center gap-1">
-                                    <p className="text-slate-900 font-black text-xs uppercase tracking-[0.3em]">Operational Readiness</p>
-                                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">No active transactions found in queue</p>
+                                    <p className="text-slate-900 font-black text-xs tracking-widest">Operational Readiness</p>
+                                    <p className="text-slate-400 font-bold text-[10px]">No active transactions found in queue</p>
                                 </div>
                             </div>
                         )}

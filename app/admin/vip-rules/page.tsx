@@ -49,7 +49,7 @@ export default function VipRulesPage() {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
             } else {
                 setLoading(false);
             }
@@ -98,7 +98,7 @@ export default function VipRulesPage() {
             if (selectedFile) {
                 const cloudFormData = new FormData();
                 cloudFormData.append("file", selectedFile);
-                cloudFormData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Zen");
+                cloudFormData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Turner");
 
                 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "deve0w9bt";
                 const response = await fetch(

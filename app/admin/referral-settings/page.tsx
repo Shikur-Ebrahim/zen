@@ -41,7 +41,7 @@ export default function ReferralSettingsPage() {
         const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
 
@@ -78,7 +78,7 @@ export default function ReferralSettingsPage() {
     const handleLogout = async () => {
         localStorage.removeItem("admin_session");
         await signOut(auth);
-        router.push("/admin");
+        router.push("/");
     };
 
     // Navigation handled by AdminSidebar

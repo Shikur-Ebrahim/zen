@@ -32,6 +32,7 @@ import {
     Hash,
     ChevronDown,
     Building2,
+    Edit3,
     Power,
     Bell,
     ShieldCheck,
@@ -76,12 +77,13 @@ export default function AdminPaymentMethods() {
     const [bankPreview, setBankPreview] = useState<string>("");
     const [uploading, setUploading] = useState(false);
     const [status, setStatus] = useState({ type: "", message: "" });
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
             setLoading(false);
@@ -115,7 +117,7 @@ export default function AdminPaymentMethods() {
     const uploadToCloudinary = async (file: File) => {
         const uploadData = new FormData();
         uploadData.append("file", file);
-        uploadData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Zen");
+        uploadData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Turner");
 
         const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "deve0w9bt";
         const response = await fetch(
@@ -145,35 +147,69 @@ export default function AdminPaymentMethods() {
             if (methodFile) finalMethodLogo = await uploadToCloudinary(methodFile);
             if (bankFile) finalBankLogo = await uploadToCloudinary(bankFile);
 
-            await addDoc(collection(db, "paymentMethods"), {
-                ...formData,
-                logoUrl: finalMethodLogo || "",
-                bankLogoUrl: finalBankLogo || "",
-                createdAt: new Date().toISOString()
-            });
+            if (editingId) {
+                await updateDoc(doc(db, "paymentMethods", editingId), {
+                    ...formData,
+                    logoUrl: finalMethodLogo || "",
+                    bankLogoUrl: finalBankLogo || "",
+                    updatedAt: new Date().toISOString()
+                });
+                setStatus({ type: "success", message: "Payment method updated successfully!" });
+            } else {
+                await addDoc(collection(db, "paymentMethods"), {
+                    ...formData,
+                    logoUrl: finalMethodLogo || "",
+                    bankLogoUrl: finalBankLogo || "",
+                    createdAt: new Date().toISOString()
+                });
+                setStatus({ type: "success", message: "Payment method added successfully!" });
+            }
 
-            setFormData({
-                methodName: "",
-                bankName: "",
-                holderName: "",
-                accountNumber: "",
-                bankDetailType: "regular",
-                logoUrl: "",
-                bankLogoUrl: "",
-                status: "active"
-            });
-            setMethodFile(null);
-            setBankFile(null);
-            setMethodPreview("");
-            setBankPreview("");
-            setStatus({ type: "success", message: "Payment method added successfully!" });
+            handleCancelEdit();
         } catch (err) {
             console.error(err);
-            setStatus({ type: "error", message: "Failed to save payment method." });
+            setStatus({ type: "error", message: `Failed to ${editingId ? 'update' : 'save'} payment method.` });
         } finally {
             setUploading(false);
             setTimeout(() => setStatus({ type: "", message: "" }), 3000);
         }
+    };
+
+    const handleEdit = (method: any) => {
+        setFormData({
+            methodName: method.methodName,
+            bankName: method.bankName,
+            holderName: method.holderName,
+            accountNumber: method.accountNumber,
+            bankDetailType: method.bankDetailType || "regular",
+            logoUrl: method.logoUrl || "",
+            bankLogoUrl: method.bankLogoUrl || "",
+            status: method.status || "active"
+        });
+        setEditingId(method.id);
+        setMethodPreview(method.logoUrl || "");
+        setBankPreview(method.bankLogoUrl || "");
+
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setFormData({
+            methodName: "",
+            bankName: "",
+            holderName: "",
+            accountNumber: "",
+            bankDetailType: "regular",
+            logoUrl: "",
+            bankLogoUrl: "",
+            status: "active"
+        });
+        setEditingId(null);
+        setMethodFile(null);
+        setBankFile(null);
+        setMethodPreview("");
+        setBankPreview("");
     };
 
     // Simplified form logic - no multi-account needed anymore
@@ -249,9 +285,9 @@ export default function AdminPaymentMethods() {
                             <section className="bg-white rounded-[2.5rem] p-8 shadow-2xl shadow-indigo-900/5 border border-white relative overflow-hidden">
                                 <h3 className="text-2xl font-black text-gray-900 mb-8 flex items-center gap-3">
                                     <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
-                                        <Plus size={20} />
+                                        <Plus size={20} className={editingId ? "rotate-45" : ""} />
                                     </div>
-                                    Add New Bank
+                                    {editingId ? "Edit Payment Method" : "Add New Bank"}
                                 </h3>
 
                                 <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
@@ -400,11 +436,21 @@ export default function AdminPaymentMethods() {
                                             >
                                                 {uploading ? <Loader2 className="animate-spin" size={24} /> : (
                                                     <>
-                                                        <Plus size={22} className="group-hover:rotate-90 transition-transform duration-500" />
-                                                        <span>Add Payment Method</span>
+                                                        {editingId ? <CheckCircle2 size={22} /> : <Plus size={22} className="group-hover:rotate-90 transition-transform duration-500" />}
+                                                        <span>{editingId ? "Update Payment Method" : "Add Payment Method"}</span>
                                                     </>
                                                 )}
                                             </button>
+
+                                            {editingId && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCancelEdit}
+                                                    className="w-full h-18 bg-white border-2 border-slate-100 hover:bg-slate-50 text-slate-500 font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 mt-2"
+                                                >
+                                                    Cancel Editing
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </form>
@@ -449,6 +495,13 @@ export default function AdminPaymentMethods() {
                                                         }`}
                                                 >
                                                     <Power size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEdit(method)}
+                                                    title="Edit Method"
+                                                    className="p-3 bg-indigo-50 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-2xl transition-all"
+                                                >
+                                                    <Settings size={18} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(method.id)}

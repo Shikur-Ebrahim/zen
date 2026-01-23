@@ -63,7 +63,7 @@ function AdminDashboard() {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             const isMaster = localStorage.getItem("admin_session") === "true";
             if (!user && !isMaster) {
-                router.push("/admin");
+                router.push("/");
                 return;
             }
             setLoading(false);
@@ -99,7 +99,7 @@ function AdminDashboard() {
             // 1. Upload to Cloudinary using unsigned preset
             const formData = new FormData();
             formData.append("file", selectedFile);
-            formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Zen");
+            formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Turner");
 
             const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "deve0w9bt";
             const response = await fetch(
@@ -151,7 +151,7 @@ function AdminDashboard() {
     const handleLogout = async () => {
         localStorage.removeItem("admin_session");
         await signOut(auth);
-        router.push("/admin");
+        router.push("/");
     };
 
     if (loading) {
@@ -194,7 +194,7 @@ function AdminDashboard() {
                                 <div className="relative z-10">
                                     <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Welcome, Admin! ✨</h1>
                                     <p className="text-gray-500 text-lg leading-relaxed max-w-2xl">
-                                        Managing the Zen Perfume Management Portal has never been easier. Use the sidebar to update banners, track team stats, or manage partners.
+                                        Managing the Turner Construction portal has never been easier. Use the sidebar to update banners, track team stats, or manage partners.
                                     </p>
                                 </div>
                                 <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">

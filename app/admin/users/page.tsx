@@ -1,72 +1,94 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { auth, db } from "@/lib/firebase";
+import { collection, onSnapshot, query, orderBy, doc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import {
-    Users,
+    Users as UsersIcon,
     Search,
-    TrendingUp,
-    UserCheck,
-    UserMinus,
-    ChevronRight,
-    Loader2,
+    Phone,
+    ArrowUpCircle,
+    ArrowDownCircle,
+    BadgeCheck,
+    Clock,
     Menu,
-    Smartphone,
+    Calendar,
     CreditCard,
-    Wallet,
-    Crown
+    Loader2 as Loader,
+    Pencil,
+    Check,
+    X
 } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 
-interface UserData {
-    id: string;
-    phoneNumber: string;
-    totalRecharge: number;
-    balance: number;
-    vip: number;
-    email?: string;
-    uid: string;
-    createdAt?: string;
-    country?: string;
-}
-
-export default function AdminUsersPage() {
-    const [users, setUsers] = useState<UserData[]>([]);
+function UsersManagement() {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [users, setUsers] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+    const [editingUserId, setEditingUserId] = useState<string | null>(null);
+    const [editBalance, setEditBalance] = useState("");
+    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
-        const q = query(collection(db, "users"), orderBy("totalRecharge", "desc"));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const usersData = snapshot.docs.map(doc => ({
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            const isMaster = localStorage.getItem("admin_session") === "true";
+            if (!user && !isMaster) {
+                router.push("/");
+                return;
+            }
+        });
+
+        const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
+        const unsubscribeUsers = onSnapshot(q, (snapshot) => {
+            const userData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            })) as UserData[];
-            setUsers(usersData);
+            }));
+            setUsers(userData);
             setLoading(false);
         });
 
-        return () => unsubscribe();
-    }, []);
+        return () => {
+            unsubscribeAuth();
+            unsubscribeUsers();
+        };
+    }, [router]);
 
-    const filteredUsers = users.filter(user => {
-        const matchesSearch = user.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesFilter =
-            filter === 'all' ||
-            (filter === 'active' && (user.totalRecharge || 0) > 0) ||
-            (filter === 'inactive' && (user.totalRecharge || 0) === 0);
-        return matchesSearch && matchesFilter;
-    });
+    useEffect(() => {
+        const filtered = users.filter(user =>
+            user.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredUsers(filtered);
+    }, [searchQuery, users]);
 
-    const stats = {
-        total: users.length,
-        active: users.filter(u => (u.totalRecharge || 0) > 0).length,
-        inactive: users.filter(u => (u.totalRecharge || 0) === 0).length,
-        totalRecharge: users.reduce((acc, u) => acc + (u.totalRecharge || 0), 0)
+    const handleUpdateBalance = async (userId: string) => {
+        if (!editBalance || isNaN(Number(editBalance))) return;
+        setUpdating(true);
+        try {
+            const userRef = doc(db, "users", userId);
+            await updateDoc(userRef, {
+                balance: Number(editBalance)
+            });
+            setEditingUserId(null);
+        } catch (error) {
+            console.error("Error updating balance:", error);
+        } finally {
+            setUpdating(false);
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white text-indigo-600">
+                <Loader className="w-12 h-12 animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#F8F9FD] flex">
@@ -75,192 +97,191 @@ export default function AdminUsersPage() {
             <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
                 {/* Header */}
                 <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex items-center justify-between z-30">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSidebarOpen(true)}
-                            className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
-                        >
-                            <Menu size={24} className="text-gray-600" />
-                        </button>
-                        <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest hidden sm:block">
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                    >
+                        <Menu size={24} className="text-gray-600" />
+                    </button>
+                    <div className="hidden md:block">
+                        <h2 className="text-sm font-black text-gray-400 uppercase tracking-widest">
                             Manager / <span className="text-indigo-600">Users</span>
                         </h2>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-[10px] font-black text-gray-400 uppercase leading-none mb-1">Total Users</p>
+                            <p className="text-lg font-black text-gray-900 leading-none">{users.length}</p>
+                        </div>
                         <div className="w-10 h-10 p-1 rounded-full border-2 border-indigo-100 overflow-hidden">
                             <img src="/logo.png" alt="Admin" className="w-full h-full object-contain" />
                         </div>
                     </div>
                 </header>
 
-                <main className="p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                        <button
-                            onClick={() => setFilter('all')}
-                            className={`text-left transition-all ${filter === 'all' ? 'scale-[1.02]' : ''}`}
-                        >
-                            <div className={`bg-white p-3 md:p-4 rounded-2xl border flex items-center gap-3 transition-all ${filter === 'all' ? 'border-indigo-600 shadow-lg shadow-indigo-600/5 ring-1 ring-indigo-600/20' : 'border-gray-100 shadow-sm'}`}>
-                                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 flex-shrink-0">
-                                    <Users size={20} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 truncate">Total Users</p>
-                                    <p className="text-lg font-black text-gray-900 leading-tight">{stats.total}</p>
-                                </div>
-                            </div>
-                        </button>
-                        <button
-                            onClick={() => setFilter('active')}
-                            className={`text-left transition-all ${filter === 'active' ? 'scale-[1.02]' : ''}`}
-                        >
-                            <div className={`bg-white p-3 md:p-4 rounded-2xl border flex items-center gap-3 transition-all ${filter === 'active' ? 'border-emerald-600 shadow-lg shadow-emerald-600/5 ring-1 ring-emerald-600/20' : 'border-gray-100 shadow-sm'}`}>
-                                <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 flex-shrink-0">
-                                    <UserCheck size={20} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 truncate">Active</p>
-                                    <p className="text-lg font-black text-gray-900 leading-tight">{stats.active}</p>
-                                </div>
-                            </div>
-                        </button>
-                        <button
-                            onClick={() => setFilter('inactive')}
-                            className={`text-left transition-all ${filter === 'inactive' ? 'scale-[1.02]' : ''}`}
-                        >
-                            <div className={`bg-white p-3 md:p-4 rounded-2xl border flex items-center gap-3 transition-all ${filter === 'inactive' ? 'border-rose-600 shadow-lg shadow-rose-600/5 ring-1 ring-rose-600/20' : 'border-gray-100 shadow-sm'}`}>
-                                <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 flex-shrink-0">
-                                    <UserMinus size={20} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 truncate">Inactive</p>
-                                    <p className="text-lg font-black text-gray-900 leading-tight">{stats.inactive}</p>
-                                </div>
-                            </div>
-                        </button>
-                        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-3 md:p-4 rounded-2xl shadow-lg shadow-indigo-600/20 text-white flex items-center gap-3">
-                            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white flex-shrink-0">
-                                <TrendingUp size={20} />
-                            </div>
-                            <div className="min-w-0">
-                                <p className="text-[9px] font-bold text-indigo-100 uppercase tracking-widest mb-0.5 truncate">Total Assets</p>
-                                <p className="text-lg font-black truncate">ETB {stats.totalRecharge.toLocaleString()}</p>
-                            </div>
+                <main className="p-4 md:p-8 max-w-5xl mx-auto w-full">
+                    {/* Welcome Card */}
+                    <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 mb-8 overflow-hidden relative">
+                        <div className="relative z-10">
+                            <h1 className="text-2xl font-black text-gray-900 mb-2">User Database 👥</h1>
+                            <p className="text-gray-500 text-sm font-medium">Track all users, their activity status, and financial statistics.</p>
+                        </div>
+                        <div className="absolute -top-6 -right-6 opacity-[0.03] pointer-events-none">
+                            <UsersIcon size={160} className="text-indigo-600" />
                         </div>
                     </div>
 
                     {/* Search Bar */}
-                    <div className="relative group">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors" size={20} />
+                    <div className="relative mb-6">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <input
                             type="text"
-                            placeholder="Search by phone number..."
+                            placeholder="Find user by phone..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-14 pr-6 py-5 bg-white border border-gray-200 rounded-[1.5rem] focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all font-medium text-gray-900 shadow-sm"
+                            className="w-full h-14 pl-14 pr-6 rounded-2xl bg-white border border-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold text-gray-700 placeholder:text-gray-300"
                         />
                     </div>
 
-                    {/* Users List */}
-                    <div className="space-y-4">
-                        {loading ? (
-                            <div className="py-20 flex flex-col items-center justify-center gap-4">
-                                <Loader2 className="animate-spin text-indigo-600" size={40} />
-                                <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading Users...</p>
-                            </div>
-                        ) : filteredUsers.length > 0 ? (
-                            filteredUsers.map((user) => (
+                    {/* User Grid/List */}
+                    <div className="grid grid-cols-1 gap-4">
+                        {filteredUsers.map((user) => {
+                            const isActive = (user.totalRecharge || 0) > 0;
+                            return (
                                 <div
                                     key={user.id}
-                                    className="bg-white p-4 md:p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-indigo-900/5 transition-all group"
+                                    className="bg-white rounded-3xl p-5 border border-gray-100 hover:border-indigo-100 transition-all group overflow-hidden"
                                 >
-                                    <div className="flex items-center gap-4">
-                                        <div className="relative">
-                                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden border-2 border-gray-50 bg-gray-100">
-                                                <img
-                                                    src="/avator profile.jpg"
-                                                    alt="User"
-                                                    className="w-full h-full object-cover"
-                                                />
+                                    <div className="flex flex-col sm:flex-row gap-5">
+                                        {/* Profile Section */}
+                                        <div className="flex sm:flex-col items-center gap-4 sm:gap-2">
+                                            <div className="relative">
+                                                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-50 shadow-sm">
+                                                    <img
+                                                        src="/avator profile.jpg"
+                                                        alt="User"
+                                                        className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all"
+                                                    />
+                                                </div>
+                                                <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center shadow-sm ${isActive ? "bg-emerald-500" : "bg-gray-300"
+                                                    }`}>
+                                                    {isActive && <BadgeCheck size={10} className="text-white" />}
+                                                </div>
                                             </div>
-                                            <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${(user.totalRecharge || 0) > 0 ? 'bg-emerald-500' : 'bg-gray-300'
+                                            <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${isActive
+                                                ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                                                : "bg-gray-50 text-gray-400 border border-gray-100"
                                                 }`}>
-                                                {(user.totalRecharge || 0) > 0 ? (
-                                                    <UserCheck size={10} className="text-white" />
-                                                ) : (
-                                                    <UserMinus size={10} className="text-white" />
-                                                )}
+                                                {isActive ? "Active" : "Inactive"}
+                                            </span>
+                                        </div>
+
+                                        {/* Main Info */}
+                                        <div className="flex-1 flex flex-col justify-center gap-1">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <div className="flex items-center gap-1.5 text-gray-900 font-black text-lg">
+                                                    <Phone size={16} className="text-gray-400" />
+                                                    {user.phoneNumber}
+                                                </div>
+                                            </div>
+                                            <div className="text-gray-400 text-xs font-medium flex flex-wrap gap-x-4 gap-y-1">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar size={12} />
+                                                    Joined: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Clock size={12} />
+                                                    VIP: {user.vip || 0}
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="font-black text-gray-900 truncate">
-                                                    {user.phoneNumber || "No Phone"}
-                                                </h3>
-                                                {user.vip > 0 && (
-                                                    <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tight border border-amber-100">
-                                                        <Crown size={10} />
-                                                        VIP {user.vip}
+                                        {/* Financial Stats */}
+                                        <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 sm:border-l border-gray-50 sm:pl-5">
+                                            <div className="flex-1 sm:w-28 flex flex-col items-center justify-center p-3 rounded-2xl bg-blue-50/50 border border-blue-100 group-hover:bg-blue-50 transition-colors">
+                                                <ArrowUpCircle size={14} className="text-blue-500 mb-1" />
+                                                <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">T. Recharge</p>
+                                                <p className="text-sm font-black text-blue-600 leading-none">{user.totalRecharge || 0}</p>
+                                            </div>
+                                            <div className="flex-1 sm:w-28 flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50/50 border border-indigo-100 group-hover:bg-indigo-50 transition-colors text-center">
+                                                <BadgeCheck size={14} className="text-indigo-500 mb-1" />
+                                                <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Credits</p>
+                                                <p className="text-sm font-black text-indigo-600 leading-none">{user.Recharge || 0}</p>
+                                            </div>
+                                            <div className="flex-1 sm:w-28 flex flex-col items-center justify-center p-3 rounded-2xl bg-amber-50/50 border border-amber-100 group-hover:bg-amber-50 transition-colors">
+                                                <ArrowDownCircle size={14} className="text-amber-500 mb-1" />
+                                                <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest leading-none mb-1">Withdraw</p>
+                                                <p className="text-sm font-black text-amber-600 leading-none">{user.totalWithdrawal || 0}</p>
+                                            </div>
+                                            <div className="w-full sm:w-32 flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100 group-hover:bg-emerald-50 transition-colors relative">
+                                                <CreditCard size={14} className="text-emerald-500 mb-1" />
+                                                <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">Balance</p>
+                                                {editingUserId === user.id ? (
+                                                    <div className="flex items-center gap-1 mt-1">
+                                                        <input
+                                                            type="number"
+                                                            value={editBalance}
+                                                            onChange={(e) => setEditBalance(e.target.value)}
+                                                            className="w-20 h-7 bg-white border border-emerald-200 rounded-lg text-xs font-black text-emerald-600 px-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                                            autoFocus
+                                                        />
+                                                        <button
+                                                            onClick={() => handleUpdateBalance(user.id)}
+                                                            disabled={updating}
+                                                            className="p-1 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {updating ? <Loader size={12} className="animate-spin" /> : <Check size={12} />}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setEditingUserId(null)}
+                                                            className="p-1 bg-gray-100 text-gray-500 rounded-md hover:bg-gray-200 transition-colors"
+                                                        >
+                                                            <X size={12} />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-sm font-black text-emerald-600 leading-none">{user.balance || 0}</p>
+                                                        <button
+                                                            onClick={() => {
+                                                                setEditingUserId(user.id);
+                                                                setEditBalance(user.balance?.toString() || "0");
+                                                            }}
+                                                            className="p-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-lg text-emerald-500 hover:bg-emerald-50"
+                                                            title="Edit Balance"
+                                                        >
+                                                            <Pencil size={12} />
+                                                        </button>
                                                     </div>
                                                 )}
-                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-lg border ${(user.totalRecharge || 0) > 0
-                                                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                                                    : 'bg-gray-50 text-gray-400 border-gray-100'
-                                                    }`}>
-                                                    {(user.totalRecharge || 0) > 0 ? 'Active' : 'Inactive'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="hidden md:flex items-center gap-8 px-8 border-x border-gray-50">
-                                            <div className="text-center">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Recharge</p>
-                                                <p className="font-black text-gray-900">ETB {(user.totalRecharge || 0).toLocaleString()}</p>
-                                            </div>
-                                            <div className="text-center">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Balance</p>
-                                                <p className="font-black text-indigo-600">ETB {(user.balance || 0).toLocaleString()}</p>
-                                            </div>
-                                        </div>
-
-                                        <button className="p-3 bg-gray-50 text-gray-400 rounded-xl hover:bg-indigo-600 hover:text-white transition-all group-hover:translate-x-1">
-                                            <ChevronRight size={20} />
-                                        </button>
-                                    </div>
-
-                                    {/* Mobile Quick Stats */}
-                                    <div className="mt-4 pt-4 border-t border-gray-50 grid grid-cols-2 gap-4 md:hidden">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                                                <CreditCard size={14} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Recharge</p>
-                                                <p className="text-xs font-black text-gray-900">ETB {(user.totalRecharge || 0).toLocaleString()}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
-                                                <Wallet size={14} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Balance</p>
-                                                <p className="text-xs font-black text-gray-900">ETB {(user.balance || 0).toLocaleString()}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="py-20 bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-400">
-                                <Users size={48} className="mb-4 opacity-20" />
-                                <p className="font-bold uppercase tracking-widest text-[10px]">No users found</p>
+                            );
+                        })}
+
+                        {filteredUsers.length === 0 && !loading && (
+                            <div className="py-20 flex flex-col items-center justify-center text-gray-300">
+                                <Search size={48} className="mb-4 opacity-10" />
+                                <p className="font-black uppercase tracking-widest text-xs">No users found</p>
                             </div>
                         )}
                     </div>
                 </main>
             </div>
         </div>
+    );
+}
+
+export default function UsersPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-white text-indigo-600">
+                <Loader className="w-12 h-12 animate-spin" />
+            </div>
+        }>
+            <UsersManagement />
+        </Suspense>
     );
 }
