@@ -199,238 +199,156 @@ export default function RechargeRecordsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black">
-            {/* Premium Header */}
-            <header className="fixed top-0 left-0 right-0 z-[60] px-6 pt-12 pb-6 bg-gradient-to-b from-blue-700 via-blue-600/90 to-transparent backdrop-blur-[2px]">
-                <div className="flex items-center justify-between max-w-lg mx-auto">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 active:scale-90 transition-transform"
-                    >
-                        <ChevronLeft className="text-white" size={24} />
-                    </button>
-                    <h1 className="text-lg font-black text-white tracking-[0.2em] uppercase">Recharge History</h1>
-                    <div className="w-10"></div>
+        <div className="min-h-screen bg-[#F0F2F5] font-sans pb-10">
+            {/* Minimal Titanium Header */}
+            <header className="px-6 pt-8 pb-4 flex items-center gap-4 sticky top-0 bg-[#F0F2F5]/80 backdrop-blur-md z-50 transition-all duration-300">
+                <button
+                    onClick={() => router.back()}
+                    className="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all active:scale-95"
+                >
+                    <ChevronLeft size={24} className="text-slate-600" />
+                </button>
+                <div className="flex-1 text-center pr-10">
+                    <h1 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Recharge History</h1>
                 </div>
             </header>
 
-            <main className="relative z-10 pt-32 bg-white rounded-t-[3.5rem] min-h-screen p-6 pb-52 overflow-hidden shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
-                {/* Decorative Elements */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-blue-100 to-transparent"></div>
-                <div className="absolute -top-10 -right-10 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] animate-pulse"></div>
-                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px] animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-                {/* Elite Stats Grid */}
-                <div className="relative mb-8">
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                        {/* Total Records */}
-                        <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                            <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-[2rem] p-6 shadow-2xl overflow-hidden">
-                                <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(#ffffff 0.5px, transparent 0.5px)`, backgroundSize: '24px 24px' }}></div>
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-[40px] -mr-16 -mt-16"></div>
-
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-                                            <FileText className="text-blue-400" size={20} />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black text-blue-200/60 uppercase tracking-[0.2em]">Total</p>
-                                            <p className="text-xs font-bold text-white/40 uppercase tracking-wider">Records</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-4xl font-black text-white tracking-tighter drop-shadow-md">{stats.total}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Verified Amount */}
-                        <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                            <div className="relative bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 rounded-[2rem] p-6 shadow-2xl overflow-hidden">
-                                <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(#ffffff 0.5px, transparent 0.5px)`, backgroundSize: '24px 24px' }}></div>
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-[40px] -mr-16 -mt-16"></div>
-
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
-                                            <DollarSign className="text-emerald-400" size={20} />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black text-emerald-200/60 uppercase tracking-[0.2em]">Verified</p>
-                                            <p className="text-xs font-bold text-white/40 uppercase tracking-wider">Amount</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-3xl font-black text-white tracking-tighter drop-shadow-md">{stats.totalAmount.toLocaleString()}</p>
-                                        <span className="text-sm font-black text-emerald-400 uppercase">ETB</span>
-                                    </div>
+            <main className="px-5 pt-4 max-w-lg mx-auto w-full">
+                {/* Modern Stats Overview */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110 duration-500"></div>
+                        <div className="relative z-10">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Verified</p>
+                            <p className="text-2xl font-black text-slate-900 tracking-tight">{stats.totalAmount.toLocaleString()}</p>
+                            <div className="flex items-center gap-1 mt-2">
+                                <div className="px-2 py-0.5 rounded-md bg-emerald-100/50 border border-emerald-100">
+                                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">ETB</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Quick Stats Bar */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-emerald-50 rounded-2xl p-3 border border-emerald-100">
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                                <p className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Verified</p>
+                    <div className="space-y-3">
+                        <div className="bg-white rounded-[1.5rem] p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Success</p>
+                                <p className="text-lg font-black text-slate-800">{stats.verified}</p>
                             </div>
-                            <p className="text-2xl font-black text-emerald-900">{stats.verified}</p>
+                            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                                <CheckCircle2 size={16} />
+                            </div>
                         </div>
-                        <div className="bg-blue-50 rounded-2xl p-3 border border-blue-100">
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                                <p className="text-[9px] font-black text-blue-600 uppercase tracking-wider">Under Review</p>
+                        <div className="bg-white rounded-[1.5rem] p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pending</p>
+                                <p className="text-lg font-black text-slate-800">{stats.underReview}</p>
                             </div>
-                            <p className="text-2xl font-black text-blue-900">{stats.underReview}</p>
+                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                                <Clock size={16} />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Filter Tabs */}
-                <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+                {/* Filter Tabs - Pill Style */}
+                <div className="flex p-1.5 bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 w-full">
                     {[
-                        { key: "all", label: "All", icon: Activity },
-                        { key: "verified", label: "Verified", icon: CheckCircle2 },
-                        { key: "under review", label: "Under Review", icon: Clock }
+                        { key: "all", label: "All" },
+                        { key: "verified", label: "Success" },
+                        { key: "under review", label: "Pending" }
                     ].map((tab) => (
                         <button
                             key={tab.key}
                             onClick={() => setFilter(tab.key as any)}
-                            className={`flex items-center gap-2 px-3 py-3 rounded-2xl font-black text-xs whitespace-nowrap transition-all ${filter === tab.key
-                                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl shadow-blue-600/30 scale-105"
-                                : "bg-white text-gray-600 border-2 border-gray-200 hover:border-blue-300 active:scale-95"
+                            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${filter === tab.key
+                                ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                                : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                                 }`}
                         >
-                            <tab.icon size={16} />
                             {tab.label}
                         </button>
                     ))}
                 </div>
 
                 {/* Records List */}
-                {filteredRecords.length === 0 ? (
-                    <div className="relative">
-                        <div className="absolute -inset-4 bg-gradient-to-r from-gray-100 to-transparent rounded-[3rem] opacity-50"></div>
-                        <div className="relative bg-white rounded-[3rem] p-16 text-center border-2 border-gray-100 shadow-xl">
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-6 shadow-inner">
-                                <FileText className="text-gray-400" size={40} />
-                            </div>
-                            <h3 className="text-xl font-black text-gray-900 mb-2 uppercase tracking-tight">No Records Found</h3>
-                            <p className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                                {filter !== "all" ? `No ${filter} recharge records yet` : "You don't have any recharge records yet"}
-                            </p>
+                <div className="space-y-4 pb-20">
+                    {filteredRecords.length === 0 ? (
+                        <div className="py-20 text-center opacity-50">
+                            <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No Records Found</p>
                         </div>
-                    </div>
-                ) : (
-                    <div className="space-y-5">
-                        {filteredRecords.map((record) => {
+                    ) : (
+                        filteredRecords.map((record) => {
                             const statusConfig = getStatusConfig(record.status);
                             const StatusIcon = statusConfig.icon;
 
                             return (
                                 <div
                                     key={record.id}
-                                    className="relative group"
+                                    className="bg-white rounded-[2rem] p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-slate-100 relative overflow-hidden group hover:shadow-lg transition-all duration-300"
                                 >
-                                    {/* Glow Effect */}
-                                    <div className={`absolute -inset-1 ${statusConfig.bgColor} rounded-[2rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity`}></div>
-
-                                    <div className="relative bg-white rounded-[2rem] p-6 border-2 border-gray-100 shadow-lg hover:shadow-2xl transition-all overflow-hidden">
-                                        {/* Background Pattern */}
-                                        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `radial-gradient(#2563eb 0.5px, transparent 0.5px)`, backgroundSize: '16px 16px' }}></div>
-
-                                        {/* Header */}
-                                        <div className="relative z-10 flex items-start justify-between mb-5">
-                                            <div className="flex items-center gap-4">
-                                                {/* Payment Method Logo - Circular */}
-                                                <div className="relative w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-xl overflow-hidden border-2 border-gray-100">
-                                                    {paymentMethodLogos[record.paymentMethod.toLowerCase()] ? (
-                                                        <img
-                                                            src={paymentMethodLogos[record.paymentMethod.toLowerCase()]}
-                                                            alt={record.paymentMethod}
-                                                            className="w-10 h-10 object-contain"
-                                                        />
-                                                    ) : (
-                                                        <StatusIcon className="text-gray-400" size={24} />
-                                                    )}
-                                                </div>
-
-                                                <div>
-                                                    {/* Status Badge */}
-                                                    <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl ${statusConfig.lightBg} ${statusConfig.borderColor} border-2 mb-2`}>
-                                                        <div className={`w-2 h-2 rounded-full ${statusConfig.textColor.replace('text-', 'bg-')} animate-pulse`}></div>
-                                                        <span className={`text-xs font-black uppercase tracking-widest ${statusConfig.textColor}`}>
-                                                            {statusConfig.label}
-                                                        </span>
-                                                    </div>
-                                                    {/* Timestamp */}
-                                                    <p className="text-xs font-bold text-gray-500 flex items-center gap-1.5">
-                                                        <Calendar size={12} />
-                                                        {formatDate(record.timestamp)}
-                                                    </p>
-                                                </div>
+                                    {/* Top Row: Icon, Method, Amounts */}
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center p-2.5 shadow-inner">
+                                                {paymentMethodLogos[record.paymentMethod.toLowerCase()] ? (
+                                                    <img
+                                                        src={paymentMethodLogos[record.paymentMethod.toLowerCase()]}
+                                                        alt={record.paymentMethod}
+                                                        className="w-full h-full object-contain"
+                                                    />
+                                                ) : (
+                                                    <CreditCard className="text-slate-400" size={20} />
+                                                )}
                                             </div>
+                                            <div>
+                                                <h3 className="text-sm font-black text-slate-900 capitalize tracking-tight">{record.paymentMethod}</h3>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{formatDate(record.timestamp)}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xl font-black text-slate-900 tracking-tight">{record.amount.toLocaleString()}</p>
+                                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${record.status.toLowerCase() === 'verified'
+                                                    ? 'bg-emerald-50 text-emerald-600'
+                                                    : 'bg-blue-50 text-blue-600'
+                                                }`}>
+                                                ETB
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                            {/* Amount */}
-                                            <div className="text-right">
-                                                <p className="text-3xl font-black text-gray-900 tracking-tighter">{record.amount.toLocaleString()}</p>
-                                                <p className="text-xs font-black text-blue-600 uppercase tracking-widest">ETB</p>
+                                    {/* Divider */}
+                                    <div className="h-px bg-slate-50 w-full mb-5"></div>
+
+                                    {/* Bottom Details (No FT Code) */}
+                                    <div className="flex items-end justify-between">
+                                        <div className="space-y-3">
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Bank Name</span>
+                                                <span className="text-xs font-bold text-slate-700 truncate max-w-[140px]">{record.bankName}</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Account Holder</span>
+                                                <span className="text-xs font-bold text-slate-700 truncate max-w-[140px]">{record.accountHolderName}</span>
                                             </div>
                                         </div>
 
-                                        {/* Details Grid */}
-                                        <div className="relative z-10 grid grid-cols-2 gap-4 pt-5 border-t-2 border-gray-100">
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-2 text-gray-500">
-                                                    <Hash size={14} className="text-blue-500" />
-                                                    <p className="text-[10px] font-black uppercase tracking-widest">FT Code</p>
-                                                </div>
-                                                <p className="text-sm font-black text-gray-900 truncate">{record.FTcode}</p>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-2 text-gray-500">
-                                                    <CreditCard size={14} className="text-purple-500" />
-                                                    <p className="text-[10px] font-black uppercase tracking-widest">Method</p>
-                                                </div>
-                                                <p className="text-sm font-black text-gray-900 capitalize">{record.paymentMethod}</p>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-2 text-gray-500">
-                                                    <Building2 size={14} className="text-emerald-500" />
-                                                    <p className="text-[10px] font-black uppercase tracking-widest">Bank</p>
-                                                </div>
-                                                <p className="text-sm font-black text-gray-900 truncate">{record.bankName}</p>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <div className="flex items-center gap-2 text-gray-500">
-                                                    <UserIcon size={14} className="text-orange-500" />
-                                                    <p className="text-[10px] font-black uppercase tracking-widest">Account</p>
-                                                </div>
-                                                <p className="text-sm font-black text-gray-900 truncate">{record.accountHolderName}</p>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <div className={`flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-xl border ${record.status.toLowerCase() === 'verified'
+                                                    ? 'bg-emerald-50/50 border-emerald-100 text-emerald-600'
+                                                    : 'bg-blue-50/50 border-blue-100 text-blue-600'
+                                                }`}>
+                                                <span className="text-[9px] font-black uppercase tracking-widest">{statusConfig.label}</span>
+                                                <StatusIcon size={12} />
                                             </div>
                                         </div>
-
-                                        {/* Verified At */}
-                                        {record.verifiedAt && (
-                                            <div className="relative z-10 mt-5 pt-5 border-t-2 border-gray-100">
-                                                <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100">
-                                                    <Shield size={14} className="text-emerald-600" />
-                                                    <p className="text-xs font-bold text-emerald-600">
-                                                        Verified on {formatDate(record.verifiedAt)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             );
-                        })}
-                    </div>
-                )}
+                        })
+                    )}
+                </div>
             </main>
         </div>
     );

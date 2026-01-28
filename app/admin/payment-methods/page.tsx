@@ -258,7 +258,7 @@ export default function AdminPaymentMethods() {
                         </button>
                         <div className="flex items-center gap-2 text-indigo-600">
                             <Banknote size={20} />
-                            <h2 className="text-sm font-black uppercase tracking-widest leading-none hidden sm:block">Payment Methods</h2>
+                            <h2 className="text-sm font-bold uppercase tracking-widest leading-none hidden sm:block">Payment methods</h2>
                         </div>
                     </div>
                     <div className="w-10 h-10 p-1 rounded-full border border-indigo-100 overflow-hidden">
@@ -268,7 +268,7 @@ export default function AdminPaymentMethods() {
 
                 <main className="p-6 md:p-10 max-w-7xl mx-auto w-full">
                     <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
-                        <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Payment Gateways ✨</h1>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">Payment Gateways ✨</h1>
                         <p className="text-gray-500 font-medium">Add and manage collection bank accounts for user recharges.</p>
                     </div>
 
@@ -287,7 +287,7 @@ export default function AdminPaymentMethods() {
                                     <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
                                         <Plus size={20} className={editingId ? "rotate-45" : ""} />
                                     </div>
-                                    {editingId ? "Edit Payment Method" : "Add New Bank"}
+                                    {editingId ? "Edit payment method" : "Add new bank"}
                                 </h3>
 
                                 <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
@@ -318,7 +318,7 @@ export default function AdminPaymentMethods() {
                                                         <div className="p-3 bg-slate-50 rounded-2xl text-slate-400 group-hover:text-indigo-600 transition-all">
                                                             <UploadCloud size={24} />
                                                         </div>
-                                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Select Logo</span>
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select logo</span>
                                                     </>
                                                 )}
                                                 <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, "method")} className="hidden" />
@@ -417,13 +417,9 @@ export default function AdminPaymentMethods() {
                                                         onChange={(e) => setFormData({ ...formData, bankDetailType: e.target.value })}
                                                         className="w-full py-4 pl-12 pr-10 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-600/50 outline-none transition-all appearance-none font-bold text-gray-900"
                                                     >
-                                                        <option value="">Select a Theme...</option>
-                                                        <option value="regular">Regular Theme</option>
-                                                        <option value="premium">Premium (Gold/VIP)</option>
-                                                        <option value="digital">Digital (Cyberpunk)</option>
-                                                        <option value="express">Express (Minimalist)</option>
-                                                        <option value="smart">Smart (Glassmorphism)</option>
-                                                        <option value="secure">Secure (Trust)</option>
+                                                        <option value="">Select a theme...</option>
+                                                        <option value="regular">Regular theme</option>
+                                                        <option value="express">Express theme</option>
                                                     </select>
                                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
                                                 </div>
@@ -466,8 +462,8 @@ export default function AdminPaymentMethods() {
                             <div className="flex items-center justify-between px-4">
                                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-indigo-600" />
-                                    Active Accounts
-                                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-black">{paymentMethods.length}</span>
+                                    Active accounts
+                                    <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-bold">{paymentMethods.length}</span>
                                 </h3>
                             </div>
 

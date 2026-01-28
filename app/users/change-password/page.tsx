@@ -101,109 +101,109 @@ export default function ChangePasswordPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-[#D4AF37]/30 pb-32">
+        <div className="min-h-screen bg-[#050510] text-white font-sans selection:bg-indigo-500/30 pb-32">
             {/* Background Atmosphere */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-full h-[40%] bg-gradient-to-b from-[#D4AF37]/5 to-transparent"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.02),transparent_70%)]"></div>
+                <div className="absolute top-0 right-0 w-full h-[40%] bg-gradient-to-b from-indigo-500/10 to-transparent"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.05),transparent_70%)]"></div>
             </div>
 
             {/* Success Overlay */}
             {success && (
                 <div className="absolute inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-6 animate-in fade-in duration-500">
-                    <div className="w-full max-w-sm bg-[#0F0F0F] rounded-[3rem] p-10 shadow-2xl border border-[#D4AF37]/20 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-2 bg-[#D4AF37]"></div>
+                    <div className="w-full max-w-sm bg-[#0A0A15] rounded-[2.5rem] p-10 shadow-2xl border border-indigo-500/20 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-2 bg-indigo-500"></div>
 
                         {/* Success Icon */}
-                        <div className="w-24 h-24 rounded-full bg-[#D4AF37]/10 flex items-center justify-center relative">
-                            <div className="absolute inset-0 bg-[#D4AF37] rounded-full blur-2xl opacity-20 animate-pulse"></div>
-                            <div className="w-20 h-20 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-lg relative z-10">
-                                <Shield className="text-black" size={40} />
+                        <div className="w-24 h-24 rounded-full bg-indigo-500/10 flex items-center justify-center relative">
+                            <div className="absolute inset-0 bg-indigo-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                            <div className="w-20 h-20 rounded-full bg-indigo-500 flex items-center justify-center shadow-lg relative z-10">
+                                <Shield className="text-white" size={40} />
                             </div>
-                            <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-emerald-500 border-4 border-[#0F0F0F] flex items-center justify-center shadow-md">
+                            <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-emerald-500 border-4 border-[#0A0A15] flex items-center justify-center shadow-md">
                                 <CheckCircle2 size={20} className="text-white" />
                             </div>
                         </div>
 
                         <div className="space-y-3">
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">Security Active!</h2>
-                            <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em]">Protocol Updated</p>
+                            <h2 className="text-3xl font-bold text-white tracking-tight">Security Updated</h2>
+                            <p className="text-xs font-semibold text-indigo-400 tracking-wide">Protocol Secure</p>
                         </div>
 
-                        <p className="text-[11px] text-white/40 leading-relaxed font-medium uppercase tracking-wider">
+                        <p className="text-sm text-white/50 leading-relaxed font-medium">
                             Your account is now protected with your new password. Returning to profile in a moment...
                         </p>
 
                         <div className="pt-4 flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce [animation-delay:-0.3s]"></div>
-                            <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce [animation-delay:-0.15s]"></div>
-                            <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce"></div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.3s]"></div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.15s]"></div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-bounce"></div>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Premium Header */}
-            <header className="sticky top-0 z-[60] bg-black/90 backdrop-blur-2xl border-b border-white/5 px-6 h-28 flex items-center justify-between max-w-lg mx-auto shadow-2xl">
-                <div className="flex items-center gap-6">
+            <header className="sticky top-0 z-[60] bg-[#050510]/90 backdrop-blur-2xl border-b border-indigo-500/10 px-6 h-24 flex items-center justify-between max-w-lg mx-auto shadow-2xl">
+                <div className="flex items-center gap-5">
                     <button
                         onClick={() => router.back()}
-                        className="w-12 h-12 rounded-2xl bg-[#D4AF37]/5 border border-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-all active:scale-90"
+                        className="w-12 h-12 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex items-center justify-center text-indigo-400 hover:bg-indigo-500/10 transition-all active:scale-90"
                     >
-                        <ChevronLeft size={26} strokeWidth={3} />
+                        <ChevronLeft size={24} strokeWidth={2.5} />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-black text-white tracking-tighter uppercase italic leading-none">Access Control</h1>
+                        <h1 className="text-xl font-bold text-white tracking-tight leading-none">Security Center</h1>
                         <div className="flex items-center gap-2 mt-2">
-                            <Shield className="text-[#D4AF37]" size={12} />
-                            <span className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em]">Security Node</span>
+                            <Shield className="text-indigo-400" size={12} />
+                            <span className="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">Access Control</span>
                         </div>
                     </div>
                 </div>
-                <div className="w-14 h-14 flex items-center justify-center rounded-[2rem] bg-gradient-to-br from-[#D4AF37]/20 to-transparent text-[#D4AF37] border border-[#D4AF37]/30 shadow-2xl">
-                    <Lock size={26} strokeWidth={2.5} />
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-xl">
+                    <Lock size={22} strokeWidth={2} />
                 </div>
             </header>
 
             <main className="px-6 py-10 max-w-lg mx-auto relative z-10">
                 {/* Info Card */}
-                <div className="mb-12 group relative bg-[#0F0F0F] p-8 rounded-[3rem] border border-[#D4AF37]/20 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-1000">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                    <div className="flex items-start gap-6 relative z-10">
-                        <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] flex-shrink-0 border border-[#D4AF37]/20">
-                            <Shield size={26} strokeWidth={2.5} />
+                <div className="mb-10 group relative bg-[#0A0A1F] p-7 rounded-[2.5rem] border border-indigo-500/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-1000">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                    <div className="flex items-start gap-5 relative z-10">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0 border border-indigo-500/20">
+                            <Shield size={24} strokeWidth={2} />
                         </div>
-                        <div>
-                            <h3 className="text-[11px] font-black text-[#D4AF37] uppercase tracking-[0.4em] mb-2 leading-none">Security Protocol</h3>
-                            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] leading-relaxed font-black italic">
-                                Choose a strong password with at least 6 characters. Never share your password with anyone.
+                        <div className="space-y-1">
+                            <h3 className="text-xs font-bold text-indigo-400 tracking-wider">Security Protocol</h3>
+                            <p className="text-[11px] text-white/40 leading-relaxed font-medium">
+                                Choose a strong password with at least 6 characters. Avoid using names or birthdays.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Password Change Form */}
-                <form onSubmit={handleChangePassword} className="space-y-10">
+                <form onSubmit={handleChangePassword} className="space-y-8">
                     {/* Current Password */}
-                    <div className="space-y-4">
-                        <label className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em] pl-4">
-                            Current Cipher Key
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-indigo-400/60 tracking-wider pl-2">
+                            Current Password
                         </label>
                         <div className="relative group/input">
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#D4AF37]/30 transition-colors group-focus-within/input:text-[#D4AF37]">
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 transition-colors group-focus-within/input:text-indigo-400">
                                 <Lock size={20} />
                             </div>
                             <input
                                 type={showCurrentPassword ? "text" : "password"}
                                 value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className="w-full h-16 pl-16 pr-16 rounded-[2rem] bg-[#0A0A0A] border-2 border-white/5 focus:border-[#D4AF37]/30 focus:outline-none text-white font-mono tracking-widest transition-all shadow-inner"
+                                placeholder="Enter current password"
+                                className="w-full h-16 pl-14 pr-14 rounded-2xl bg-[#0A0A15] border border-white/5 focus:border-indigo-500/40 focus:bg-[#0A0A20] focus:outline-none text-white transition-all shadow-inner placeholder:text-white/10"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-[#D4AF37] transition-colors"
+                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-indigo-400 transition-colors"
                             >
                                 {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
@@ -211,25 +211,25 @@ export default function ChangePasswordPage() {
                     </div>
 
                     {/* New Password */}
-                    <div className="space-y-4">
-                        <label className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em] pl-4">
-                            New Cipher Key
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-indigo-400/60 tracking-wider pl-2">
+                            New Password
                         </label>
                         <div className="relative group/input">
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#D4AF37]/30 transition-colors group-focus-within/input:text-[#D4AF37]">
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 transition-colors group-focus-within/input:text-indigo-400">
                                 <Lock size={20} />
                             </div>
                             <input
                                 type={showNewPassword ? "text" : "password"}
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className="w-full h-16 pl-16 pr-16 rounded-[2rem] bg-[#0A0A0A] border-2 border-white/5 focus:border-[#D4AF37]/30 focus:outline-none text-white font-mono tracking-widest transition-all shadow-inner"
+                                placeholder="Enter new password"
+                                className="w-full h-16 pl-14 pr-14 rounded-2xl bg-[#0A0A15] border border-white/5 focus:border-indigo-500/40 focus:bg-[#0A0A20] focus:outline-none text-white transition-all shadow-inner placeholder:text-white/10"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowNewPassword(!showNewPassword)}
-                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-[#D4AF37] transition-colors"
+                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-indigo-400 transition-colors"
                             >
                                 {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
@@ -237,25 +237,25 @@ export default function ChangePasswordPage() {
                     </div>
 
                     {/* Confirm New Password */}
-                    <div className="space-y-4">
-                        <label className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em] pl-4">
-                            Re-verify New Cipher
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-indigo-400/60 tracking-wider pl-2">
+                            Confirm New Password
                         </label>
                         <div className="relative group/input">
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#D4AF37]/30 transition-colors group-focus-within/input:text-[#D4AF37]">
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 transition-colors group-focus-within/input:text-indigo-400">
                                 <Lock size={20} />
                             </div>
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className="w-full h-16 pl-16 pr-16 rounded-[2rem] bg-[#0A0A0A] border-2 border-white/5 focus:border-[#D4AF37]/30 focus:outline-none text-white font-mono tracking-widest transition-all shadow-inner"
+                                placeholder="Confirm new password"
+                                className="w-full h-16 pl-14 pr-14 rounded-2xl bg-[#0A0A15] border border-white/5 focus:border-indigo-500/40 focus:bg-[#0A0A20] focus:outline-none text-white transition-all shadow-inner placeholder:text-white/10"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-[#D4AF37] transition-colors"
+                                className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-indigo-400 transition-colors"
                             >
                                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
@@ -263,20 +263,20 @@ export default function ChangePasswordPage() {
                     </div>
 
                     {/* Password Requirements */}
-                    <div className="bg-[#0A0A0A] rounded-[2rem] p-7 border border-white/5 shadow-inner">
-                        <p className="text-[9px] font-black text-white/20 mb-4 uppercase tracking-[0.4em] italic">System Compliance Matrix:</p>
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className={`flex items-center gap-3 transition-colors ${newPassword.length >= 6 ? 'text-[#D4AF37]' : 'text-white/10'}`}>
-                                <CheckCircle2 size={16} strokeWidth={3} />
-                                <span className="text-[10px] font-black uppercase tracking-widest italic">Length Protocol (6+)</span>
+                    <div className="bg-[#0A0A1A] rounded-2xl p-6 border border-indigo-500/5 shadow-inner">
+                        <p className="text-[10px] font-bold text-white/20 mb-4 uppercase tracking-widest">Complexity Requirements:</p>
+                        <div className="grid grid-cols-1 gap-3">
+                            <div className={`flex items-center gap-3 transition-colors ${newPassword.length >= 6 ? 'text-indigo-400' : 'text-white/10'}`}>
+                                <CheckCircle2 size={16} strokeWidth={2.5} />
+                                <span className="text-[11px] font-semibold tracking-tight">Minimum 6 characters</span>
                             </div>
-                            <div className={`flex items-center gap-3 transition-colors ${newPassword && confirmPassword && newPassword === confirmPassword ? 'text-[#D4AF37]' : 'text-white/10'}`}>
-                                <CheckCircle2 size={16} strokeWidth={3} />
-                                <span className="text-[10px] font-black uppercase tracking-widest italic">Hash Match Verified</span>
+                            <div className={`flex items-center gap-3 transition-colors ${newPassword && confirmPassword && newPassword === confirmPassword ? 'text-indigo-400' : 'text-white/10'}`}>
+                                <CheckCircle2 size={16} strokeWidth={2.5} />
+                                <span className="text-[11px] font-semibold tracking-tight">Passwords match</span>
                             </div>
-                            <div className={`flex items-center gap-3 transition-colors ${newPassword && currentPassword && newPassword !== currentPassword ? 'text-[#D4AF37]' : 'text-white/10'}`}>
-                                <CheckCircle2 size={16} strokeWidth={3} />
-                                <span className="text-[10px] font-black uppercase tracking-widest italic">Unique Entropy Status</span>
+                            <div className={`flex items-center gap-3 transition-colors ${newPassword && currentPassword && newPassword !== currentPassword ? 'text-indigo-400' : 'text-white/10'}`}>
+                                <CheckCircle2 size={16} strokeWidth={2.5} />
+                                <span className="text-[11px] font-semibold tracking-tight">New password is unique</span>
                             </div>
                         </div>
                     </div>
@@ -285,17 +285,17 @@ export default function ChangePasswordPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-20 bg-[#D4AF37] hover:bg-[#B8860B] text-black font-black rounded-[2.5rem] uppercase tracking-[0.3em] transition-all disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_20px_50px_rgba(212,175,55,0.25)] flex items-center justify-center gap-4 group italic"
+                        className="w-full h-16 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl tracking-wide transition-all disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_15px_30px_rgba(79,70,229,0.3)] flex items-center justify-center gap-3 group active:scale-[0.98]"
                     >
                         {loading ? (
                             <>
-                                <div className="w-6 h-6 border-4 border-black/30 border-t-black rounded-full animate-spin"></div>
-                                <span className="animate-pulse">Rewriting Cipher...</span>
+                                <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                <span className="animate-pulse">Updating...</span>
                             </>
                         ) : (
                             <>
-                                <Shield size={24} strokeWidth={3} />
-                                <span>Execute Protocol</span>
+                                <Lock size={20} strokeWidth={2.5} />
+                                <span>Change Password</span>
                             </>
                         )}
                     </button>

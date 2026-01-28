@@ -57,14 +57,14 @@ function BankDetailContent() {
                 >
                     <ChevronLeft size={20} />
                 </button>
-                <h1 className="text-lg font-black tracking-tight uppercase">Recharge</h1>
+                <h1 className="text-lg font-bold tracking-tight">Deposit</h1>
                 <div className="w-10" />
             </header>
 
             <main className="pt-28 px-6 max-w-lg mx-auto space-y-10">
                 {/* Amount Highlight */}
                 <div className="text-center space-y-2 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">The amount</p>
+                    <p className="text-[10px] font-bold text-slate-400 tracking-widest">Deposit amount</p>
                     <div className="flex items-center justify-center gap-3">
                         <span className="text-6xl font-black text-indigo-600 tracking-tighter">
                             {Number(amount).toLocaleString()}
@@ -75,20 +75,20 @@ function BankDetailContent() {
 
                 {/* Order Summary Card */}
                 <div className="bg-slate-50/50 border border-slate-100 rounded-[2.5rem] p-8 flex items-center justify-between shadow-sm animate-in zoom-in-95 duration-500">
-                    <span className="text-sm font-bold text-slate-500">Order Amount</span>
-                    <span className="text-lg font-black text-indigo-600">ETB {Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="text-sm font-bold text-slate-500">Amount</span>
+                    <span className="text-lg font-bold text-indigo-600">Etb {Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>
 
                 {/* Bank Selection Display */}
                 <div className="space-y-6">
-                    <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest leading-none px-1">Please choose payment</h2>
+                    <h2 className="text-sm font-bold text-slate-900 tracking-widest leading-none px-1">Please choose payment</h2>
 
                     <button
                         onClick={() => {
                             if (methodId) {
                                 // Default to 'regular' if no type is specified or if it's invalid
                                 const theme = method?.bankDetailType || "regular";
-                                const validThemes = ["regular", "premium", "digital", "express", "smart", "secure"];
+                                const validThemes = ["regular", "express"];
                                 const targetTheme = validThemes.includes(theme.toLowerCase()) ? theme.toLowerCase() : "regular";
 
                                 router.push(`/users/bank-detail/${targetTheme}?amount=${amount}&methodId=${methodId}`);
@@ -104,7 +104,7 @@ function BankDetailContent() {
                                 )}
                             </div>
                             <span className="text-sm font-black text-slate-800 text-left leading-tight">
-                                {method?.bankName || "Select a Payment Method"}
+                                {method?.bankName || "Select bank"}
                             </span>
                         </div>
                         <ChevronRight size={20} className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />

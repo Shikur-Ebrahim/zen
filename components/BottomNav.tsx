@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Home, Ship, Users, Wallet, Shield } from "lucide-react";
+import { Home, Ship, Users, Shield } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
 import { syncDailyIncome } from "@/lib/sync";
 import { auth } from "@/lib/firebase";
@@ -40,8 +40,6 @@ function BottomNavContent() {
             setActiveTab("me");
         } else if (pathname.includes("/users/team")) {
             setActiveTab("team");
-        } else if (pathname === "/users/wallet") {
-            setActiveTab("wallet");
         }
     }, [pathname, searchParams, mounted]);
 
@@ -51,7 +49,6 @@ function BottomNavContent() {
 
     const navItems = [
         { id: "home", icon: Home, label: "HOME", path: "/users/welcome?tab=home" },
-        { id: "wallet", icon: Wallet, label: "WALLETS", path: "/users/wallet" },
         { id: "product", icon: Ship, label: "PRODUCTS", path: "/users/product" },
         { id: "team", icon: Users, label: "TEAMS", path: "/users/team" },
         { id: "me", icon: Shield, label: "PROFILE", path: "/users/profile" },

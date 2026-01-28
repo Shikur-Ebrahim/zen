@@ -123,31 +123,30 @@ export default function UserBankPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-slate-800 animate-spin" />
+            <div className="min-h-screen bg-[#7B3F00] flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-[#F5E6D3] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#F8F9FB] text-slate-900 font-sans selection:bg-indigo-100">
+        <div className="min-h-screen bg-[#7B3F00] text-[#F5E6D3] font-sans selection:bg-[#D4AF37]/30">
             {/* Dynamic Background Effects */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-100/60 blur-[100px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-blue-100/60 blur-[80px] rounded-full"></div>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.4] mix-blend-multiply"></div>
+                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-[#F5E6D3]/5 blur-[100px] rounded-full"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-[#1A0F00]/40 blur-[80px] rounded-full"></div>
             </div>
 
             <div className="relative z-10 max-w-lg mx-auto min-h-screen flex flex-col">
                 {/* Header */}
-                <header className="px-6 pt-12 pb-6 flex items-center gap-4 sticky top-0 bg-[#F8F9FB]/80 backdrop-blur-xl z-50">
+                <header className="px-6 pt-12 pb-6 flex items-center gap-4 sticky top-0 bg-[#7B3F00]/80 backdrop-blur-xl z-50 transition-colors">
                     <button
                         onClick={() => view === "connect" ? setView("list") : router.back()}
-                        className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center hover:bg-slate-50 transition-all text-slate-700 active:scale-95"
+                        className="w-11 h-11 rounded-2xl bg-[#1A0F00]/40 border border-[#F5E6D3]/10 shadow-sm flex items-center justify-center hover:bg-[#1A0F00]/60 transition-all text-[#F5E6D3] active:scale-90"
                     >
                         <ChevronLeft size={22} />
                     </button>
-                    <h1 className="text-lg font-black tracking-wider uppercase text-slate-900">
+                    <h1 className="text-xl font-bold tracking-tight text-[#F5E6D3]">
                         {view === "list" ? "My Bank Accounts" : "Connect Account"}
                     </h1>
                 </header>
@@ -156,162 +155,157 @@ export default function UserBankPage() {
                     {view === "list" ? (
                         linkedBank ? (
                             /* Linked State */
-                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                                 <div className="flex items-center justify-between px-1">
-                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Verified Accounts (1)</h3>
+                                    <h3 className="text-xs font-bold text-[#F5E6D3]/30 tracking-wider">Verified Accounts (1)</h3>
                                     <button
                                         onClick={() => setView("connect")}
-                                        className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1.5 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full"
+                                        className="text-xs font-bold text-[#D4AF37] hover:text-[#F5E6D3] flex items-center gap-2 transition-all bg-[#1A0F00]/40 px-4 py-2 rounded-2xl border border-[#D4AF37]/20"
                                     >
-                                        <Plus size={12} /> Add Bank
+                                        <Plus size={14} /> Add Bank
                                     </button>
                                 </div>
 
-                                {/* Premium Bank Card - Light Theme */}
+                                {/* Premium Bank Card */}
                                 <div className="relative group">
-                                    <div className="absolute -inset-1.5 bg-gradient-to-br from-slate-200 to-slate-100 rounded-[2.5rem] blur opacity-60 group-hover:opacity-100 transition-opacity"></div>
-                                    <div className="relative bg-white border border-white/50 rounded-[2.5rem] p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] overflow-hidden">
-                                        {/* Abstract Card Texture */}
-                                        <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-80"></div>
+                                    <div className="absolute -inset-1 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-[2.5rem] blur opacity-40 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="relative bg-[#1A0F00]/60 border border-[#F5E6D3]/10 rounded-[2.5rem] p-8 shadow-2xl overflow-hidden backdrop-blur-3xl">
+                                        <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 opacity-50"></div>
 
-                                        <div className="flex items-start gap-5 mb-8">
-                                            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center p-3 shadow-lg shadow-slate-200/50">
+                                        <div className="flex items-start gap-6 mb-8">
+                                            <div className="w-16 h-16 rounded-2xl bg-[#000000] border border-[#F5E6D3]/10 flex items-center justify-center p-3 shadow-xl">
                                                 {linkedBank.bankLogoUrl ? (
-                                                    <img src={linkedBank.bankLogoUrl} className="w-full h-full object-contain" alt="Bank" />
+                                                    <img src={linkedBank.bankLogoUrl} className="w-full h-full object-contain brightness-110" alt="Bank" />
                                                 ) : (
-                                                    <Building2 className="text-slate-400" size={30} />
+                                                    <Building2 className="text-[#F5E6D3]/20" size={30} />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="text-xl font-black tracking-tight leading-tight text-slate-900 mb-1.5 truncate">{linkedBank.bankName}</h4>
+                                                <h4 className="text-2xl font-bold tracking-tight text-[#F5E6D3] mb-2 truncate">{linkedBank.bankName}</h4>
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse"></div>
-                                                    <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active Connection</span>
+                                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse"></div>
+                                                    <span className="text-xs font-medium text-emerald-400 tracking-wide">Active Connection</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-y-8 bg-slate-50/50 rounded-3xl p-6 border border-slate-100">
-                                            <div className="space-y-1">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Account Number</p>
-                                                <p className="text-lg font-black tracking-[0.1em] text-slate-800 font-mono">
+                                        <div className="grid grid-cols-2 gap-y-10 bg-[#000000]/40 rounded-3xl p-6 border border-white/5">
+                                            <div className="space-y-1.5">
+                                                <p className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase tracking-widest">Account Number</p>
+                                                <p className="text-xl font-bold tracking-wider text-[#F5E6D3] font-mono">
                                                     {linkedBank.accountNumber}
                                                 </p>
                                             </div>
-                                            <div className="space-y-1 text-right">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Account Type</p>
-                                                <p className="text-sm font-black uppercase tracking-widest text-slate-700">Personal</p>
+                                            <div className="space-y-1.5 text-right">
+                                                <p className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase tracking-widest">Type</p>
+                                                <p className="text-sm font-bold text-[#F5E6D3]/80">Personal Account</p>
                                             </div>
-                                            <div className="space-y-1">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Holder Name</p>
-                                                <p className="text-sm font-black uppercase tracking-widest text-slate-800 truncate">{linkedBank.holderName}</p>
+                                            <div className="space-y-1.5">
+                                                <p className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase tracking-widest">Holder Name</p>
+                                                <p className="text-sm font-bold text-[#F5E6D3] truncate">{linkedBank.holderName}</p>
                                             </div>
-                                            <div className="space-y-1 text-right">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</p>
-                                                <div className="flex items-center justify-end gap-1.5">
-                                                    <ShieldCheck size={12} className="text-emerald-500" />
-                                                    <p className="text-xs font-black text-indigo-900 uppercase tracking-widest">Verified</p>
+                                            <div className="space-y-1.5 text-right">
+                                                <p className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase tracking-widest">Status</p>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <ShieldCheck size={14} className="text-emerald-500" />
+                                                    <p className="text-xs font-bold text-emerald-400">Verified</p>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         ) : (
-                            /* Empty State - Light Theme */
-                            <div className="h-full flex flex-col items-center justify-center py-12 text-center space-y-8 animate-in zoom-in-95 duration-700">
+                            /* Empty State */
+                            <div className="h-full flex flex-col items-center justify-center py-16 text-center space-y-10 animate-in zoom-in-95 duration-1000">
                                 <div className="relative group p-10">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-full blur-[40px] opacity-80 group-hover:scale-110 transition-transform duration-700"></div>
-                                    <div className="relative w-48 h-48 bg-white rounded-[3rem] border border-slate-100 flex items-center justify-center p-8 shadow-[0_20px_50px_-10px_rgba(99,102,241,0.15)] group-hover:shadow-[0_30px_60px_-10px_rgba(99,102,241,0.25)] transition-shadow duration-500">
+                                    <div className="absolute inset-0 bg-indigo-500 rounded-[3rem] blur-[60px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                                    <div className="relative w-52 h-52 bg-[#1A0F00]/40 rounded-[3.5rem] border border-[#F5E6D3]/10 flex items-center justify-center p-10 shadow-2xl backdrop-blur-xl group-hover:scale-105 transition-transform duration-500">
                                         <div className="relative">
-                                            <div className="absolute inset-0 bg-indigo-100 rounded-full blur-2xl opacity-40"></div>
-                                            <CreditCard size={72} className="text-slate-900 relative z-10 stroke-[1.5]" />
-                                            <div className="absolute -bottom-4 -right-4 bg-slate-900 p-3 rounded-2xl border-4 border-white shadow-lg">
-                                                <Plus size={20} className="text-white" />
+                                            <CreditCard size={80} className="text-[#D4AF37] relative z-10 stroke-[1.2]" />
+                                            <div className="absolute -bottom-6 -right-6 bg-[#D4AF37] p-4 rounded-3xl border-4 border-[#7B3F00] shadow-2xl">
+                                                <Plus size={24} className="text-black" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 max-w-xs mx-auto">
-                                    <h2 className="text-3xl font-black tracking-tight uppercase text-slate-900">Link Bank Account</h2>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Connect your bank account securely to enable fast withdrawals.</p>
+                                <div className="space-y-4 max-w-xs mx-auto">
+                                    <h2 className="text-4xl font-bold tracking-tight text-[#F5E6D3]">Link Bank</h2>
+                                    <p className="text-sm font-medium text-[#F5E6D3]/40 leading-relaxed">Connect your bank account securely to enable instant withdrawals.</p>
                                 </div>
 
                                 <button
                                     onClick={() => setView("connect")}
-                                    className="w-full max-w-xs py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-3xl text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-3"
+                                    className="w-full max-w-xs py-6 bg-[#D4AF37] hover:bg-[#F5E6D3] text-black rounded-3xl text-sm font-bold tracking-widest shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3"
                                 >
-                                    <ShieldCheck size={18} className="text-slate-400" />
-                                    Connect Now
+                                    <ShieldCheck size={20} />
+                                    <span>Connect Now</span>
                                 </button>
                             </div>
                         )
                     ) : view === "notification" ? (
-                        /* Warning Notification State */
-                        <div className="h-full flex flex-col items-center justify-center py-12 text-center space-y-8 animate-in zoom-in-95 duration-500">
-                            <div className="p-8 rounded-full bg-red-50 border border-red-100 shadow-[0_10px_30px_-10px_rgba(239,68,68,0.2)]">
-                                <ShieldCheck size={48} className="text-red-500" />
+                        /* Already Connected Warning */
+                        <div className="h-full flex flex-col items-center justify-center py-16 text-center space-y-10 animate-in zoom-in-95 duration-700">
+                            <div className="p-10 rounded-full bg-red-500/10 border border-red-500/20 shadow-2xl">
+                                <ShieldCheck size={56} className="text-red-500" />
                             </div>
 
-                            <div className="space-y-4 max-w-xs mx-auto">
-                                <h3 className="text-2xl font-black uppercase text-slate-900 leading-none">Already Connected</h3>
-                                <p className="text-xs font-bold text-slate-500 leading-relaxed uppercase tracking-wider">
-                                    Thise bank already connected befor. If you want to unliked and connect other account just conmucated Zen Team with telegram section.
+                            <div className="space-y-6 max-w-xs mx-auto px-4">
+                                <h3 className="text-3xl font-bold text-white tracking-tight">Already Connected</h3>
+                                <p className="text-sm font-medium text-gray-400 leading-relaxed">
+                                    This bank account is already linked. To connect a different account, please contact our support team on Telegram.
                                 </p>
                             </div>
 
                             <button
                                 onClick={() => router.push("/users/service")}
-                                className="w-full max-w-xs py-5 bg-red-500 text-white rounded-3xl text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-red-500/20 active:scale-95 transition-all hover:bg-red-600"
+                                className="w-full max-w-xs py-6 bg-red-500 text-white rounded-3xl text-sm font-bold uppercase tracking-widest shadow-xl shadow-red-500/20 active:scale-95 transition-all hover:bg-red-600"
                             >
-                                OK
+                                Contact Support
                             </button>
                         </div>
                     ) : (
-                        /* Connect Form State - Light Theme */
-                        <div className="space-y-10 animate-in fade-in slide-in-from-top-4 duration-500 max-w-sm mx-auto w-full">
-                            <div className="text-center space-y-2 pb-4">
-                                <div className="inline-flex items-center justify-center w-14 h-14 rounded-[1.5rem] bg-indigo-50 text-indigo-600 mb-4 shadow-sm border border-indigo-100">
-                                    <Lock size={24} />
+                        /* Connect Form State */
+                        <div className="space-y-12 animate-in fade-in slide-in-from-top-4 duration-700 max-w-sm mx-auto w-full pt-4">
+                            <div className="text-center space-y-4">
+                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-[2rem] bg-[#1A0F00]/60 text-[#D4AF37] border border-[#F5E6D3]/10 shadow-2xl backdrop-blur-xl">
+                                    <Lock size={28} />
                                 </div>
-                                <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">Secure Link</h2>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Encrypted Banking Gateway</p>
+                                <div className="space-y-1">
+                                    <h2 className="text-4xl font-bold tracking-tight">Secure Link</h2>
+                                    <p className="text-[11px] font-bold text-[#F5E6D3]/20 uppercase tracking-[0.4em]">Encrypted Banking Gateway</p>
+                                </div>
                             </div>
 
-                            <form onSubmit={handleConnect} className="space-y-6">
-                                <div className="space-y-5">
-                                    {/* Bank Selector - Custom Dropdown */}
-                                    <div className="space-y-2.5 relative">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Select Partner Bank</label>
-
+                            <form onSubmit={handleConnect} className="space-y-8">
+                                <div className="space-y-6">
+                                    {/* Bank Selector */}
+                                    <div className="space-y-3 relative">
+                                        <label className="text-xs font-bold text-[#F5E6D3]/30 tracking-wide ml-2">Select Partner Bank</label>
                                         <div
                                             onClick={() => setShowBankDropdown(!showBankDropdown)}
-                                            className="relative w-full h-[4.5rem] rounded-[2rem] bg-white border border-slate-100 hover:border-slate-300 transition-all shadow-sm cursor-pointer flex items-center px-6 gap-4 group"
+                                            className="relative w-full h-[5rem] rounded-3xl bg-[#1A0F00]/60 border border-white/5 hover:border-[#F5E6D3]/20 transition-all shadow-2xl cursor-pointer flex items-center px-6 gap-5 group backdrop-blur-xl"
                                         >
-                                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-slate-900 transition-colors">
+                                            <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center text-[#F5E6D3]/20 group-hover:text-[#F5E6D3] transition-all border border-white/5">
                                                 {formData.bankLogoUrl ? (
-                                                    <img src={formData.bankLogoUrl} className="w-full h-full object-contain p-2" alt="Selected" />
+                                                    <img src={formData.bankLogoUrl} className="w-full h-full object-contain p-2 brightness-110" alt="Selected" />
                                                 ) : (
-                                                    <Building2 size={20} />
+                                                    <Building2 size={24} />
                                                 )}
                                             </div>
-
                                             <div className="flex-1">
                                                 {formData.bankName ? (
-                                                    <p className="font-black text-sm text-slate-800 uppercase tracking-wider">{formData.bankName}</p>
+                                                    <p className="font-bold text-base text-white">{formData.bankName}</p>
                                                 ) : (
-                                                    <p className="font-bold text-sm text-slate-300 uppercase tracking-wider">Choose Supported Bank</p>
+                                                    <p className="font-medium text-base text-[#F5E6D3]/20">Choose Supported Bank</p>
                                                 )}
                                             </div>
-
-                                            <ChevronDown className={`text-slate-300 transition-transform duration-300 ${showBankDropdown ? "rotate-180" : ""}`} size={20} />
+                                            <ChevronDown className={`text-[#F5E6D3]/40 transition-transform duration-500 ${showBankDropdown ? "rotate-180" : ""}`} size={20} />
                                         </div>
 
-                                        {/* Dropdown List */}
                                         {showBankDropdown && (
-                                            <div className="absolute top-full left-0 right-0 mt-3 p-2 bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 z-50 max-h-64 overflow-y-auto custom-scrollbar animate-in slide-in-from-top-2 fade-in duration-200">
+                                            <div className="absolute top-full left-0 right-0 mt-4 p-3 bg-[#1A0F00] rounded-[2.5rem] border border-[#F5E6D3]/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] z-50 max-h-72 overflow-y-auto animate-in slide-in-from-top-4 fade-in duration-300 backdrop-blur-3xl scrollbar-hide">
                                                 {availableBanks.map((bank) => (
                                                     <button
                                                         key={bank.id}
@@ -324,20 +318,20 @@ export default function UserBankPage() {
                                                             });
                                                             setShowBankDropdown(false);
                                                         }}
-                                                        className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors group"
+                                                        className="w-full flex items-center gap-5 p-4 rounded-2xl hover:bg-white/5 transition-all group mb-1 last:mb-0"
                                                     >
-                                                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 group-hover:border-indigo-100 group-hover:bg-indigo-50/30 transition-colors">
+                                                        <div className="w-12 h-12 rounded-xl bg-black border border-white/5 flex items-center justify-center p-2 group-hover:border-[#D4AF37]/40 transition-all">
                                                             {bank.logoUrl ? (
-                                                                <img src={bank.logoUrl} className="w-full h-full object-contain" alt={bank.name} />
+                                                                <img src={bank.logoUrl} className="w-full h-full object-contain brightness-110" alt={bank.name} />
                                                             ) : (
-                                                                <Building2 size={16} className="text-slate-300" />
+                                                                <Building2 size={20} className="text-[#F5E6D3]/20" />
                                                             )}
                                                         </div>
-                                                        <span className={`text-xs font-black uppercase tracking-wider text-left ${formData.bankName === bank.name ? "text-indigo-600" : "text-slate-600"}`}>
+                                                        <span className={`text-sm font-bold text-left flex-1 ${formData.bankName === bank.name ? "text-[#D4AF37]" : "text-[#F5E6D3]/80"}`}>
                                                             {bank.name}
                                                         </span>
                                                         {formData.bankName === bank.name && (
-                                                            <div className="ml-auto w-2 h-2 rounded-full bg-indigo-500"></div>
+                                                            <div className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.4)]"></div>
                                                         )}
                                                     </button>
                                                 ))}
@@ -346,29 +340,29 @@ export default function UserBankPage() {
                                     </div>
 
                                     {/* Holder Name */}
-                                    <div className="space-y-2.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Account Holder Name</label>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-bold text-[#F5E6D3]/30 tracking-wide ml-2">Holder Name</label>
                                         <div className="relative group">
-                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 p-2 bg-slate-100 rounded-xl text-slate-400 group-focus-within:text-slate-900 group-focus-within:bg-white transition-all shadow-sm">
-                                                <User size={18} />
+                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 p-2.5 bg-black/40 rounded-2xl text-[#F5E6D3]/40 group-focus-within:text-[#D4AF37] group-focus-within:bg-black transition-all border border-white/5">
+                                                <User size={20} />
                                             </div>
                                             <input
                                                 type="text"
                                                 required
-                                                placeholder="AS PER BANK RECORDS"
+                                                placeholder="Enter full name"
                                                 value={formData.holderName}
                                                 onChange={(e) => setFormData({ ...formData, holderName: e.target.value })}
-                                                className="w-full h-[4.5rem] pl-[4.5rem] pr-6 rounded-[2rem] bg-white border border-slate-100 focus:border-slate-300 focus:ring-4 focus:ring-slate-100 outline-none font-bold text-sm text-slate-800 uppercase tracking-wider placeholder:text-slate-300 transition-all shadow-sm"
+                                                className="w-full h-[5rem] pl-[5rem] pr-6 rounded-3xl bg-[#1A0F00]/60 border border-white/5 focus:border-[#D4AF37]/30 focus:ring-4 focus:ring-[#D4AF37]/5 outline-none font-bold text-base text-white placeholder:text-[#F5E6D3]/10 transition-all backdrop-blur-xl"
                                             />
                                         </div>
                                     </div>
 
                                     {/* Account Number */}
-                                    <div className="space-y-2.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Account Number</label>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-bold text-[#F5E6D3]/30 tracking-wide ml-2">Account Number</label>
                                         <div className="relative group">
-                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 p-2 bg-slate-100 rounded-xl text-slate-400 group-focus-within:text-slate-900 group-focus-within:bg-white transition-all shadow-sm">
-                                                <Hash size={18} />
+                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 p-2.5 bg-black/40 rounded-2xl text-[#F5E6D3]/40 group-focus-within:text-[#D4AF37] group-focus-within:bg-black transition-all border border-white/5">
+                                                <Hash size={20} />
                                             </div>
                                             <input
                                                 type="text"
@@ -376,7 +370,7 @@ export default function UserBankPage() {
                                                 placeholder="0000 0000 0000"
                                                 value={formData.accountNumber}
                                                 onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                                                className="w-full h-[4.5rem] pl-[4.5rem] pr-6 rounded-[2rem] bg-white border border-slate-100 focus:border-slate-300 focus:ring-4 focus:ring-slate-100 outline-none font-bold text-sm text-slate-800 uppercase tracking-wider placeholder:text-slate-300 transition-all shadow-sm"
+                                                className="w-full h-[5rem] pl-[5rem] pr-6 rounded-3xl bg-[#1A0F00]/60 border border-white/5 focus:border-[#D4AF37]/30 focus:ring-4 focus:ring-[#D4AF37]/5 outline-none font-bold text-base text-white placeholder:text-[#F5E6D3]/10 transition-all backdrop-blur-xl"
                                             />
                                         </div>
                                     </div>
@@ -385,14 +379,14 @@ export default function UserBankPage() {
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="w-full h-[4.5rem] bg-slate-900 text-white rounded-[2rem] text-sm font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-xl shadow-slate-900/10 transition-all hover:bg-slate-800 active:scale-95 disabled:opacity-50 disabled:active:scale-100 mt-6"
+                                    className="w-full h-[5.5rem] bg-[#D4AF37] text-black rounded-3xl text-sm font-bold tracking-widest flex items-center justify-center gap-4 shadow-2xl transition-all hover:bg-white active:scale-95 disabled:opacity-50 mt-10"
                                 >
                                     {submitting ? (
-                                        <Loader2 className="animate-spin text-slate-400" size={24} />
+                                        <Loader2 className="animate-spin" size={28} />
                                     ) : (
                                         <>
                                             <span>Verify & Link</span>
-                                            <ShieldCheck size={20} className="text-emerald-400" />
+                                            <ShieldCheck size={22} className="opacity-80" />
                                         </>
                                     )}
                                 </button>
@@ -401,11 +395,11 @@ export default function UserBankPage() {
                     )}
                 </main>
 
-                {/* Footer Security Badge */}
-                <footer className="p-8 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100/50 border border-slate-200/50">
-                        <Lock size={10} className="text-slate-400" />
-                        <span className="text-[8px] font-black text-slate-400 tracking-[0.2em] uppercase">Bank Grade Security</span>
+                {/* Footer Component */}
+                <footer className="p-10 text-center relative z-10 mt-auto">
+                    <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-xl">
+                        <Lock size={12} className="text-[#D4AF37]" />
+                        <span className="text-[10px] font-bold text-[#F5E6D3]/30 tracking-widest uppercase">Secured Banking Network</span>
                     </div>
                 </footer>
             </div>

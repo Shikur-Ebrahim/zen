@@ -83,7 +83,7 @@ function PaymentMethodContent() {
                         <ChevronLeft size={24} />
                     </button>
                     <div className="flex flex-col items-center">
-                        <h1 className="text-xl font-black tracking-[0.25em] uppercase bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                        <h1 className="text-xl font-bold tracking-[0.25em] bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
                             Selection
                         </h1>
                         <div className="h-0.5 w-8 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent mt-1"></div>
@@ -100,7 +100,7 @@ function PaymentMethodContent() {
                     <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[3rem] p-10 border border-[#D4AF37]/20 shadow-2xl relative overflow-hidden text-center">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
 
-                        <p className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.4em] mb-4">Confirm Recharge Amount</p>
+                        <p className="text-[10px] font-bold text-[#D4AF37]/60 tracking-[0.4em] mb-4">Confirm recharge amount</p>
                         <div className="flex items-center justify-center gap-4">
                             <span className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_4px_20px_rgba(212,175,55,0.15)]">
                                 {Number(amount).toLocaleString()}
@@ -118,7 +118,7 @@ function PaymentMethodContent() {
                     <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-4 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
-                            <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.3em]">Gateways</h2>
+                            <h2 className="text-[10px] font-bold text-[#D4AF37]/60 tracking-[0.3em]">Gateways</h2>
                         </div>
                         <div className="px-3 py-1 bg-[#D4AF37]/10 rounded-full border border-[#D4AF37]/20">
                             <p className="text-[8px] font-black text-[#D4AF37] uppercase tracking-wider">{paymentMethods.length} Available</p>
@@ -133,8 +133,8 @@ function PaymentMethodContent() {
                                     key={method.id}
                                     onClick={() => setSelectedMethod(method.id)}
                                     className={`relative group p-1 rounded-[2.5rem] transition-all duration-500 ${isSelected
-                                            ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] shadow-[0_20px_40px_rgba(212,175,55,0.2)] scale-[1.05]"
-                                            : "bg-[#1A1A1A] border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 shadow-xl"
+                                        ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] shadow-[0_20px_40px_rgba(212,175,55,0.2)] scale-[1.05]"
+                                        : "bg-[#1A1A1A] border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 shadow-xl"
                                         }`}
                                 >
                                     <div className={`h-full rounded-[2.3rem] p-6 flex flex-col items-center justify-center gap-5 transition-all duration-500 overflow-hidden relative ${isSelected ? "bg-[#0A0A0A]" : "bg-[#1A1A1A]"
@@ -145,8 +145,8 @@ function PaymentMethodContent() {
                                         )}
 
                                         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden transition-all p-2 ${isSelected
-                                                ? "bg-white shadow-[0_0_20px_rgba(212,175,55,0.3)] scale-110"
-                                                : "bg-black/40 border border-[#D4AF37]/10"
+                                            ? "bg-white shadow-[0_0_20px_rgba(212,175,55,0.3)] scale-110"
+                                            : "bg-black/40 border border-[#D4AF37]/10"
                                             }`}>
                                             {method.logoUrl ? (
                                                 <img src={method.logoUrl} className="w-full h-full object-contain" alt={method.methodName} />
@@ -156,7 +156,7 @@ function PaymentMethodContent() {
                                         </div>
 
                                         <div className="text-center space-y-1">
-                                            <span className={`text-sm font-black transition-colors block uppercase tracking-[0.1em] ${isSelected ? "text-white" : "text-white/40"
+                                            <span className={`text-sm font-bold transition-colors block tracking-[0.1em] ${isSelected ? "text-white" : "text-white/40"
                                                 }`}>
                                                 {method.methodName}
                                             </span>
@@ -177,7 +177,7 @@ function PaymentMethodContent() {
                     {paymentMethods.length === 0 && (
                         <div className="py-24 text-center space-y-6 bg-[#1A1A1A] rounded-[3rem] border-2 border-dashed border-[#D4AF37]/10">
                             <Building2 size={40} className="mx-auto text-[#D4AF37]/20" />
-                            <p className="text-white/20 font-black uppercase tracking-[0.4em] text-[10px]">Gateways Offline</p>
+                            <p className="text-white/20 font-bold tracking-[0.4em] text-[10px]">Gateways offline</p>
                         </div>
                     )}
                 </section>
@@ -195,7 +195,7 @@ function PaymentMethodContent() {
                         className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black h-20 rounded-[2.2rem] font-black uppercase tracking-[0.35em] text-[11px] shadow-[0_20px_60px_-10px_rgba(212,175,55,0.4)] hover:shadow-[0_25px_80px_rgba(212,175,55,0.5)] active:scale-95 transition-all duration-500 overflow-hidden flex items-center justify-center gap-5 disabled:opacity-30 disabled:grayscale"
                     >
                         <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"></div>
-                        <span className="relative z-10">Proceed to Merchant</span>
+                        <span className="relative z-10">Proceed to merchant</span>
                         <ArrowRight size={20} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
                     </button>
 

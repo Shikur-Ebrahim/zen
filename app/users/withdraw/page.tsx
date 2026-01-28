@@ -200,7 +200,7 @@ export default function WithdrawalPage() {
                             </div>
 
                             <div className="space-y-3">
-                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Access Alert</h3>
+                                <h3 className="text-2xl font-bold text-white tracking-tight">Attention</h3>
                                 <p className="text-sm font-medium text-white/40 leading-relaxed px-2">
                                     {errorModal.message}
                                 </p>
@@ -208,7 +208,7 @@ export default function WithdrawalPage() {
 
                             <button
                                 onClick={() => setErrorModal(null)}
-                                className="w-full py-5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+                                className="w-full py-5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-[1.5rem] text-sm font-bold tracking-widest transition-all active:scale-95 shadow-lg"
                             >
                                 Continue
                             </button>
@@ -225,7 +225,7 @@ export default function WithdrawalPage() {
                 >
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-xl font-black tracking-[0.2em] uppercase bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
                     Withdrawal
                 </h1>
                 <div className="w-12" /> {/* Spacer */}
@@ -248,31 +248,31 @@ export default function WithdrawalPage() {
 
                         if (!isOpenToday || !isWithinHours) {
                             return (
-                                <div className="bg-[#1A1A1A] border border-amber-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
-                                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 animate-pulse">
+                                <div className="bg-[#1A1A1A] border border-red-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                    <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 animate-pulse">
                                         <Clock size={28} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] opacity-80">Withdrawals Closed</p>
-                                        <p className="text-sm font-black text-white/90 uppercase tracking-tighter">
-                                            Opens {withdrawalSettings.startTime} tomorrow
+                                        <p className="text-[10px] font-bold text-red-500 tracking-wider opacity-80">Withdrawals Closed</p>
+                                        <p className="text-sm font-bold text-white/90">
+                                            Opens at {withdrawalSettings.startTime} tomorrow
                                         </p>
                                     </div>
                                 </div>
                             );
                         }
                         return (
-                            <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
-                                <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                            <div className="bg-[#1A1A1A] border border-emerald-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                                     <CheckCircle2 size={28} />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] opacity-80">Withdrawals Active</p>
-                                    <p className="text-sm font-black text-white uppercase tracking-tighter">
-                                        Window Closes: {withdrawalSettings.endTime}
+                                    <p className="text-[10px] font-bold text-emerald-500 tracking-wider opacity-80">Withdrawals Available</p>
+                                    <p className="text-sm font-bold text-white">
+                                        Available until {withdrawalSettings.endTime}
                                     </p>
                                 </div>
-                                <div className="w-3 h-3 bg-[#D4AF37] rounded-full animate-ping opacity-30"></div>
+                                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-ping opacity-30"></div>
                             </div>
                         );
                     })()}
@@ -285,16 +285,16 @@ export default function WithdrawalPage() {
                             {/* Metallic Shine Effect */}
                             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
 
-                            <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-70">Withdrawal Amount</p>
+                            <p className="text-[#D4AF37] text-[10px] font-bold tracking-wider mb-4 opacity-70">Enter Amount</p>
                             <div className="flex items-baseline gap-4">
                                 <input
                                     type="number"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="0"
-                                    className="w-full bg-transparent text-6xl font-black text-white placeholder:text-white/5 outline-none border-none p-0 z-10 relative tabular-nums"
+                                    className="w-full bg-transparent text-6xl font-bold text-white placeholder:text-white/5 outline-none border-none p-0 z-10 relative tabular-nums"
                                 />
-                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-black uppercase tracking-widest text-base shrink-0">ETB</span>
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-bold tracking-tight text-base shrink-0">ETB</span>
                             </div>
 
                             <div className="mt-8 flex gap-1">
@@ -315,25 +315,25 @@ export default function WithdrawalPage() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover/info:bg-[#D4AF37]/10 transition-all duration-500"></div>
 
                     <div className="flex justify-between items-center p-5 rounded-[1.5rem] bg-[#0A0A0A] border border-[#D4AF37]/5 group-hover/info:border-[#D4AF37]/20 transition-all">
-                        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Balance</span>
-                        <span className="text-lg font-black text-[#D4AF37] tabular-nums">
+                        <span className="text-[10px] font-bold text-white/40 tracking-wider">Your Balance</span>
+                        <span className="text-lg font-bold text-[#D4AF37] tabular-nums">
                             {Number(userData?.balance || 0).toLocaleString()}
                         </span>
                     </div>
 
                     <div className="flex justify-between items-center px-4">
                         <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Platform Fee</span>
-                            <div className="px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-400">5%</div>
+                            <span className="text-[10px] font-bold text-white/40 tracking-wider">Service Fee</span>
+                            <div className="px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400">5%</div>
                         </div>
-                        <span className="text-xs font-black text-white/40 tabular-nums">-{fee.toLocaleString()}</span>
+                        <span className="text-xs font-bold text-white/40 tabular-nums">-{fee.toLocaleString()}</span>
                     </div>
 
                     <div className="pt-6 border-t border-[#D4AF37]/10 flex justify-between items-end">
-                        <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-1.5">You Receive</span>
+                        <span className="text-[10px] font-bold text-white tracking-widest mb-1.5">Total you get</span>
                         <div className="flex flex-col items-end">
                             <div className="flex items-center gap-2">
-                                <span className="text-4xl font-black text-white tabular-nums tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                                <span className="text-4xl font-bold text-white tabular-nums tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                                     {actualReceipt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                 </span>
                                 <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-bold text-xs">ETB</span>
@@ -346,7 +346,7 @@ export default function WithdrawalPage() {
                 <section className="space-y-5 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                     <div className="flex items-center gap-2 px-1">
                         <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
-                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Receiving Account</h2>
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 tracking-wider">Withdraw to</h2>
                     </div>
 
                     {linkedBank ? (
@@ -363,8 +363,8 @@ export default function WithdrawalPage() {
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="text-xl font-black text-white truncate tracking-tight uppercase">{linkedBank.bankName}</h4>
-                                        <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em] truncate mt-1">{linkedBank.holderName}</p>
+                                        <h4 className="text-xl font-bold text-white truncate tracking-tight">{linkedBank.bankName}</h4>
+                                        <p className="text-[10px] font-bold text-[#D4AF37] tracking-wider truncate mt-1">{linkedBank.holderName}</p>
                                     </div>
                                     <div className="text-[#D4AF37]/20 group-hover/bank:text-[#D4AF37] transition-all">
                                         <ChevronRight size={24} />
@@ -373,14 +373,14 @@ export default function WithdrawalPage() {
 
                                 <div className="pt-8 border-t border-[#D4AF37]/10 grid grid-cols-2 gap-6 relative z-10">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Account Number</p>
-                                        <p className="text-sm font-black text-white tracking-widest font-mono truncate">{linkedBank.accountNumber}</p>
+                                        <p className="text-[10px] font-bold text-white/30 tracking-wider">Account Number</p>
+                                        <p className="text-sm font-bold text-white tracking-widest font-mono truncate">{linkedBank.accountNumber}</p>
                                     </div>
                                     <div className="space-y-1 text-right">
-                                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Status</p>
+                                        <p className="text-[10px] font-bold text-white/30 tracking-wider">Account Status</p>
                                         <div className="flex items-center justify-end gap-1.5">
                                             <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
-                                            <p className="text-xs font-black text-emerald-500 uppercase tracking-tighter">Verified</p>
+                                            <p className="text-xs font-bold text-emerald-500 tracking-tight">Verified</p>
                                         </div>
                                     </div>
                                 </div>
@@ -394,7 +394,7 @@ export default function WithdrawalPage() {
                             <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-6 group-hover/add:scale-110 transition-all">
                                 <CreditCard className="text-[#D4AF37]" size={32} />
                             </div>
-                            <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-2">No Account Linked</p>
+                            <p className="text-[10px] font-bold text-[#D4AF37] tracking-widest mb-2">No bank account added</p>
                             <p className="text-sm text-white/50 font-medium tracking-tight">Tap to add your receiving bank details</p>
                         </div>
                     )}
@@ -408,25 +408,25 @@ export default function WithdrawalPage() {
                         <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
                             <AlertCircle size={22} />
                         </div>
-                        <h3 className="text-xs font-black text-[#D4AF37] uppercase tracking-[0.2em]">Settlement Policy</h3>
+                        <h3 className="text-xs font-bold text-[#D4AF37] tracking-wider">Important Rules</h3>
                     </div>
 
                     <ul className="space-y-5">
                         {[
-                            `Window: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
-                            `Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} Br per request`,
-                            `Frequency: Once every ${withdrawalSettings.frequency} day(s) (Reset at 00:00)`,
-                            "Processing: Funds typically arrive within 2-72 business hours",
-                            "Security: Account holder MUST match identity of the registered user"
+                            `Available Hours: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
+                            `Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} ETB per request`,
+                            `Frequency: Once every ${withdrawalSettings.frequency} day(s) (Reset at Midnight)`,
+                            "Processing: Funds usually arrive within 2-72 hours",
+                            "Security: Account name must match your profile name"
                         ].map((rule, i) => {
                             const [label, ...val] = rule.split(": ");
                             return (
                                 <li key={i} className="flex gap-4 items-start group/tip">
                                     <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-[#D4AF37]/20 transition-all">
-                                        <span className="text-[10px] font-black text-[#D4AF37]">{i + 1}</span>
+                                        <span className="text-[10px] font-bold text-[#D4AF37]">{i + 1}</span>
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-[11px] font-bold text-white/80 leading-relaxed group-hover/tip:text-white transition-all uppercase tracking-tighter">
+                                        <p className="text-[11px] font-bold text-white/80 leading-relaxed group-hover/tip:text-white transition-all tracking-tight">
                                             <span className="text-white/30 mr-1">{label}:</span> {val.join(": ")}
                                         </p>
                                     </div>
@@ -441,10 +441,10 @@ export default function WithdrawalPage() {
             <div className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 pb-10 border-t border-[#D4AF37]/10 shadow-[0_-20px_40px_rgba(0,0,0,0.5)] relative z-[60]">
                 <button
                     onClick={handleWithdrawClick}
-                    className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
+                    className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-bold tracking-widest text-xs shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                 >
                     <Lock size={18} className="opacity-70 group-hover:scale-110 transition-transform" />
-                    <span>Confirm Settlement</span>
+                    <span>Withdraw Now</span>
                 </button>
             </div>
         </div>

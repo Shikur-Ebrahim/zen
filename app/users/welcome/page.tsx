@@ -18,7 +18,8 @@ import {
     CheckCircle2,
     Coins,
     Star,
-    PartyPopper
+    PartyPopper,
+    ArrowLeftRight
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import VipCelebrationCard from "@/components/VipCelebrationCard";
@@ -207,10 +208,12 @@ function WelcomeContent() {
             setNotifications(notifData);
         });
 
-        // 3. Fetch all products
-        const qProducts = query(collection(db, "Products"), orderBy("createdAt", "desc"));
+        // 3. Fetch all products sorted by price ascending (smaller price at top)
+        const qProducts = query(collection(db, "Products"), orderBy("price", "asc"));
         const unsubscribeProducts = onSnapshot(qProducts, (snapshot) => {
             const productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Client-side sort to ensure correct order
+            productData.sort((a: any, b: any) => (a.price || 0) - (b.price || 0));
             setProducts(productData);
         });
 
@@ -275,34 +278,33 @@ function WelcomeContent() {
 
     if (!mounted || loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-[#020202]">
-                <Loader2 className="w-12 h-12 animate-spin text-[#D4AF37]" />
-                <p className="mt-8 text-[10px] font-black tracking-[0.4em] text-[#D4AF37]/30 uppercase italic">Initializing System...</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#7B3F00]">
+                <Loader2 className="w-12 h-12 animate-spin text-[#F5E6D3]" />
+                <p className="mt-8 text-sm font-medium tracking-wide text-[#F5E6D3]/60">Loading...</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#7B3F00] text-[#F5E6D3] pb-44 relative overflow-hidden" onClick={() => showNotifPanel && setShowNotifPanel(false)}>
+        <div className="min-h-screen bg-[#7B3F00] text-[#F5E6D3] pb-32 relative overflow-hidden" onClick={() => showNotifPanel && setShowNotifPanel(false)}>
             {/* Ambient Background Glow */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#F5E6D3]/5 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#1A0F00]/40 blur-[100px] rounded-full"></div>
             </div>
 
             {/* Premium Top Bar */}
-            <header className="fixed top-0 left-0 right-0 bg-[#7B3F00]/95 backdrop-blur-3xl z-40 px-6 py-5 flex items-center justify-between border-b border-[#F5E6D3]/10 shadow-lg">
-                <div className="flex items-center gap-4">
+            <header className="fixed top-0 left-0 right-0 bg-[#7B3F00]/95 backdrop-blur-3xl z-40 px-4 py-4 flex items-center justify-between border-b border-[#F5E6D3]/10">
+                <div className="flex items-center gap-3">
                     <motion.div
-                        initial={{ rotate: -10, scale: 0.9 }}
-                        animate={{ rotate: 0, scale: 1 }}
-                        className="w-12 h-12 relative rounded-full overflow-hidden border border-[#F5E6D3]/20 shadow-lg"
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        className="w-10 h-10 relative rounded-full overflow-hidden border border-[#F5E6D3]/20"
                     >
                         <img src="/zen-3d-logo.png" alt="Zen Logo" className="w-full h-full object-cover" />
                     </motion.div>
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-[#F5E6D3]/60 uppercase tracking-widest leading-none mb-1">Account</span>
-                        <span className="text-sm font-black text-[#F5E6D3] tracking-tight">
+                        <span className="text-[10px] font-medium text-[#F5E6D3]/40 uppercase tracking-wider">Account</span>
+                        <span className="text-sm font-bold text-[#F5E6D3]">
                             {userData?.email?.split('@')[0] || "User"}
                         </span>
                     </div>
@@ -315,30 +317,30 @@ function WelcomeContent() {
                                 setShowNotifPanel(!showNotifPanel);
                                 setHasUnread(false);
                             }}
-                            className="w-14 h-14 flex items-center justify-center rounded-[2rem] bg-[#D4AF37]/5 border border-[#D4AF37]/10 relative hover:bg-[#D4AF37]/10 transition-all active:scale-90"
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A0F00]/40 relative border border-[#F5E6D3]/10 hover:bg-[#1A0F00]/60 transition-all active:scale-95"
                         >
-                            <Bell size={26} className="text-[#D4AF37]" strokeWidth={2.5} />
+                            <Bell size={20} className="text-[#F5E6D3]" />
                             {unreadCount > 0 && (
-                                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-[#D4AF37] text-black text-[10px] font-black rounded-full border-2 border-black">
+                                <span className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 flex items-center justify-center bg-[#D4AF37] text-black text-[9px] font-bold rounded-full border-2 border-[#7B3F00]">
                                     {unreadCount > 99 ? '99+' : unreadCount}
                                 </span>
                             )}
                         </button>
 
                         {showNotifPanel && (
-                            <div className="absolute top-full right-0 mt-6 w-85 bg-[#0F0F0F] rounded-[3rem] shadow-2xl border border-[#D4AF37]/20 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden">
-                                <div className="p-4 flex items-center justify-between border-b border-white/5 mb-4">
-                                    <h4 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.4em] italic">Intelligence Feed</h4>
-                                    <span className="text-[9px] bg-[#D4AF37]/10 px-3 py-1 rounded-full font-black text-[#D4AF37] border border-[#D4AF37]/20 italic animate-pulse">LIVE NODE</span>
+                            <div className="absolute top-full right-0 mt-4 w-72 bg-[#1A0F00] rounded-2xl shadow-xl border border-[#F5E6D3]/10 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="p-3 flex items-center justify-between border-b border-[#F5E6D3]/5 mb-2">
+                                    <h4 className="text-xs font-bold text-[#F5E6D3]">Notifications</h4>
+                                    <span className="text-[9px] bg-[#D4AF37]/10 px-2 py-0.5 rounded-full font-bold text-[#D4AF37]">New</span>
                                 </div>
-                                <div className="max-h-[420px] overflow-y-auto p-2 space-y-4 scrollbar-hide">
+                                <div className="max-h-80 overflow-y-auto p-1 space-y-2">
                                     {(() => {
                                         const allNotifs: any[] = [...userNotifs];
                                         if (latestRecharge) allNotifs.push({ ...latestRecharge, type: 'recharge' });
                                         allNotifs.sort((a, b) => ((b.createdAt || b.timestamp)?.toMillis?.() || 0) - ((a.createdAt || a.timestamp)?.toMillis?.() || 0));
 
                                         if (allNotifs.length === 0) return (
-                                            <div className="py-20 text-center text-white/10 text-[10px] uppercase font-black tracking-[0.5em] italic">No active data streams</div>
+                                            <div className="py-12 text-center text-[#F5E6D3]/20 text-xs font-medium">No notifications</div>
                                         );
 
                                         return allNotifs.map((notif, idx) => {
@@ -352,20 +354,20 @@ function WelcomeContent() {
                                                 <div
                                                     key={idx}
                                                     onClick={() => handleMarkAsRead(notif)}
-                                                    className={`p-4 rounded-[2rem] border transition-all cursor-pointer flex items-center gap-5 ${isUnread ? "bg-[#D4AF37]/10 border-[#D4AF37]/20 shadow-[0_10px_30px_rgba(212,175,55,0.1)] translate-y-[-2px]" : "bg-white/5 border-white/5 opacity-60 hover:opacity-100 hover:bg-white/10"}`}
+                                                    className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${isUnread ? "bg-[#D4AF37]/5 border-[#D4AF37]/10" : "bg-[#F5E6D3]/5 border-transparent hover:bg-[#F5E6D3]/10"}`}
                                                 >
-                                                    <div className="w-12 h-12 rounded-2xl bg-black shrink-0 flex items-center justify-center overflow-hidden border border-[#D4AF37]/20 shadow-lg">
+                                                    <div className="w-10 h-10 rounded-lg bg-black shrink-0 flex items-center justify-center overflow-hidden">
                                                         <img
                                                             src={notif.type === 'registration' ? encodeURI(`/level ${LEVEL_MAP[notif.level as string] || "1"}.jpg`) : "/zen-3d-logo.png"}
-                                                            className="w-full h-full object-cover grayscale brightness-125"
+                                                            className="w-full h-full object-cover"
                                                             alt="Notif"
                                                         />
                                                     </div>
                                                     <div className="flex-1">
-                                                        <p className="text-[11px] font-black text-white line-clamp-1 uppercase tracking-tighter italic">{notif.message || notif.type.replace('_', ' ')}</p>
-                                                        <p className="text-[10px] text-[#D4AF37] font-black mt-1 uppercase tracking-widest">{notif.amount ? `${Number(notif.amount).toLocaleString()} ETB` : "Success"}</p>
+                                                        <p className="text-xs font-bold text-[#F5E6D3] line-clamp-1">{notif.message || notif.type.replace('_', ' ')}</p>
+                                                        <p className="text-[10px] text-[#F5E6D3]/40 font-medium mt-0.5">{notif.amount ? `${Number(notif.amount).toLocaleString()} ETB` : "Success"}</p>
                                                     </div>
-                                                    {isUnread && <div className="w-2.5 h-2.5 bg-[#D4AF37] rounded-full shadow-[0_0_15px_#D4AF37]"></div>}
+                                                    {isUnread && <div className="w-2 h-2 bg-[#D4AF37] rounded-full"></div>}
                                                 </div>
                                             );
                                         });
@@ -377,19 +379,19 @@ function WelcomeContent() {
                 </div>
             </header>
 
-            <main className="pt-24 space-y-8 max-w-lg mx-auto pb-20 relative z-10">
+            <main className="pt-20 space-y-8 max-w-lg mx-auto pb-20 relative z-10">
                 {activeNav === "home" ? (
                     <>
                         {/* Elite Banner Section - Premium Horizontal Slider Redesign */}
                         {banners.length > 0 && (
-                            <section className="relative group/banners">
-                                <div className="w-full aspect-[2/0.95] overflow-hidden bg-black/50 relative shadow-[0_30px_60px_rgba(0,0,0,0.5)] border-y border-white/5">
+                            <section className="relative">
+                                <div className="w-full aspect-[2/1] overflow-hidden bg-[#1A0F00] relative shadow-lg border-b border-[#F5E6D3]/5">
                                     <div
                                         className="flex h-full"
                                         style={{
                                             width: `${(banners.length + 1) * 100}%`,
                                             transform: `translateX(-${(currentBannerIndex * 100) / (banners.length + 1)}%)`,
-                                            transition: isResetting ? 'none' : 'transform 1.2s cubic-bezier(0.23, 1, 0.32, 1)'
+                                            transition: isResetting ? 'none' : 'transform 1s cubic-bezier(0.2, 1, 0.3, 1)'
                                         }}
                                         onTransitionEnd={() => {
                                             if (currentBannerIndex >= banners.length) {
@@ -402,32 +404,15 @@ function WelcomeContent() {
                                         {[...banners, banners[0]].map((banner, index) => (
                                             <div key={index} className="w-full h-full relative" style={{ width: `${100 / (banners.length + 1)}%` }}>
                                                 <img src={banner?.url} alt="ZEN Collection" className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-transparent"></div>
-
-                                                {/* Text Overlay for Banner */}
-                                                <div className="absolute bottom-16 left-8 right-8 space-y-2">
-                                                    <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.6em] italic drop-shadow-lg">Featured Protocol</span>
-                                                    <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl">{banner?.title || "Limited Assets"}</h2>
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
 
-                                    {/* Curved Bottom Overlay */}
+                                    {/* Black Wavy Overlay */}
                                     <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none pointer-events-none">
-                                        <svg className="relative block w-full h-[40px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                                            <path d="M0,0 C150,80 350,80 600,40 C850,0 1050,0 1200,40 L1200,120 L0,120 Z" fill="#020202"></path>
+                                        <svg className="relative block w-full h-[30px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                                            <path d="M0,0 C150,80 350,80 600,40 C850,0 1050,0 1200,40 L1200,120 L0,120 Z" fill="#000000"></path>
                                         </svg>
-                                    </div>
-
-                                    {/* Pagination Dots */}
-                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
-                                        {banners.map((_, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`h-1 rounded-full transition-all duration-500 ${idx === currentBannerIndex % banners.length ? 'w-8 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]' : 'w-2 bg-white/10'}`}
-                                            ></div>
-                                        ))}
                                     </div>
                                 </div>
                             </section>
@@ -437,193 +422,158 @@ function WelcomeContent() {
                         <div className="px-6 space-y-4">
 
 
-                            {/* Interactive Action Grid */}
-                            <section className="space-y-8 pt-6">
-                                <div className="flex items-center gap-5 px-3">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shadow-[0_0_15px_#D4AF37]"></div>
-                                    <h3 className="text-[11px] font-black text-[#D4AF37] uppercase tracking-[0.5em] italic">Capital Grid</h3>
-                                    <div className="flex-1 h-px bg-white/5"></div>
+                            {/* Quick Actions Grid */}
+                            <section className="space-y-6 pt-4">
+                                <div className="flex items-center justify-between gap-3 px-1">
+                                    <div className="flex items-center gap-3">
+                                        <h3 className="text-xs font-bold text-[#F5E6D3]/40 uppercase tracking-widest">Wallets</h3>
+                                        <div className="w-12 h-px bg-[#F5E6D3]/5"></div>
+                                    </div>
+                                    <div className="flex items-baseline gap-1.5 bg-[#F5E6D3]/5 px-3 py-1.5 rounded-lg border border-[#F5E6D3]/5">
+                                        <span className="text-[10px] font-bold text-[#F5E6D3]/40 uppercase tracking-wider">Balance</span>
+                                        <span className="text-sm font-bold text-[#F5E6D3]">
+                                            {(userData?.balance ?? userData?.Recharge ?? 0).toLocaleString()} <span className="text-[10px] font-medium text-[#F5E6D3]/60">ETB</span>
+                                        </span>
+                                    </div>
                                 </div>
 
-
-
-                                {/* Modern Bento Hub - Golden Era Premium Redesign */}
-                                <div className="grid grid-cols-6 gap-6">
-                                    {/* Primary Action: Recharge */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    {/* Action: Add Money */}
                                     <motion.button
-                                        whileHover={{ scale: 1.02, translateY: -5 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={handleRechargeClick}
-                                        className="col-span-3 aspect-[1.1/1] bg-[#0F0F0F] rounded-[3rem] p-8 flex flex-col items-start justify-between border border-[#D4AF37]/20 relative overflow-hidden group shadow-2xl"
+                                        className="bg-[#F5F5F5] rounded-[2.5rem] p-6 flex flex-col items-start gap-4 border border-white shadow-[0_10px_40px_rgba(0,0,0,0.2)] transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
-                                        <div className="w-16 h-16 rounded-[1.5rem] bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] mb-4 group-hover:scale-110 transition-transform shadow-inner border border-[#D4AF37]/10">
-                                            <Wallet size={32} strokeWidth={2.5} />
+                                        <div className="w-14 h-14 rounded-2xl bg-[#7B3F00]/5 flex items-center justify-center text-[#7B3F00] shadow-sm border border-[#7B3F00]/5">
+                                            <Wallet size={28} />
                                         </div>
-                                        <div className="flex flex-col items-start z-10">
-                                            <span className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em] leading-none mb-2 italic">Protocol 01</span>
-                                            <span className="text-lg font-black text-white tracking-tighter italic uppercase">Fill Vault</span>
+                                        <div className="flex flex-col items-start">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Account</span>
+                                            <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">Deposit</span>
                                         </div>
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-8 -mt-8"></div>
                                     </motion.button>
 
-                                    {/* Primary Action: Payouts */}
+                                    {/* Action: Withdraw */}
                                     <motion.button
-                                        whileHover={{ scale: 1.02, translateY: -5 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => router.push("/users/withdraw")}
-                                        className="col-span-3 aspect-[1.1/1] bg-[#0F0F0F] rounded-[3rem] p-8 flex flex-col items-start justify-between border border-[#D4AF37]/20 relative overflow-hidden group shadow-2xl"
+                                        className="bg-[#F5F5F5] rounded-[2.5rem] p-6 flex flex-col items-start gap-4 border border-white shadow-[0_10px_40px_rgba(0,0,0,0.2)] transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
-                                        <div className="w-16 h-16 rounded-[1.5rem] bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] mb-4 group-hover:scale-110 transition-transform shadow-inner border border-[#D4AF37]/10">
-                                            <Coins size={32} strokeWidth={2.5} />
+                                        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-500/10">
+                                            <Coins size={28} />
                                         </div>
-                                        <div className="flex flex-col items-start z-10">
-                                            <span className="text-[10px] font-black text-[#D4AF37]/40 uppercase tracking-[0.4em] leading-none mb-2 italic">Protocol 02</span>
-                                            <span className="text-lg font-black text-white tracking-tighter italic uppercase">Liquify</span>
+                                        <div className="flex flex-col items-start">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Payout</span>
+                                            <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">Withdraw</span>
                                         </div>
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-8 -mt-8"></div>
                                     </motion.button>
+                                </div>
 
-                                    {/* Secondary Action: Invite */}
+                                <div className="grid grid-cols-3 gap-3">
+                                    {/* Action: Invite */}
                                     <motion.button
-                                        whileHover={{ scale: 1.03 }}
                                         whileTap={{ scale: 0.97 }}
                                         onClick={() => router.push("/users/invite")}
-                                        className="col-span-2 bg-[#0F0F0F] rounded-[2.2rem] p-5 flex flex-col items-center justify-center gap-4 border border-[#D4AF37]/10 group hover:border-[#D4AF37]/40 transition-all shadow-xl"
+                                        className="bg-[#F5F5F5] rounded-[2rem] p-4 flex flex-col items-center justify-center gap-3 border border-white shadow-lg transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
-                                        <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/5 flex items-center justify-center text-[#D4AF37]/60 group-hover:text-[#D4AF37] transition-all">
-                                            <Users size={24} strokeWidth={2.5} />
+                                        <div className="w-12 h-12 rounded-xl bg-orange-500/5 flex items-center justify-center text-orange-600">
+                                            <Users size={24} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white/40 group-hover:text-white uppercase tracking-[0.3em] font-mono transition-colors">Nodes</span>
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Invite</span>
                                     </motion.button>
 
-                                    {/* Secondary Action: VIP Rules */}
+                                    {/* Action: Rules */}
                                     <motion.button
-                                        whileHover={{ scale: 1.03 }}
                                         whileTap={{ scale: 0.97 }}
                                         onClick={() => router.push("/users/vip-rules")}
-                                        className="col-span-2 bg-[#0F0F0F] rounded-[2.2rem] p-5 flex flex-col items-center justify-center gap-4 border border-[#D4AF37]/10 group hover:border-[#D4AF37]/40 transition-all shadow-xl"
+                                        className="bg-[#F5F5F5] rounded-[2rem] p-4 flex flex-col items-center justify-center gap-3 border border-white shadow-lg transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
-                                        <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/5 flex items-center justify-center text-[#D4AF37]/60 group-hover:text-[#D4AF37] transition-all">
-                                            <Shield size={24} strokeWidth={2.5} />
+                                        <div className="w-12 h-12 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-600">
+                                            <Shield size={24} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white/40 group-hover:text-white uppercase tracking-[0.3em] font-mono transition-colors">Direct</span>
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">VIP</span>
                                     </motion.button>
 
-                                    {/* Secondary Action: Tasks */}
+                                    {/* Action: Exchange */}
                                     <motion.button
-                                        whileHover={{ scale: 1.03 }}
                                         whileTap={{ scale: 0.97 }}
-                                        onClick={() => router.push("/users/tasks")}
-                                        className="col-span-2 bg-[#0F0F0F] rounded-[2.2rem] p-5 flex flex-col items-center justify-center gap-4 border border-[#D4AF37]/10 group hover:border-[#D4AF37]/40 transition-all shadow-xl"
+                                        onClick={() => router.push("/users/exchange")}
+                                        className="bg-[#F5F5F5] rounded-[2rem] p-4 flex flex-col items-center justify-center gap-3 border border-white shadow-lg transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
-                                        <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/5 flex items-center justify-center text-[#D4AF37]/60 group-hover:text-[#D4AF37] transition-all">
-                                            <TrendingUp size={24} strokeWidth={2.5} />
+                                        <div className="w-12 h-12 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-600">
+                                            <ArrowLeftRight size={24} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white/40 group-hover:text-white uppercase tracking-[0.3em] font-mono transition-colors">Audit</span>
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Exchange</span>
                                     </motion.button>
                                 </div>
                             </section>
 
-                            {/* Direct Product Integration - Compact Mobile-First */}
-                            <div className="space-y-6 pt-6 pb-12">
-                                <div className="flex items-center gap-5 px-3">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shadow-[0_0_15px_#D4AF37]"></div>
-                                    <h3 className="text-[11px] font-black text-[#D4AF37] uppercase tracking-[0.5em] italic">Marketplace Nodes</h3>
-                                    <div className="flex-1 h-px bg-white/5"></div>
+                            {/* Products Section */}
+                            <div className="space-y-6 pt-4 pb-12">
+                                <div className="flex items-center gap-3 px-1">
+                                    <h3 className="text-xs font-bold text-[#F5E6D3]/40 uppercase tracking-widest">Products</h3>
+                                    <div className="flex-1 h-px bg-[#F5E6D3]/5"></div>
                                 </div>
 
-                                <div className="space-y-10">
+                                <div className="space-y-6">
                                     {products.map((product) => (
                                         <motion.div
                                             key={product.id}
-                                            initial={{ opacity: 0, y: 30 }}
+                                            initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             onClick={() => router.push(`/users/product/${product.id}`)}
-                                            className="bg-[#0F0F0F] rounded-[4rem] p-8 shadow-2xl relative overflow-hidden group border border-[#D4AF37]/10 active:scale-[0.98] transition-all cursor-pointer"
+                                            className="bg-[#1A0F00]/40 rounded-3xl p-6 shadow-xl border border-[#F5E6D3]/10 active:scale-[0.99] transition-all cursor-pointer"
                                         >
-                                            {/* Sales Tracking Bar - Advanced Edition */}
-                                            {product.showTracking && (
-                                                <div className="mb-6">
-                                                    <div className="bg-black/50 rounded-2-xl p-4 border border-[#D4AF37]/10 shadow-inner">
-                                                        <div className="flex justify-between items-end mb-3 px-1">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="relative flex h-2 w-2">
-                                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75"></span>
-                                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4AF37]"></span>
-                                                                </div>
-                                                                <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] italic">High Demand Load</span>
-                                                            </div>
-                                                            <span className="text-[10px] font-black text-white italic">
-                                                                <span className="text-[#D4AF37]">{Math.min(100, Math.round(((product.trackingCurrent || 0) / (product.trackingTarget || 100)) * 100))}%</span>
-                                                                <span className="text-white/20 ml-1">DEPLOYED</span>
-                                                            </span>
-                                                        </div>
-                                                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden shadow-inner border border-white/5">
-                                                            <motion.div
-                                                                initial={{ width: 0 }}
-                                                                animate={{ width: `${Math.min(100, ((product.trackingCurrent || 0) / (product.trackingTarget || 100)) * 100)}%` }}
-                                                                transition={{ duration: 1.5, ease: "easeOut" }}
-                                                                className="h-full bg-gradient-to-r from-[#D4AF37] via-[#F5E6D3] to-[#D4AF37] rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]"
-                                                            ></motion.div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Product Image Stage - Elite */}
-                                            <div className="aspect-[2/1.1] w-full rounded-[2.5rem] overflow-hidden bg-black relative shadow-2xl border border-white/5">
+                                            {/* Product Image */}
+                                            <div className="aspect-[2/1] w-full rounded-2xl overflow-hidden bg-black relative mb-6 border border-[#F5E6D3]/5">
                                                 {product.imageUrl ? (
                                                     <img
                                                         src={product.imageUrl}
                                                         alt={product.name}
-                                                        className="w-full h-full object-cover grayscale brightness-110 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                                                        className="w-full h-full object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-white/5">
-                                                        <Package size={64} strokeWidth={1} />
+                                                    <div className="w-full h-full flex items-center justify-center text-[#F5E6D3]/10">
+                                                        <Package size={48} />
                                                     </div>
                                                 )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                                             </div>
 
-                                            <div className="mt-8 space-y-6">
-                                                <div className="flex justify-between items-start border-b border-white/5 pb-4">
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-start">
                                                     <div>
-                                                        <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">{product.name}</h3>
-                                                        <p className="text-[10px] font-black text-[#D4AF37]/50 uppercase tracking-[0.4em] mt-1 shrink-0">Industrial Asset</p>
+                                                        <h3 className="text-xl font-bold text-[#F5E6D3] tracking-tight">{product.name}</h3>
+                                                        <p className="text-xs font-medium text-[#F5E6D3]/30 mt-1">Product</p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] block mb-1 font-mono">Cost Basis</span>
-                                                        <span className="text-2xl font-black text-[#D4AF37] italic tracking-tighter">
+                                                        <span className="text-[10px] font-bold text-[#F5E6D3]/30 uppercase block mb-1">Price</span>
+                                                        <span className="text-xl font-bold text-[#D4AF37]">
                                                             {product.price?.toLocaleString()}
-                                                            <span className="text-[11px] ml-2 text-[#D4AF37]/40 not-italic">ETB</span>
+                                                            <span className="text-xs ml-1 font-medium text-[#D4AF37]/60">ETB</span>
                                                         </span>
                                                     </div>
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="bg-white/5 rounded-3xl p-5 border border-white/5">
-                                                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] block mb-2 italic">Yield /24h</span>
-                                                        <p className="text-lg font-black text-white italic tracking-tighter">
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="bg-[#1A0F00]/60 rounded-2xl p-4 border border-[#F5E6D3]/5">
+                                                        <span className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase block mb-1">Daily Profit</span>
+                                                        <p className="text-base font-bold text-[#F5E6D3]">
                                                             {product.dailyIncome?.toLocaleString()}
-                                                            <span className="text-[11px] ml-2 text-[#D4AF37] opacity-60">ETB</span>
+                                                            <span className="text-xs ml-1 font-medium text-[#F5E6D3]/40">ETB</span>
                                                         </p>
                                                     </div>
-                                                    <div className="bg-white/5 rounded-3xl p-5 border border-white/5">
-                                                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] block mb-2 italic">Cycle Length</span>
-                                                        <p className="text-lg font-black text-white italic tracking-tighter">
+                                                    <div className="bg-[#1A0F00]/60 rounded-2xl p-4 border border-[#F5E6D3]/5">
+                                                        <span className="text-[10px] font-bold text-[#F5E6D3]/20 uppercase block mb-1">Term</span>
+                                                        <p className="text-base font-bold text-[#F5E6D3]">
                                                             {product.contractPeriod}
-                                                            <span className="text-[11px] ml-2 text-[#D4AF37] opacity-60">DAYS</span>
+                                                            <span className="text-xs ml-1 font-medium text-[#F5E6D3]/40">Days</span>
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                {/* Action Button - Execution Grade */}
-                                                <div className="pt-2">
-                                                    <div className="w-full h-16 bg-[#D4AF37] rounded-[2rem] flex items-center justify-center shadow-[0_15px_40px_rgba(212,175,55,0.2)] group-hover:bg-[#F5E6D3] transition-all duration-500">
-                                                        <span className="text-[11px] font-black text-black uppercase tracking-[0.5em] italic">Acquire Protocol</span>
-                                                    </div>
-                                                </div>
+                                                <button className="w-full h-12 bg-[#D4AF37] rounded-xl flex items-center justify-center shadow-lg shadow-[#D4AF37]/10 text-black text-sm font-bold transition-all hover:bg-[#F5E6D3]">
+                                                    Buy Now
+                                                </button>
                                             </div>
                                         </motion.div>
                                     ))}

@@ -26,7 +26,7 @@ function RechargeContent() {
     const searchParams = useSearchParams();
     const [amount, setAmount] = useState<string>("0");
     const [customAmount, setCustomAmount] = useState<string>("");
-    const [minRecharge, setMinRecharge] = useState<number>(4500);
+    const [minDeposit, setMinDeposit] = useState<number>(4500);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [presetAmounts, setPresetAmounts] = useState<number[]>(DEFAULT_PRESETS);
@@ -46,6 +46,9 @@ function RechargeContent() {
 
                 if (uniquePrices.length > 0) {
                     setPresetAmounts(uniquePrices);
+                    if (!searchParams.get("amount")) {
+                        setAmount(uniquePrices[0].toString());
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching product prices:", error);
@@ -62,11 +65,9 @@ function RechargeContent() {
                     const settings = docSnap.data();
                     if (settings.minAmount) {
                         const min = Number(settings.minAmount);
-                        setMinRecharge(min);
+                        setMinDeposit(min);
                         // If no amount in searchParams, use min
-                        if (!searchParams.get("amount")) {
-                            setAmount(min.toString());
-                        } else {
+                        if (searchParams.get("amount")) {
                             setAmount(searchParams.get("amount")!);
                         }
                     }
@@ -99,8 +100,8 @@ function RechargeContent() {
 
     const handleNext = () => {
         const numAmount = parseInt(amount);
-        if (isNaN(numAmount) || numAmount < minRecharge) {
-            setErrorMsg(`Minimum recharge amount is ${minRecharge.toLocaleString()} ETB`);
+        if (isNaN(numAmount) || numAmount < minDeposit) {
+            setErrorMsg(`Minimum deposit amount is ${minDeposit.toLocaleString()} ETB`);
             setShowErrorModal(true);
             return;
         }
@@ -123,8 +124,8 @@ function RechargeContent() {
                 >
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-xl font-black tracking-[0.2em] uppercase bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
-                    Recharge
+                <h1 className="text-xl font-bold tracking-tight text-[#F5E6D3]">
+                    Deposit
                 </h1>
                 <div className="w-12" /> {/* Spacer */}
             </header>
@@ -137,7 +138,7 @@ function RechargeContent() {
                             {/* Metallic Shine Effect */}
                             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
 
-                            <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-70">Recharge Amount</p>
+                            <p className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-4 opacity-70">Deposit Amount</p>
                             <div className="flex items-baseline gap-3">
                                 <span className="text-white text-6xl font-black tracking-tighter tabular-nums drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                                     {Number(amount).toLocaleString()}
@@ -161,7 +162,7 @@ function RechargeContent() {
                 {/* Preset Grid */}
                 <section className="space-y-4">
                     <div className="flex items-center justify-between px-1">
-                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Select Amount</h2>
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 uppercase tracking-widest">Select amount</h2>
                         {fetchingPresets && <Loader2 size={14} className="animate-spin text-[#D4AF37]/40" />}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -172,8 +173,8 @@ function RechargeContent() {
                                     key={val}
                                     onClick={() => handleAmountSelect(val)}
                                     className={`relative py-6 rounded-[2rem] font-black text-sm transition-all active:scale-95 group overflow-hidden ${isSelected
-                                            ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black shadow-xl shadow-[#D4AF37]/20"
-                                            : "bg-[#1A1A1A] text-[#D4AF37]/60 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 shadow-none"
+                                        ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black shadow-xl shadow-[#D4AF37]/20"
+                                        : "bg-[#1A1A1A] text-[#D4AF37]/60 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 shadow-none"
                                         }`}
                                 >
                                     {val.toLocaleString()}
@@ -187,7 +188,7 @@ function RechargeContent() {
                 <section className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                     <div className="flex items-center gap-2 px-1">
                         <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
-                        <h2 className="text-[10px] font-black text-[#D4AF37]/60 uppercase tracking-[0.2em]">Custom (Min. {minRecharge.toLocaleString()})</h2>
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 uppercase tracking-widest">Custom (Min. {minDeposit.toLocaleString()})</h2>
                     </div>
 
                     <div className="relative group">
@@ -212,7 +213,7 @@ function RechargeContent() {
                         <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
                             <Info size={22} />
                         </div>
-                        <h3 className="text-xs font-black text-[#D4AF37] uppercase tracking-[0.2em]">Important Security</h3>
+                        <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Important security</h3>
                     </div>
 
                     <ul className="space-y-5">
@@ -235,9 +236,9 @@ function RechargeContent() {
                 <div className="pt-6">
                     <button
                         onClick={handleNext}
-                        className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
+                        className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-bold uppercase tracking-widest text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                     >
-                        <span>Select Payment Method</span>
+                        <span>Select payment method</span>
                         <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
                     </button>
                 </div>
@@ -255,7 +256,7 @@ function RechargeContent() {
                             </div>
 
                             <div className="space-y-3">
-                                <h2 className="text-2xl font-black text-white uppercase tracking-tight">Security Alert</h2>
+                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Security Alert</h2>
                                 <p className="text-white/40 text-sm font-medium leading-relaxed px-2">
                                     {errorMsg}
                                 </p>
@@ -263,7 +264,7 @@ function RechargeContent() {
 
                             <button
                                 onClick={() => setShowErrorModal(false)}
-                                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 py-5 rounded-[1.5rem] border border-red-500/20 font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95"
+                                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 py-5 rounded-[1.5rem] border border-red-500/20 font-bold uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95"
                             >
                                 Continue
                             </button>

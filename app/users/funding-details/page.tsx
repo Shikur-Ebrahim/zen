@@ -8,16 +8,15 @@ import { onAuthStateChanged } from "firebase/auth";
 import {
     ChevronLeft,
     Loader2,
-    TrendingUp,
-    TrendingDown,
     Package,
     Calendar,
     Timer,
     Zap,
     Coins,
-    Gem,
-    LayoutDashboard,
-    ArrowRight
+    TrendingUp,
+    LayoutGrid,
+    Clock,
+    CheckCircle2
 } from "lucide-react";
 
 export default function FundingDetailsPage() {
@@ -25,6 +24,7 @@ export default function FundingDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [orders, setOrders] = useState<any[]>([]);
     const [products, setProducts] = useState<Record<string, any>>({});
+    const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -32,6 +32,7 @@ export default function FundingDetailsPage() {
                 router.push("/");
                 return;
             }
+            setUserId(currentUser.uid);
 
             // Fetch User Orders
             const qOrders = query(
@@ -76,13 +77,9 @@ export default function FundingDetailsPage() {
 
         return new Intl.DateTimeFormat('en-GB', {
             day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        }).format(date) + " UTC+3";
+            month: 'short',
+            year: 'numeric'
+        }).format(date);
     };
 
     const calculateRemainingDays = (order: any) => {
@@ -101,50 +98,42 @@ export default function FundingDetailsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white pb-20 font-sans">
-            {/* Immersive Header */}
-            <header className="px-6 pt-10 pb-8 flex items-center gap-5 sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/5">
-                <button
-                    onClick={() => router.back()}
-                    className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors active:scale-90 border border-white/5"
-                >
-                    <ChevronLeft size={24} className="text-white" />
-                </button>
-                <div className="flex-1">
-                    <h1 className="text-2xl font-black uppercase tracking-tighter leading-none mb-1">Portfolio</h1>
-                    <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Asset Intelligence</p>
-                    </div>
-                </div>
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <TrendingUp size={20} className="text-white" />
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-20 font-sans">
+            {/* Header */}
+            <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-50 bg-[#F8FAFC]/90 backdrop-blur-md">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm active:scale-95 transition-all"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <h1 className="text-lg font-bold text-slate-800">My Assets</h1>
                 </div>
             </header>
 
-            <main className="p-6 space-y-8">
+            <main className="px-6 space-y-6 mt-2">
                 {orders.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
-                        <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-blue-500/5 blur-xl group-hover:bg-blue-500/10 transition-colors"></div>
-                            <Gem size={40} className="text-slate-700 relative z-10" />
+                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+                        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center">
+                            <Package size={32} className="text-slate-400" />
                         </div>
                         <div className="space-y-1">
-                            <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest leading-none">Market Vacant</h3>
-                            <p className="text-xs font-bold text-slate-600 uppercase tracking-tighter">No active funding plans detected</p>
+                            <h3 className="text-base font-bold text-slate-700">No Active Plans</h3>
+                            <p className="text-sm text-slate-500">You haven't invested in any products yet.</p>
                         </div>
                         <button
                             onClick={() => router.push('/users/product')}
-                            className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-600/20 active:scale-95 transition-all"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 transition-all"
                         >
-                            Explore Plans
+                            Browse Products
                         </button>
                     </div>
                 ) : (
@@ -157,91 +146,84 @@ export default function FundingDetailsPage() {
                         return (
                             <div
                                 key={order.id}
-                                className="relative bg-white/5 rounded-[2.8rem] border border-white/5 p-7 shadow-2xl overflow-hidden group hover:border-white/10 transition-all active:scale-[0.99]"
+                                className="bg-white rounded-[1.5rem] p-5 shadow-sm border border-slate-100 flex flex-col gap-5"
                             >
-                                {/* Glow Background */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] -mr-32 -mt-32 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                                {/* Product Image & Header */}
-                                <div className="flex gap-6 mb-8 relative z-10">
-                                    <div className="w-24 h-24 rounded-[1.8rem] bg-slate-900 border border-white/5 overflow-hidden shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                                {/* Top Section: Image & Title */}
+                                <div className="flex gap-4">
+                                    <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0">
                                         {product.imageUrl ? (
                                             <img src={product.imageUrl} alt={order.productName} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <Package size={32} className="text-slate-800" />
+                                                <Package size={20} className="text-slate-300" />
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex-1 py-1">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h3 className="text-xl font-black text-white leading-none tracking-tighter uppercase">{order.productName}</h3>
-                                            <div className="px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-                                                <span className="text-[8px] font-black text-emerald-400 uppercase tracking-[0.2em]">Active</span>
-                                            </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <h3 className="text-base font-bold text-slate-800 truncate pr-2">{order.productName}</h3>
+                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100">
+                                                Active
+                                            </span>
                                         </div>
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <Timer size={12} className="text-blue-400" />
-                                            <p className="text-[10px] font-black text-blue-400/80 uppercase tracking-widest">Plan Cycle: {order.contractPeriod} Days</p>
-                                        </div>
-                                        {/* Simple Progress Bar */}
-                                        <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
-                                                style={{ width: `${Math.min(100, progress)}%` }}
-                                            ></div>
+                                        <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
+                                            <Clock size={12} />
+                                            <span>Purchased {formatDate(order.purchaseDate || order.createdAt)}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Analytics Grid */}
-                                <div className="grid grid-cols-2 gap-4 mb-8 relative z-10">
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Coins size={12} className="text-amber-400" />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Principal</span>
-                                        </div>
-                                        <p className="text-lg font-black text-white tracking-tighter">{Number(order.price).toLocaleString()} <span className="text-[10px] text-gray-500">ETB</span></p>
+                                {/* Divider */}
+                                <div className="h-px w-full bg-slate-50"></div>
+
+                                {/* Stats Grid */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                            <Coins size={12} /> Principal
+                                        </span>
+                                        <p className="text-sm font-bold text-slate-800">
+                                            {Number(order.price).toLocaleString()} <span className="text-xs text-slate-400 font-normal">ETB</span>
+                                        </p>
                                     </div>
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Zap size={12} className="text-emerald-400" />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Daily Yield</span>
-                                        </div>
-                                        <p className="text-lg font-black text-emerald-400 tracking-tighter">{Number(order.dailyIncome).toLocaleString()} <span className="text-[10px] text-emerald-900/40 font-bold">ETB</span></p>
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                            <TrendingUp size={12} /> Daily
+                                        </span>
+                                        <p className="text-sm font-bold text-slate-800">
+                                            {Number(order.dailyIncome).toLocaleString()} <span className="text-xs text-slate-400 font-normal">ETB</span>
+                                        </p>
                                     </div>
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                        <div className="flex items-center gap-2 mb-2 text-indigo-400">
-                                            <LayoutDashboard size={12} />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Total Earned</span>
-                                        </div>
-                                        <p className="text-lg font-black text-indigo-400 tracking-tighter">{totalProfit.toLocaleString()} <span className="text-[10px] text-indigo-900/40 font-bold">ETB</span></p>
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                            <Zap size={12} /> Total Earned
+                                        </span>
+                                        <p className="text-sm font-bold text-emerald-600">
+                                            +{totalProfit.toLocaleString()} <span className="text-xs text-slate-400 font-normal">ETB</span>
+                                        </p>
                                     </div>
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                        <div className="flex items-center gap-2 mb-2 text-red-400">
-                                            <Timer size={12} />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Time Remaining</span>
-                                        </div>
-                                        <p className="text-lg font-black text-white tracking-tighter">{remaining} <span className="text-[10px] text-red-900/40 font-bold">DAYS</span></p>
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                            <Timer size={12} /> Remaining
+                                        </span>
+                                        <p className="text-sm font-bold text-blue-600">
+                                            {remaining} <span className="text-xs text-slate-400 font-normal">Days</span>
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* Bottom Meta Card */}
-                                <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-2xl p-5 border border-white/5 flex items-center justify-between group-hover:from-slate-800 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                                            <Calendar size={18} className="text-slate-400" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Purchase Timeline</p>
-                                            <p className="text-[10px] font-black text-white uppercase tracking-tighter">
-                                                {formatDate(order.purchaseDate || order.createdAt)}
-                                            </p>
-                                        </div>
+                                {/* Progress Bar */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="font-medium text-slate-400">Plan Progress</span>
+                                        <span className="font-bold text-blue-600">{Math.round(progress)}%</span>
                                     </div>
-                                    <button className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 transition-all text-slate-500 hover:text-white">
-                                        <ArrowRight size={16} />
-                                    </button>
+                                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-blue-500 rounded-full transition-all duration-1000"
+                                            style={{ width: `${Math.min(100, progress)}%` }}
+                                        ></div>
+                                    </div>
                                 </div>
                             </div>
                         );

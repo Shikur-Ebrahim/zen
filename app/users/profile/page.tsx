@@ -39,7 +39,9 @@ import {
     ArrowUp,
     TrendingDown,
     Activity,
-    CreditCard
+    CreditCard,
+    Building2,
+    Headphones
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -148,18 +150,12 @@ export default function ProfilePage() {
                         {/* Identity Details */}
                         <div className="flex-1 space-y-1.5 overflow-hidden">
                             <div className="space-y-0">
-                                <h2 className="text-2xl font-black text-gray-900 leading-tight tracking-tight uppercase truncate">Member</h2>
+                                <h2 className="text-2xl font-black text-gray-900 leading-tight tracking-tight uppercase truncate">Customer</h2>
                                 <div className="flex items-center gap-2">
                                     <div className="px-2 py-0.5 bg-blue-50 rounded-md border border-blue-100/50">
                                         <span className="text-[10px] font-black text-blue-600 tracking-widest uppercase">UID: {userData?.uid?.substring(0, 6).toUpperCase() || "LLBSBV"}</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2 px-1">
-                                <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
-                                <p className="text-lg font-black text-gray-900 tracking-tighter">
-                                    {formatPhone(userData?.phoneNumber || "25100000000")}
-                                </p>
                             </div>
                         </div>
 
@@ -216,8 +212,8 @@ export default function ProfilePage() {
                     {[
                         { label: "FUND", image: null, color: "blue", iconColor: "text-blue-600", path: "/users/funding-details", dark: false, icon: Wallet },
                         { label: "DOWNLOAD", image: "/zen-3d-logo-v2.png", color: "indigo", iconColor: "text-white", path: "/users/download", dark: false, icon: null },
-                        { label: "BANK", image: "/bank_icon.png", color: "emerald", iconColor: "text-emerald-600", path: "/users/bank", dark: false, icon: null },
-                        { label: "SERVICE", image: "/service_icon.png", color: "purple", iconColor: "text-purple-600", path: "/users/service", dark: false, icon: null },
+                        { label: "BANK", image: null, color: "emerald", iconColor: "text-emerald-600", path: "/users/bank", dark: false, icon: Building2 },
+                        { label: "SERVICE", image: null, color: "purple", iconColor: "text-purple-600", path: "/users/service", dark: false, icon: Headphones },
                     ].map((item: any, i) => (
                         <button
                             key={i}
@@ -249,38 +245,36 @@ export default function ProfilePage() {
 
 
                 {/* Advanced System Actions - Navigtion Tiles */}
-                <div className="space-y-4 pb-12">
-                    <div className="flex items-center gap-3 mb-6 px-1">
-                        <div className="w-1.5 h-4 bg-gray-900 rounded-full"></div>
+                <div className="space-y-5 pb-10">
+                    <div className="flex items-center gap-3 mb-8 px-1">
+                        <div className="w-1.5 h-4 bg-indigo-600 rounded-full"></div>
                         <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.3em]">System Management</h3>
                     </div>
 
                     {[
-                        { title: "WITHDRAWAL RECORD", sub: "PAYMENT STATUS", icon: ArrowUpRight, color: "emerald", path: "/users/withdrawal-record" },
-                        { title: "LOGIN PASSWORD", sub: "SECURITY PROTOCOLS", icon: Key, color: "purple", path: "/users/change-password" },
-                        { title: "WITHDRAWAL PASSWORD", sub: "ASSET PROTECTION", icon: Lock, color: "indigo", path: "/users/change-withdrawal-password" },
-                        { title: "RECHARGE RECORD", sub: "CREDIT ANALYSIS", icon: History, color: "orange", path: "/users/recharge-records" },
+                        { title: "WITHDRAWAL RECORD", sub: "PAYMENT STATUS", icon: ArrowUpRight, color: "emerald", bgColor: "bg-emerald-50", path: "/users/withdrawal-record" },
+                        { title: "LOGIN PASSWORD", sub: "SECURITY PROTOCOLS", icon: Key, color: "purple", bgColor: "bg-purple-50", path: "/users/change-password" },
+                        { title: "WITHDRAWAL PASSWORD", sub: "ASSET PROTECTION", icon: Lock, color: "indigo", bgColor: "bg-indigo-50", path: "/users/change-withdrawal-password" },
+                        { title: "RECHARGE RECORD", sub: "CREDIT ANALYSIS", icon: History, color: "orange", bgColor: "bg-orange-50", path: "/users/recharge-records" },
                     ].map((item, i) => (
                         <button
                             key={i}
                             onClick={() => item.path && router.push(item.path)}
                             className="w-full relative group active:scale-[0.98] transition-all"
                         >
-                            <div className="absolute -inset-2 bg-gradient-to-r from-gray-100 to-transparent rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                            <div className="relative flex items-center justify-between p-5 bg-gray-200 rounded-[2rem] border border-gray-300 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.04)] hover:shadow-xl hover:shadow-gray-300/40 transition-all">
-                                <div className="flex items-center gap-5">
-                                    <div className={`w-12 h-12 rounded-2xl bg-${item.color}-50 flex items-center justify-center text-${item.color}-600 relative overflow-hidden`}>
-                                        <div className="absolute top-0 right-0 w-4 h-4 bg-white opacity-40 blur-sm rounded-full -mr-1 -mt-1"></div>
-                                        <item.icon size={22} className="relative z-10" />
+                            <div className="relative flex items-center justify-between p-6 bg-white/60 backdrop-blur-md rounded-[2.8rem] border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-500">
+                                <div className="flex items-center gap-6">
+                                    <div className={`w-14 h-14 rounded-3xl ${item.bgColor} flex items-center justify-center text-${item.color}-600 shadow-sm relative overflow-hidden`}>
+                                        <div className="absolute inset-0 bg-white/30 backdrop-blur-[2px]"></div>
+                                        <item.icon size={26} className="relative z-10" />
                                     </div>
                                     <div className="text-left space-y-0.5">
-                                        <h3 className="text-sm font-black text-gray-900 tracking-tight uppercase">{item.title}</h3>
-                                        <p className="text-[9px] font-bold text-blue-500/60 uppercase tracking-widest">{item.sub}</p>
+                                        <h3 className="text-base font-black text-slate-800 tracking-tight">{item.title}</h3>
+                                        <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">{item.sub}</p>
                                     </div>
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                                    <ChevronRightIcon size={16} className="text-gray-300 group-hover:text-white transition-colors" />
+                                <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-lg shadow-gray-200/50 group-hover:bg-indigo-600 transition-all duration-500 group-hover:translate-x-1">
+                                    <ChevronRightIcon size={20} className="text-gray-300 group-hover:text-white transition-colors" />
                                 </div>
                             </div>
                         </button>
