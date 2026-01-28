@@ -16,8 +16,8 @@ import {
 // Mock Product Database
 const LUXURY_CATALOG = [
     {
-        id: "zen-01",
-        name: "ZEN ELITE ALPHA",
+        id: "dpm-01",
+        name: "DPM ELITE ESSENCE",
         category: "LEVEL A",
         price: 15400,
         dailyIncome: 1250,
@@ -25,8 +25,8 @@ const LUXURY_CATALOG = [
         imageUrl: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=2070&auto=format&fit=crop",
     },
     {
-        id: "zen-02",
-        name: "ZEN SIGNATURE GOLD",
+        id: "dpm-02",
+        name: "DPM SIGNATURE OUD",
         category: "LEVEL B",
         price: 28900,
         dailyIncome: 2400,
@@ -34,8 +34,8 @@ const LUXURY_CATALOG = [
         imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop",
     },
     {
-        id: "zen-03",
-        name: "ZEN INFINITY PLATINUM",
+        id: "dpm-03",
+        name: "DPM INFINITY ROYAL",
         category: "LEVEL S+",
         price: 75000,
         dailyIncome: 6800,
@@ -160,7 +160,7 @@ export default function ProductCardPage() {
                             <ChevronLeft size={24} />
                         </div>
                         <div className="text-center">
-                            <span className="text-[9px] font-medium text-[#C9A24D] tracking-[0.2em] block">Zen Elite</span>
+                            <span className="text-[9px] font-medium text-[#C9A24D] tracking-[0.2em] block">DPM Elite</span>
                             <span className="text-[14px] font-semibold text-[#1A1A1A]">Collection</span>
                         </div>
                         <div className="w-12 h-12" />

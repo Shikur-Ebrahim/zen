@@ -403,7 +403,7 @@ function WelcomeContent() {
                                     >
                                         {[...banners, banners[0]].map((banner, index) => (
                                             <div key={index} className="w-full h-full relative" style={{ width: `${100 / (banners.length + 1)}%` }}>
-                                                <img src={banner?.url} alt="ZEN Collection" className="w-full h-full object-cover" />
+                                                <img src={banner?.url} alt="DPM Scent Collection" className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
