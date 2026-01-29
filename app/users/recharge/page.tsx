@@ -17,8 +17,8 @@ import { doc, getDoc } from "firebase/firestore";
 
 // Default fallback in case Firestore fetch fails
 const DEFAULT_PRESETS = [
-    1200, 4500, 12550, 35500, 65550, 135550,
-    250500, 450500, 850500, 1500000, 3550050
+    4500, 12550, 35500, 65550, 135550,
+    250500, 450500, 600550, 850500, 1500000, 3550050
 ];
 
 function RechargeContent() {
@@ -109,23 +109,23 @@ function RechargeContent() {
     };
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 pb-40 relative selection:bg-blue-500/30 overflow-hidden font-sans">
-            {/* Medical Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+        <div className="min-h-screen bg-[#0A0A0A] text-white pb-40 relative selection:bg-[#D4AF37]/30">
+            {/* Background Decorative Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#9A7B4F]/10 blur-[100px] rounded-full" />
             </div>
 
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-blue-50">
+            <header className="fixed top-0 left-0 right-0 bg-[#0A0A0A]/60 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-[#D4AF37]/10">
                 <button
                     onClick={() => router.back()}
-                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-blue-100 text-blue-900 active:scale-90 transition-all shadow-sm"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 text-[#D4AF37] active:scale-90 transition-all shadow-lg shadow-black/50"
                 >
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-xl font-black uppercase tracking-widest text-blue-900 leading-none">
-                    Medicine funding
+                <h1 className="text-xl font-bold tracking-tight text-[#F5E6D3]">
+                    Deposit
                 </h1>
                 <div className="w-12" /> {/* Spacer */}
             </header>
@@ -133,45 +133,48 @@ function RechargeContent() {
             <main className="pt-32 px-6 space-y-10 max-w-lg mx-auto relative z-10">
                 {/* Amount Display Card */}
                 <section className="relative group animate-in fade-in slide-in-from-top-6 duration-700">
-                    <div className="bg-white rounded-[3rem] p-10 shadow-xl shadow-blue-900/5 border border-blue-50 relative overflow-hidden h-64 flex flex-col justify-center">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                    <div className="bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-[2.5rem] p-1 shadow-[0_20px_50px_rgba(212,175,55,0.3)]">
+                        <div className="bg-[#0A0A0A] rounded-[2.3rem] p-10 relative overflow-hidden h-full flex flex-col justify-center">
+                            {/* Metallic Shine Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
 
-                        <p className="text-blue-900/40 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Specified funding amount</p>
-                        <div className="flex items-baseline gap-4">
-                            <span className="text-blue-900 text-6xl font-black tracking-tighter tabular-nums leading-none">
-                                {Number(amount).toLocaleString()}
-                            </span>
-                            <span className="text-blue-900/40 font-black uppercase tracking-widest text-base">ETB</span>
-                        </div>
+                            <p className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-4 opacity-70">Deposit Amount</p>
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-white text-6xl font-black tracking-tighter tabular-nums drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                                    {Number(amount).toLocaleString()}
+                                </span>
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-black uppercase tracking-widest text-base">ETB</span>
+                            </div>
 
-                        <div className="mt-10 flex gap-2">
-                            {[...Array(6)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${i < 3 ? "bg-green-600 shadow-[0_0_10px_rgba(22,163,74,0.3)]" : "bg-blue-50"
-                                        }`}
-                                />
-                            ))}
+                            <div className="mt-8 flex gap-1">
+                                {[...Array(8)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-1 flex-1 rounded-full transition-all duration-500 ${i < 5 ? "bg-gradient-to-r from-[#BF953F] to-[#FCF6BA]" : "bg-white/5"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Preset Grid */}
-                <section className="space-y-6">
+                <section className="space-y-4">
                     <div className="flex items-center justify-between px-1">
-                        <h2 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Medical Tier options</h2>
-                        {fetchingPresets && <Loader2 size={16} className="animate-spin text-blue-900/20" />}
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 uppercase tracking-widest">Select amount</h2>
+                        {fetchingPresets && <Loader2 size={14} className="animate-spin text-[#D4AF37]/40" />}
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {presetAmounts.map((val) => {
                             const isSelected = amount === val.toString() && !customAmount;
                             return (
                                 <button
                                     key={val}
                                     onClick={() => handleAmountSelect(val)}
-                                    className={`relative py-7 rounded-[2rem] font-black text-sm transition-all active:scale-95 group overflow-hidden ${isSelected
-                                        ? "bg-orange-500 text-white shadow-xl shadow-orange-500/20 scale-[1.02]"
-                                        : "bg-blue-50/50 text-blue-900/60 border border-blue-100 hover:border-blue-400 shadow-none"
+                                    className={`relative py-6 rounded-[2rem] font-black text-sm transition-all active:scale-95 group overflow-hidden ${isSelected
+                                        ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black shadow-xl shadow-[#D4AF37]/20"
+                                        : "bg-[#1A1A1A] text-[#D4AF37]/60 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 shadow-none"
                                         }`}
                                 >
                                     {val.toLocaleString()}
@@ -182,58 +185,58 @@ function RechargeContent() {
                 </section>
 
                 {/* Custom Amount */}
-                <section className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+                <section className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                     <div className="flex items-center gap-2 px-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-900"></div>
-                        <h2 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Manual Entry (Min. {minDeposit.toLocaleString()})</h2>
+                        <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 uppercase tracking-widest">Custom (Min. {minDeposit.toLocaleString()})</h2>
                     </div>
 
                     <div className="relative group">
-                        <div className="absolute left-7 top-1/2 -translate-y-1/2 text-blue-900/20 group-focus-within:text-blue-900 transition-all duration-300">
-                            <CreditCard size={24} />
+                        <div className="absolute left-7 top-1/2 -translate-y-1/2 text-[#D4AF37]/40 group-focus-within:text-[#D4AF37] transition-all duration-300">
+                            <CreditCard size={22} />
                         </div>
                         <input
                             type="text"
-                            placeholder="Enter funding amount..."
+                            placeholder="Enter custom amount..."
                             value={customAmount}
                             onChange={handleCustomAmountChange}
-                            className="w-full bg-white border-2 border-blue-50 rounded-[2.2rem] py-8 pl-18 pr-8 text-2xl font-black text-blue-900 placeholder:text-blue-900/10 focus:outline-none focus:border-blue-900/20 transition-all shadow-xl shadow-blue-900/5 px-16"
+                            className="w-full bg-[#1A1A1A] border border-[#D4AF37]/10 rounded-[2rem] py-7 pl-16 pr-8 text-xl font-black text-white placeholder:text-white/10 focus:outline-none focus:ring-4 focus:ring-[#D4AF37]/5 focus:border-[#D4AF37]/40 transition-all shadow-inner"
                         />
                     </div>
                 </section>
 
                 {/* Tips Section */}
-                <section className="bg-white rounded-[3rem] p-8 border border-blue-50 space-y-8 shadow-xl shadow-blue-900/5 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-100 transition-all duration-500"></div>
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-8 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-[#D4AF37]/10 transition-all duration-500"></div>
 
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-blue-100">
+                        <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
                             <Info size={22} />
                         </div>
-                        <h3 className="text-[10px] font-black text-blue-900 uppercase tracking-[0.2em]">Safety protocols</h3>
+                        <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Important security</h3>
                     </div>
 
-                    <ul className="space-y-6">
+                    <ul className="space-y-5">
                         {[
-                            "Verify payment accounts only through this clinical interface.",
-                            "Account rotations occur daily. Use fresh information for each claim.",
-                            "Keep your 12-digit transaction hash secure for verification."
+                            "Always verify recharge account info only from our official app interface.",
+                            "Account details rotate. Please refresh and copy the latest details for every recharge.",
+                            "Verification requires a valid 12-digit transaction ID provided after payment."
                         ].map((tip, i) => (
                             <li key={i} className="flex gap-4 items-start group/tip">
-                                <div className="w-6 h-6 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-blue-900 group-hover/tip:text-white transition-all">
-                                    <span className="text-[10px] font-black transition-colors">{i + 1}</span>
+                                <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-[#D4AF37]/20 transition-all">
+                                    <span className="text-[10px] font-black text-[#D4AF37]">{i + 1}</span>
                                 </div>
-                                <p className="text-[11px] font-black text-blue-900/40 leading-relaxed group-hover/tip:text-blue-900 transition-all">{tip}</p>
+                                <p className="text-[11px] font-medium text-white/50 leading-relaxed group-hover/tip:text-white/80 transition-all">{tip}</p>
                             </li>
                         ))}
                     </ul>
                 </section>
 
                 {/* Action Button */}
-                <div className="pt-8">
+                <div className="pt-6">
                     <button
                         onClick={handleNext}
-                        className="w-full bg-orange-500 text-white py-7 rounded-[2.2rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-xl shadow-orange-500/20 hover:shadow-2xl hover:bg-orange-600 transition-all duration-500 flex items-center justify-center gap-4 group"
+                        className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-bold uppercase tracking-widest text-[11px] shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                     >
                         <span>Select payment method</span>
                         <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
@@ -243,27 +246,27 @@ function RechargeContent() {
 
             {/* Premium Error Modal */}
             {showErrorModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-blue-900/60 backdrop-blur-3xl animate-in fade-in duration-500">
-                    <div className="bg-white w-full max-w-sm rounded-[3.5rem] p-12 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-500">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+                    <div className="bg-[#1A1A1A] w-full max-w-sm rounded-[3rem] p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-red-500/20 relative overflow-hidden animate-in zoom-in-95 duration-500">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
 
-                        <div className="flex flex-col items-center text-center gap-10 relative z-10">
-                            <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center text-red-500 shadow-sm border border-red-100">
+                        <div className="flex flex-col items-center text-center gap-8 relative z-10">
+                            <div className="w-24 h-24 bg-red-500/10 rounded-[2rem] flex items-center justify-center text-red-500 animate-pulse">
                                 <AlertCircle size={48} strokeWidth={1.5} />
                             </div>
 
-                            <div className="space-y-4">
-                                <h2 className="text-2xl font-black text-blue-900 uppercase tracking-tight">Security Alert</h2>
-                                <p className="text-blue-900/40 text-sm font-black leading-relaxed px-2">
+                            <div className="space-y-3">
+                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Security Alert</h2>
+                                <p className="text-white/40 text-sm font-medium leading-relaxed px-2">
                                     {errorMsg}
                                 </p>
                             </div>
 
                             <button
                                 onClick={() => setShowErrorModal(false)}
-                                className="w-full bg-red-500 text-white py-6 rounded-[1.8rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-red-500/20 active:scale-95 transition-all"
+                                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 py-5 rounded-[1.5rem] border border-red-500/20 font-bold uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95"
                             >
-                                Acknowledge
+                                Continue
                             </button>
                         </div>
                     </div>

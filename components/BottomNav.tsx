@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Home, Ship, Users, Shield } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, Suspense } from "react";
 import { syncDailyIncome } from "@/lib/sync";
 import { auth } from "@/lib/firebase";
@@ -49,38 +48,38 @@ function BottomNavContent() {
     if (!mounted || hideNav) return null;
 
     const navItems = [
-        { id: "home", icon: Home, label: "Clinic", path: "/users/welcome?tab=home" },
-        { id: "product", icon: Ship, label: "Pharmacy", path: "/users/product" },
-        { id: "team", icon: Users, label: "Assisted", path: "/users/team" },
-        { id: "me", icon: Shield, label: "Finance", path: "/users/profile" },
+        { id: "home", icon: Home, label: "HOME", path: "/users/welcome?tab=home" },
+        { id: "product", icon: Ship, label: "PRODUCTS", path: "/users/product" },
+        { id: "team", icon: Users, label: "TEAMS", path: "/users/team" },
+        { id: "me", icon: Shield, label: "PROFILE", path: "/users/profile" },
     ];
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-[100] px-6 pb-8 bg-gradient-to-t from-white via-white/80 to-transparent pt-12 pointer-events-none mx-auto max-w-lg">
-            <div className="flex items-center justify-between gap-4 pointer-events-auto">
+        <div className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-8 bg-gradient-to-t from-white via-white/80 to-transparent pt-12 pointer-events-none">
+            <div className="max-w-md mx-auto flex items-center justify-between gap-2 pointer-events-auto">
                 {navItems.map((item) => (
                     <button
                         key={item.id}
                         onClick={() => router.push(item.path)}
-                        className="flex flex-col items-center gap-1.5 group relative"
+                        className="flex-1 flex flex-col items-center gap-1.5 group relative"
                     >
                         <div
-                            className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 ${activeTab === item.id
-                                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 rotate-[-5deg]"
-                                : "text-blue-900/40 hover:bg-blue-50 hover:text-blue-900 active:scale-95"
+                            className={`relative w-full h-14 flex items-center justify-center rounded-[2rem] transition-all duration-500 ${activeTab === item.id
+                                ? "bg-[#3E2723] text-white shadow-[0_12px_24px_rgba(62,39,35,0.3)] scale-110"
+                                : "bg-[#F5E6D3] text-[#3E2723]/40 border border-[#3E2723]/5 active:scale-95 shadow-sm"
                                 }`}
                         >
-                            <item.icon size={activeTab === item.id ? 22 : 20} strokeWidth={activeTab === item.id ? 2.5 : 2} className="relative z-10" />
+                            <item.icon size={22} className="relative z-10" />
+                            {activeTab === item.id && (
+                                <div className="absolute inset-0 bg-white/5 rounded-[2rem] blur-md opacity-20"></div>
+                            )}
                         </div>
                         <span
-                            className={`text-[9px] font-black uppercase tracking-widest transition-colors duration-500 ${activeTab === item.id ? "text-blue-900" : "text-blue-900/30"
+                            className={`text-[8.5px] font-black uppercase tracking-tighter transition-colors leading-none truncate ${activeTab === item.id ? "text-[#3E2723]" : "text-[#3E2723]/30"
                                 }`}
                         >
                             {item.label}
                         </span>
-                        {activeTab === item.id && (
-                            <motion.div layoutId="nav-glow" className="absolute -bottom-1 w-1 h-1 bg-orange-500 rounded-full" />
-                        )}
                     </button>
                 ))}
             </div>

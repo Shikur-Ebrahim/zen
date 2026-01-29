@@ -2,13 +2,21 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1e293b; /* Dark Blue Slate */
+  --foreground: #171717;
 }
 
-/* Force light mode regardless of preference */
-:root {
-  --background: #ffffff;
-  --foreground: #1e293b;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 body {

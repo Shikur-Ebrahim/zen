@@ -13,29 +13,25 @@ import {
     ChevronLeft,
     ShieldCheck,
     Key,
-    AlertCircle,
-    Fingerprint,
-    Shield,
-    Activity
+    AlertCircle
 } from "lucide-react";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
 
 function ChangePasswordContent() {
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Keep focus on the hidden input
     useEffect(() => {
         const focusInput = () => inputRef.current?.focus();
         focusInput();
-        window.addEventListener('click', focusInput);
-        return () => window.removeEventListener('click', focusInput);
     }, []);
 
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
+    // State management for logic flow
     const [step, setStep] = useState<"enter_old" | "create_new" | "confirm_new">("create_new");
     const [input, setInput] = useState("");
     const [tempNew, setTempNew] = useState("");
@@ -54,6 +50,7 @@ function ChangePasswordContent() {
             }
             setUser(currentUser);
 
+            // Fetch current setting
             const userRef = doc(db, "users", currentUser.uid);
             const docSnap = await getDoc(userRef);
             if (docSnap.exists()) {
@@ -79,18 +76,20 @@ function ChangePasswordContent() {
         try {
             if (step === "enter_old") {
                 if (input === existingPass) {
-                    toast.success("Identity Protocol Verified");
+                    toast.success("Identity Verified");
                     setStep("create_new");
                     setInput("");
                 } else {
                     triggerShake();
-                    setErrorMsg("Invalid PIN! Medical authorization failed.");
+                    setErrorMsg("Incorrect Password! Please enter the correct PIN.");
+                    toast.error("Incorrect Password! Please enter the correct PIN.");
                     setInput("");
                 }
                 setSubmitting(false);
             } else if (step === "create_new") {
                 if (hasExistingPass && input === existingPass) {
-                    setErrorMsg("New PIN must differ from current protocol.");
+                    setErrorMsg("New PIN cannot be the same as old PIN.");
+                    toast.error("New PIN cannot be the same as old PIN");
                     triggerShake();
                     setInput("");
                     setSubmitting(false);
@@ -102,26 +101,23 @@ function ChangePasswordContent() {
                 setSubmitting(false);
             } else if (step === "confirm_new") {
                 if (input === tempNew) {
+                    // Update Password in Firestore
                     await updateDoc(doc(db, "users", user.uid), {
                         withdrawalPassword: input
                     });
                     setSubmitting(false);
-                    setShowSuccess(true);
-                } else {
-                    triggerShake();
-                    setErrorMsg("Synchronization failed! PIN mismatch.");
-                    setInput("");
-                    setSubmitting(false);
+                    setShowSuccess(true); // Trigger Success View
                 }
             }
 
         } catch (error) {
             console.error(error);
-            toast.error("Clinical system error");
+            toast.error("An error occurred");
             setSubmitting(false);
         }
     };
 
+    // Auto-submit when exactly 4 digits are typed
     useEffect(() => {
         if (input.length === 4 && !submitting) {
             handleAction();
@@ -135,89 +131,77 @@ function ChangePasswordContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
             </div>
         );
     }
 
     if (showSuccess) {
         return (
-            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6  relative font-sans overflow-hidden">
-                {/* Ambient Background Glow */}
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+            <div className="min-h-screen bg-[#F8F9FB] flex flex-col items-center justify-center p-6 animate-in fade-in fill-mode-forwards duration-500">
+                <div className="w-full max-w-sm bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-indigo-100 border border-slate-50 text-center relative overflow-hidden">
+                    {/* Background decoration */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 blur-xl"></div>
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-50 rounded-full -ml-16 -mb-16 blur-xl"></div>
+
+                    <div className="relative z-10 flex flex-col items-center gap-6">
+                        <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center mb-2">
+                            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center shadow-inner">
+                                <CheckCircle2 size={40} className="text-emerald-500 drop-shadow-sm" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Success!</h2>
+                            <p className="text-sm font-bold text-slate-500 leading-relaxed">
+                                Your withdrawal password has been changed correctly.
+                            </p>
+                        </div>
+
+                        <div className="w-full pt-4">
+                            <button
+                                onClick={() => router.back()}
+                                className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-[2rem] text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-900/10 transition-all active:scale-95"
+                            >
+                                Back to Profile
+                            </button>
+                        </div>
+                    </div>
                 </div>
-
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="w-full max-w-sm bg-white rounded-[3rem] p-12 border border-blue-50 shadow-3xl text-center relative z-10 overflow-hidden"
-                >
-                    <div className="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
-
-                    <div className="w-28 h-28 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-8 shadow-inner">
-                        <CheckCircle2 size={56} className="text-green-600" strokeWidth={2.5} />
-                    </div>
-
-                    <div className="space-y-4">
-                        <h2 className="text-3xl font-black text-blue-900 uppercase tracking-tight leading-none">Node Secured</h2>
-                        <p className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em] leading-relaxed">
-                            Clinical disbursement PIN has been successfully re-encrypted.
-                        </p>
-                    </div>
-
-                    <div className="w-full pt-10">
-                        <button
-                            onClick={() => router.back()}
-                            className="w-full h-18 bg-blue-900 hover:bg-blue-950 text-white rounded-[1.8rem] text-sm font-black uppercase tracking-[0.25em] shadow-xl shadow-blue-900/10 transition-all active:scale-95"
-                        >
-                            Confirm & Path Back
-                        </button>
-                    </div>
-                </motion.div>
             </div>
         );
     }
 
-    return (
-        <div className="min-h-screen bg-white flex flex-col items-center p-6 relative font-sans overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
-            </div>
+    // Determine visual steps
+    const steps = hasExistingPass
+        ? [
+            { id: 1, label: "Verify Old" },
+            { id: 2, label: "Create New" },
+            { id: 3, label: "Confirm" }
+        ]
+        : [
+            { id: 2, label: "Create New" },
+            { id: 3, label: "Confirm" }
+        ];
 
-            {/* Back Button */}
+    return (
+        <div className="min-h-screen bg-[#F8F9FB] flex flex-col items-center p-6 pt-12 relative font-sans">
+            {/* Minimal Back Button */}
             <button
                 onClick={() => router.back()}
-                className="absolute top-8 left-8 w-12 h-12 rounded-2xl bg-white shadow-xl shadow-blue-900/5 border border-blue-50 flex items-center justify-center hover:bg-blue-50 transition-all active:scale-95 z-50"
+                className="absolute top-8 left-8 w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-all active:scale-95 z-50"
             >
-                <ChevronLeft size={24} className="text-blue-900" />
+                <ChevronLeft size={24} className="text-slate-400" />
             </button>
 
-            {/* Header Content */}
-            <div className="relative z-10 text-center mt-20 space-y-6 max-w-[280px]">
-                <div className="w-20 h-20 bg-blue-50 rounded-[2rem] flex items-center justify-center mx-auto border border-blue-100 shadow-lg shadow-blue-900/5">
-                    <Fingerprint size={40} className="text-blue-600" strokeWidth={2.5} />
-                </div>
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-black text-blue-900 uppercase tracking-tight leading-none">
-                        {step === "enter_old" ? "Verify Identity" : step === "create_new" ? "Define PIN" : "Verify PIN"}
-                    </h1>
-                    <p className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em] leading-relaxed">
-                        {step === "enter_old" ? "Authorize clinical node via existing credential" : step === "create_new" ? "Construct new 4-digit disbursement key" : "Re-enter new credential to finalize encryption"}
-                    </p>
-                </div>
-            </div>
-
-            {/* Input Section */}
-            <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-sm">
+            {/* Hidden Input & Dots Display */}
+            <div className="flex-1 flex flex-col items-center justify-center -mt-20">
                 <div
-                    className={`relative flex gap-6 p-10 cursor-text transition-all duration-300 ${shake ? "animate-shake bg-red-50 rounded-[3rem]" : ""}`}
+                    className={`relative flex gap-8 p-8 cursor-text ${shake ? "animate-shake" : ""}`}
                     onClick={() => inputRef.current?.focus()}
                 >
+                    {/* Native Input - Invisible but functional */}
                     <input
                         ref={inputRef}
                         type="tel"
@@ -234,52 +218,29 @@ function ChangePasswordContent() {
                         autoFocus
                     />
 
+                    {/* Visual Dots */}
                     {[...Array(4)].map((_, i) => (
                         <div
                             key={i}
-                            className={`w-6 h-6 rounded-full transition-all duration-500 border-2 ${i < input.length
-                                ? "bg-orange-500 border-orange-600 scale-125 shadow-lg shadow-orange-500/20"
-                                : "bg-blue-50 border-blue-100 scale-100"
+                            className={`w-5 h-5 rounded-full transition-all duration-300 ${i < input.length
+                                ? (shake ? "bg-red-500 scale-125" : "bg-slate-800 scale-125") + " shadow-[0_0_15px_rgba(0,0,0,0.1)]"
+                                : "bg-slate-200 scale-100"
                                 }`}
                         ></div>
                     ))}
                 </div>
 
-                {/* Error Box */}
-                <AnimatePresence>
+                {/* Status Message */}
+                <div className="h-6 mt-4 text-center px-4">
                     {errorMsg && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="bg-red-50 px-6 py-3 rounded-2xl border border-red-100 flex items-center gap-3 mt-4"
-                        >
-                            <AlertCircle size={14} className="text-red-500" />
-                            <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">
-                                {errorMsg}
-                            </p>
-                        </motion.div>
+                        <p className="text-[10px] font-black text-red-500 uppercase tracking-widest animate-in fade-in slide-in-from-top-1">
+                            {errorMsg}
+                        </p>
                     )}
-                </AnimatePresence>
+                </div>
             </div>
 
-            {/* Step Indicators */}
-            <div className="pb-20 relative z-10 flex items-center gap-4">
-                {[1, 2, 3].map((s) => (
-                    <div
-                        key={s}
-                        className={`w-2 h-2 rounded-full transition-all duration-500 ${(step === "enter_old" && s === 1) || (step === "create_new" && s === 2) || (step === "confirm_new" && s === 3)
-                                ? "bg-blue-900 w-8"
-                                : "bg-blue-100"
-                            }`}
-                    />
-                ))}
-            </div>
-
-            {/* Bottom Logistics */}
-            <div className="fixed bottom-10 left-0 right-0 flex justify-center pointer-events-none opacity-20 z-0">
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-900">Secure Pin Entry</span>
-            </div>
+            {/* Bottom Action Button - REMOVED for auto-submit */}
         </div>
     );
 }
@@ -288,7 +249,7 @@ export default function ChangeWithdrawalPasswordPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
             </div>
         }>
             <ChangePasswordContent />

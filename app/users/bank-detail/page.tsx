@@ -8,14 +8,8 @@ import {
     ChevronLeft,
     Building2,
     Loader2,
-    ChevronRight,
-    Activity,
-    ShieldCheck,
-    Stethoscope,
-    Wallet,
-    Info
+    ChevronRight
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 function BankDetailContent() {
     const router = useRouter();
@@ -48,140 +42,84 @@ function BankDetailContent() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 pb-32 font-sans selection:bg-blue-100 relative overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
-            </div>
-
+        <div className="min-h-screen bg-white text-slate-900 pb-32">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-blue-50">
-                <div className="max-w-lg mx-auto px-6 h-20 flex items-center justify-between">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-blue-100 text-blue-900 active:scale-90 transition-all shadow-sm"
-                    >
-                        <ChevronLeft size={22} />
-                    </button>
-                    <h1 className="text-lg font-black uppercase tracking-widest text-blue-900 leading-none italic">Funding Protocol</h1>
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
-                        <Activity size={18} />
-                    </div>
-                </div>
+            <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl z-50 px-6 py-5 flex items-center justify-between border-b border-slate-100">
+                <button
+                    onClick={() => router.back()}
+                    className="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 active:scale-90 transition-all font-bold"
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <h1 className="text-lg font-bold tracking-tight">Deposit</h1>
+                <div className="w-10" />
             </header>
 
-            <main className="max-w-lg mx-auto px-6 pt-12 relative z-10 space-y-12">
+            <main className="pt-28 px-6 max-w-lg mx-auto space-y-10">
                 {/* Amount Highlight */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center space-y-4"
-                >
-                    <div className="inline-flex items-center gap-2 px-6 py-2 bg-blue-50 rounded-full border border-blue-100 shadow-sm">
-                        <Wallet size={14} className="text-blue-600" />
-                        <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.3em]">Protocol Allocation</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-4">
-                        <span className="text-7xl font-black text-blue-900 tracking-tighter italic">
+                <div className="text-center space-y-2 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <p className="text-[10px] font-bold text-slate-400 tracking-widest">Deposit amount</p>
+                    <div className="flex items-center justify-center gap-3">
+                        <span className="text-6xl font-black text-indigo-600 tracking-tighter">
                             {Number(amount).toLocaleString()}
                         </span>
-                        <div className="flex flex-col items-start">
-                            <span className="text-2xl font-black text-blue-900/20 leading-none">ETB</span>
-                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none mt-1">Certified</span>
-                        </div>
+                        <span className="text-6xl font-black text-indigo-600">Br</span>
                     </div>
-                </motion.div>
+                </div>
 
-                {/* Summary Card */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="bg-blue-900 rounded-[3rem] p-10 flex items-center justify-between shadow-2xl shadow-blue-900/20 relative overflow-hidden"
-                >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-16 -mt-16"></div>
-                    <div className="space-y-1">
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Settlement Net</p>
-                        <p className="text-2xl font-black text-white italic">Etb {Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-                    </div>
-                    <ShieldCheck size={40} className="text-white/10" strokeWidth={1.5} />
-                </motion.div>
+                {/* Order Summary Card */}
+                <div className="bg-slate-50/50 border border-slate-100 rounded-[2.5rem] p-8 flex items-center justify-between shadow-sm animate-in zoom-in-95 duration-500">
+                    <span className="text-sm font-bold text-slate-500">Amount</span>
+                    <span className="text-lg font-bold text-indigo-600">Etb {Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                </div>
 
-                {/* Gateway Selection */}
+                {/* Bank Selection Display */}
                 <div className="space-y-6">
-                    <div className="flex items-center justify-between px-2">
-                        <h2 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.3em] leading-none">Gateway Authorization</h2>
-                        <Info size={14} className="text-blue-900/20" />
-                    </div>
+                    <h2 className="text-sm font-bold text-slate-900 tracking-widest leading-none px-1">Please choose payment</h2>
 
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
+                    <button
                         onClick={() => {
                             if (methodId) {
+                                // Default to 'regular' if no type is specified or if it's invalid
                                 const theme = method?.bankDetailType || "regular";
                                 const validThemes = ["regular", "express"];
                                 const targetTheme = validThemes.includes(theme.toLowerCase()) ? theme.toLowerCase() : "regular";
+
                                 router.push(`/users/bank-detail/${targetTheme}?amount=${amount}&methodId=${methodId}`);
                             }
                         }}
-                        className="w-full bg-white border border-blue-50 rounded-[2.5rem] p-8 shadow-xl shadow-blue-900/5 hover:border-blue-200 transition-all flex items-center justify-between group active:scale-[0.98] relative overflow-hidden"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/0 via-blue-50/50 to-blue-50/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-
-                        <div className="flex items-center gap-6 relative z-10">
-                            <div className="w-20 h-20 rounded-[1.8rem] border border-blue-100 overflow-hidden flex items-center justify-center bg-blue-50 shadow-inner transition-transform group-hover:scale-105 duration-500 p-3">
+                        className="w-full bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all flex items-center justify-between group active:scale-[0.98]">
+                        <div className="flex items-center gap-5">
+                            <div className="w-16 h-16 rounded-full border border-slate-50 overflow-hidden flex items-center justify-center bg-white shadow-sm transition-transform group-hover:scale-105 duration-500">
                                 {method?.bankLogoUrl ? (
-                                    <img src={method.bankLogoUrl} className="w-full h-full object-contain filter drop-shadow-[0_2px_5px_rgba(30,58,138,0.1)]" alt="Bank Logo" />
+                                    <img src={method.bankLogoUrl} className="w-full h-full object-contain p-2" alt="Bank Logo" />
                                 ) : (
-                                    <Building2 size={32} className="text-blue-900/10" />
+                                    <Building2 size={24} className="text-slate-200" />
                                 )}
                             </div>
-                            <div className="flex flex-col items-start gap-1">
-                                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Verified Channel</span>
-                                <span className="text-lg font-black text-blue-900 text-left leading-tight italic uppercase">
-                                    {method?.bankName || "Select Gateway"}
-                                </span>
-                            </div>
+                            <span className="text-sm font-black text-slate-800 text-left leading-tight">
+                                {method?.bankName || "Select bank"}
+                            </span>
                         </div>
-                        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 text-blue-900 transition-all group-hover:bg-blue-900 group-hover:text-white group-hover:border-blue-900 relative z-10">
-                            <ChevronRight size={24} />
-                        </div>
-                    </motion.button>
-                </div>
-
-                {/* Secure Footer Notification */}
-                <div className="bg-orange-50/50 border border-orange-100 rounded-[2rem] p-6 flex gap-4 items-start animate-pulse relative z-10">
-                    <Info className="text-orange-500 shrink-0 mt-0.5" size={18} />
-                    <p className="text-[10px] font-black text-orange-700 uppercase tracking-widest leading-relaxed">
-                        Ensure the transfer amount remains identical to the protocol request to avoid settlement expiration.
-                    </p>
+                        <ChevronRight size={20} className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
+                    </button>
                 </div>
             </main>
 
-            {/* Stealth Logistics */}
-            <div className="fixed bottom-10 left-0 right-0 flex justify-center pointer-events-none opacity-10 z-0">
-                <span className="text-[9px] font-black uppercase tracking-[1em] text-blue-900">N-256 FUNDING GATEWAY</span>
-            </div>
+
         </div>
     );
 }
 
 export default function BankDetailPage() {
     return (
-        <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-            </div>
-        }>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-10 h-10 animate-spin text-indigo-600" /></div>}>
             <BankDetailContent />
         </Suspense>
     );

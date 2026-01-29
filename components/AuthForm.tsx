@@ -6,7 +6,7 @@ import Image from "next/image";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, increment, Timestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { Loader2, Eye, EyeOff, ChevronDown, AlertCircle, Send, UserX, ShieldAlert, ArrowRight, User, Phone, Lock, Globe } from "lucide-react";
+import { Loader2, Eye, EyeOff, ChevronDown, AlertCircle, Send, UserX, ShieldAlert } from "lucide-react";
 import { countries, phoneValidationRules } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,7 +24,6 @@ export default function AuthForm() {
         country: "Ethiopia",
         phonePrefix: "+251",
         phoneNumber: "",
-        fullName: "",
     });
 
     const [supportLink, setSupportLink] = useState<string | null>(null);
@@ -104,7 +103,7 @@ export default function AuthForm() {
 
                 const fullPhoneNumber = `${formData.phonePrefix}${formData.phoneNumber}`;
                 const sanitizedPhone = fullPhoneNumber.replace(/\+/g, "").replace(/\s/g, "");
-                const generatedEmail = `${sanitizedPhone}@msd.app`;
+                const generatedEmail = `${sanitizedPhone}@dpm.app`;
 
                 if (formData.password !== formData.confirmPassword) {
                     throw new Error("Passwords do not match");
@@ -122,10 +121,10 @@ export default function AuthForm() {
 
                 const searchParams = new URLSearchParams(window.location.search);
                 const refParam = searchParams.get("ref");
-                let refCode = refParam || localStorage.getItem("msd_ref");
+                let refCode = refParam || localStorage.getItem("dpm_ref");
 
                 if (refParam) {
-                    localStorage.setItem("msd_ref", refParam);
+                    localStorage.setItem("dpm_ref", refParam);
                 }
 
                 if (refCode) {
@@ -217,7 +216,7 @@ export default function AuthForm() {
                 } else {
                     const fullPhoneNumber = `${formData.phonePrefix}${input}`;
                     const sanitizedPhone = fullPhoneNumber.replace(/\+/g, "").replace(/\s/g, "");
-                    const generatedEmail = `${sanitizedPhone}@msd.app`;
+                    const generatedEmail = `${sanitizedPhone}@dpm.app`;
 
                     userCredential = await signInWithEmailAndPassword(auth, generatedEmail, formData.password);
                 }
@@ -284,11 +283,11 @@ export default function AuthForm() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+        <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-[#FAF9F6]">
             {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-100/30 rounded-full blur-[120px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-green-100/20 rounded-full blur-[120px]"></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-[#C9A24D]/5 blur-[120px] rounded-full"></div>
+                <div className="absolute bottom-[0%] right-[-10%] w-[60%] h-[60%] bg-[#8B5E3C]/5 blur-[100px] rounded-full"></div>
             </div>
 
             <motion.div
@@ -304,11 +303,11 @@ export default function AuthForm() {
                     <div className="pt-20 pb-10 px-8 text-center">
                         <div className="flex justify-center mb-10">
                             <div className="w-44 h-44 relative group">
-                                <div className="absolute inset-0 bg-blue-50/50 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-1000"></div>
-                                <div className="w-full h-full rounded-2xl bg-white border border-blue-100 shadow-md relative z-10 flex items-center justify-center p-4 overflow-hidden">
+                                <div className="absolute inset-0 bg-gray-100/50 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-1000"></div>
+                                <div className="w-full h-full rounded-2xl bg-white border border-gray-100 shadow-lg relative z-10 flex items-center justify-center p-4 overflow-hidden">
                                     <img
-                                        src="/msd-logo.png"
-                                        alt="MSD Logo"
+                                        src="/dpm-logo.png"
+                                        alt="DPM Logo"
                                         className="w-full h-full object-contain"
                                     />
                                 </div>
@@ -316,28 +315,36 @@ export default function AuthForm() {
                         </div>
 
                         <div className="space-y-1">
-                            <h1 className="text-3xl font-black text-blue-900 tracking-tight mb-2">
+                            <h1 className="text-3xl font-bold tracking-tight text-[#1A1A1A]">
                                 {activeTab === "register" ? "Create Account" : "Welcome Back"}
                             </h1>
-                            <p className="text-xs text-blue-600/60 font-medium">
-                                {activeTab === "register" ? "Join MSD Medicine" : "Sign in to your account"}
+                            <p className="text-xs text-gray-500 font-medium">
+                                {activeTab === "register" ? "Join DPM Fragrances" : "Sign in to your account"}
                             </p>
                         </div>
 
                         {/* Tab Switcher */}
-                        <div className="flex bg-blue-50/50 p-1.5 rounded-[2rem] border border-blue-100/50 mb-10">
-                            {(["login", "register"] as const).map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`flex-1 py-4 rounded-2xl text-[10px] font-black tracking-widest uppercase transition-all duration-500 ${activeTab === tab
-                                        ? "bg-white text-blue-900 shadow-md scale-[1.02]"
-                                        : "text-blue-900/40 hover:text-blue-900/60"
-                                        }`}
-                                >
-                                    {tab.replace("-", " ")}
-                                </button>
-                            ))}
+                        <div className="relative flex p-1 bg-gray-100/80 rounded-2xl mt-12 mb-4 mx-4">
+                            <motion.div
+                                className="absolute top-1 bottom-1 rounded-xl bg-white shadow-sm border border-gray-200/50"
+                                animate={{
+                                    left: activeTab === "register" ? "4px" : "50%",
+                                    width: "calc(50% - 8px)"
+                                }}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                            />
+                            <button
+                                onClick={() => setActiveTab("register")}
+                                className={`flex-1 py-3 text-sm font-semibold transition-all relative z-10 ${activeTab === "register" ? "text-gray-900" : "text-gray-400"}`}
+                            >
+                                Register
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("login")}
+                                className={`flex-1 py-3 text-sm font-semibold transition-all relative z-10 ${activeTab === "login" ? "text-gray-900" : "text-gray-400"}`}
+                            >
+                                Log In
+                            </button>
                         </div>
                     </div>
 
@@ -362,17 +369,17 @@ export default function AuthForm() {
                                     </motion.div>
                                 )}
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                                <form onSubmit={handleSubmit} className="space-y-4">
                                     {/* Country Selector */}
                                     <div className="relative">
                                         <button
                                             type="button"
                                             onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                                            className="w-full px-5 py-5 rounded-2xl bg-white border border-blue-100 text-left flex items-center justify-between hover:border-blue-200 transition-all outline-none"
+                                            className="w-full px-5 py-4.5 rounded-2xl bg-gray-50 border border-gray-200 text-left flex items-center justify-between hover:bg-white transition-all outline-none"
                                         >
                                             <div className="flex items-center gap-3">
                                                 {formData.country && (
-                                                    <div className="relative w-6 h-4 rounded-sm overflow-hidden border border-blue-100">
+                                                    <div className="relative w-6 h-4 rounded-sm overflow-hidden border border-gray-200">
                                                         <Image
                                                             src={countries.find(c => c.name === formData.country)?.flag || ""}
                                                             alt={formData.country}
@@ -382,9 +389,9 @@ export default function AuthForm() {
                                                         />
                                                     </div>
                                                 )}
-                                                <span className="text-blue-900 font-bold">{formData.country}</span>
+                                                <span className="text-gray-700 font-semibold">{formData.country}</span>
                                             </div>
-                                            <ChevronDown size={18} className={`text-blue-900/40 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
+                                            <ChevronDown size={18} className={`text-gray-400 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
                                         </button>
 
                                         <AnimatePresence>
@@ -393,7 +400,7 @@ export default function AuthForm() {
                                                     initial={{ opacity: 0, y: 5 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, y: 5 }}
-                                                    className="absolute z-50 w-full mt-2 bg-white border border-blue-100 rounded-2xl shadow-xl max-h-64 overflow-y-auto no-scrollbar"
+                                                    className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-64 overflow-y-auto no-scrollbar"
                                                 >
                                                     {countries.map((c) => (
                                                         <button
@@ -403,13 +410,13 @@ export default function AuthForm() {
                                                                 setFormData(prev => ({ ...prev, country: c.name, phonePrefix: c.prefix, phoneNumber: "" }));
                                                                 setIsCountryDropdownOpen(false);
                                                             }}
-                                                            className="w-full px-5 py-4 flex items-center gap-3 hover:bg-blue-50 transition-colors text-left"
+                                                            className="w-full px-5 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
                                                         >
-                                                            <div className="relative w-7 h-5 rounded-sm overflow-hidden border border-blue-50">
+                                                            <div className="relative w-7 h-5 rounded-sm overflow-hidden border border-gray-100">
                                                                 <Image src={c.flag} alt={c.name} fill className="object-cover" unoptimized />
                                                             </div>
-                                                            <span className="text-blue-900 font-bold">{c.name}</span>
-                                                            <span className="ml-auto text-xs text-blue-900/30">{c.prefix}</span>
+                                                            <span className="text-gray-700 font-semibold">{c.name}</span>
+                                                            <span className="ml-auto text-xs text-gray-400">{c.prefix}</span>
                                                         </button>
                                                     ))}
                                                 </motion.div>
@@ -418,9 +425,9 @@ export default function AuthForm() {
                                     </div>
 
                                     {/* Input Fields */}
-                                    <div className="space-y-6">
-                                        <div className="flex bg-white border border-blue-100 rounded-2xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/5 focus-within:border-blue-200 transition-all">
-                                            <div className="px-5 flex items-center bg-blue-50 font-black text-blue-900/40 text-[10px] tracking-widest border-r border-blue-100 min-w-[80px] justify-center uppercase">
+                                    <div className="space-y-4">
+                                        <div className="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-gray-200 focus-within:bg-white transition-all">
+                                            <div className="px-5 flex items-center bg-gray-100/50 text-gray-500 font-bold text-sm border-r border-gray-200 min-w-[80px] justify-center">
                                                 {formData.phonePrefix}
                                             </div>
                                             <input
@@ -429,24 +436,10 @@ export default function AuthForm() {
                                                 required
                                                 value={formData.phoneNumber}
                                                 onChange={handleInputChange}
-                                                className="w-full px-5 py-5 bg-transparent outline-none text-blue-900 font-bold placeholder:text-blue-900/20"
+                                                className="w-full px-5 py-4.5 bg-transparent outline-none text-gray-900 font-semibold placeholder:text-gray-400"
                                                 placeholder={activeTab === "login" ? "Email or Phone" : "Phone Number"}
                                             />
                                         </div>
-
-                                        {activeTab === "register" && (
-                                            <div className="relative">
-                                                <input
-                                                    type="text"
-                                                    name="fullName"
-                                                    required
-                                                    className="w-full px-5 py-5 rounded-2xl bg-white border border-blue-100 outline-none text-blue-900 font-bold placeholder:text-blue-900/20 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all"
-                                                    placeholder="Full Name"
-                                                    value={formData.fullName}
-                                                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                                />
-                                            </div>
-                                        )}
 
                                         <div className="relative">
                                             <input
@@ -455,15 +448,15 @@ export default function AuthForm() {
                                                 required
                                                 value={formData.password}
                                                 onChange={handleInputChange}
-                                                className="w-full px-5 py-5 rounded-2xl bg-white border border-blue-100 outline-none text-blue-900 font-bold placeholder:text-blue-900/20 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all pr-14"
+                                                className="w-full px-5 py-4.5 rounded-2xl bg-gray-50 border border-gray-200 outline-none text-gray-900 font-semibold placeholder:text-gray-400 focus:ring-2 focus:ring-gray-200 focus:bg-white transition-all pr-14"
                                                 placeholder="Password"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-5 top-1/2 -translate-y-1/2 text-blue-900/30 hover:text-blue-900 transition-colors"
+                                                className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                             >
-                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                             </button>
                                         </div>
 
@@ -479,7 +472,7 @@ export default function AuthForm() {
                                                     required={activeTab === "register"}
                                                     value={formData.confirmPassword}
                                                     onChange={handleInputChange}
-                                                    className="w-full px-5 py-5 rounded-2xl bg-white border border-blue-100 outline-none text-blue-900 font-bold placeholder:text-blue-900/20 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-200 transition-all"
+                                                    className="w-full px-5 py-4.5 rounded-2xl bg-gray-50 border border-gray-200 outline-none text-gray-900 font-semibold placeholder:text-gray-400 focus:ring-2 focus:ring-gray-200 focus:bg-white transition-all"
                                                     placeholder="Confirm Password"
                                                 />
                                             </motion.div>
@@ -487,25 +480,17 @@ export default function AuthForm() {
                                     </div>
 
                                     {/* Action Button */}
-                                    <motion.button
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.98 }}
+                                    <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full h-16 bg-orange-500 text-white rounded-[1.5rem] font-black text-[12px] tracking-[0.25em] uppercase transition-all shadow-lg shadow-orange-500/20 hover:bg-orange-600 disabled:opacity-50 flex items-center justify-center gap-3 active:scale-[0.98]"
+                                        className="w-full py-5 mt-8 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold text-sm shadow-xl shadow-gray-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
                                     >
                                         {loading ? (
-                                            <>
-                                                <Loader2 className="animate-spin" size={20} strokeWidth={3} />
-                                                <span>Verifying...</span>
-                                            </>
+                                            <Loader2 className="animate-spin" size={20} />
                                         ) : (
-                                            <>
-                                                <span>{activeTab === "register" ? "Confirm Registration" : "Enter Securely"}</span>
-                                                <ArrowRight size={18} strokeWidth={3} />
-                                            </>
+                                            <span>{activeTab === "register" ? "Create Account" : "Sign In"}</span>
                                         )}
-                                    </motion.button>
+                                    </button>
                                 </form>
                             </motion.div>
                         </AnimatePresence>
@@ -519,14 +504,14 @@ export default function AuthForm() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mt-10 px-8 text-center bg-white py-8 rounded-[2.5rem] border border-blue-100 shadow-xl"
+                            className="mt-10 px-8 text-center bg-white/40 backdrop-blur-xl py-8 rounded-[2.5rem] border border-white/50"
                         >
-                            <ShieldAlert size={32} className="mx-auto text-orange-500 mb-4" />
-                            <p className="text-blue-900 font-black text-[10px] uppercase tracking-widest mb-6">Security Restriction Enabled</p>
+                            <ShieldAlert size={32} className="mx-auto text-red-500 mb-4" />
+                            <p className="text-[#1A1A1A] font-black text-[10px] uppercase tracking-widest mb-6">Security Restriction Enabled</p>
                             {supportLink && (
                                 <button
                                     onClick={() => window.open(supportLink.startsWith('http') ? supportLink : `https://t.me/${supportLink.replace('@', '')}`, '_blank')}
-                                    className="px-10 py-4 bg-orange-500 text-white rounded-full font-black text-[9px] tracking-widest uppercase hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+                                    className="px-10 py-4 bg-[#1A1A1A] text-white rounded-full font-black text-[9px] tracking-widest uppercase hover:bg-black transition-all"
                                 >
                                     Engage Support
                                 </button>

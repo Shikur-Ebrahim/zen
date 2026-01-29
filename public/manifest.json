@@ -1,19 +1,19 @@
 {
-  "name": "MSD Medicine",
-  "short_name": "MSD",
-  "description": "MSD Medicine Seller Application",
+  "name": "DPM Fragrances",
+  "short_name": "DPM",
+  "description": "DPM Fragrances Application",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/msd-logo.png",
+      "src": "/dpm-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/msd-logo.png",
+      "src": "/dpm-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

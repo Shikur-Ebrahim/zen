@@ -21,60 +21,60 @@ const THEMES: Record<number, {
     shadow: string;
 }> = {
     1: {
-        primary: "from-blue-100 to-blue-200",
-        secondary: "bg-blue-600",
-        accent: "text-blue-900",
+        primary: "from-orange-400 to-orange-700",
+        secondary: "bg-orange-600",
+        accent: "text-orange-200",
         icon: Medal,
-        label: "Certified Associate",
-        glow: "rgba(37, 99, 235, 0.2)",
-        shadow: "shadow-blue-600/20"
+        label: "Bronze Achievement",
+        glow: "rgba(249, 115, 22, 0.4)",
+        shadow: "shadow-orange-600/30"
     },
     2: {
-        primary: "from-green-100 to-green-200",
-        secondary: "bg-green-600",
-        accent: "text-green-900",
+        primary: "from-slate-300 to-slate-500",
+        secondary: "bg-slate-400",
+        accent: "text-slate-100",
         icon: Star,
-        label: "Medical Specialist",
-        glow: "rgba(22, 163, 74, 0.2)",
-        shadow: "shadow-green-600/20"
+        label: "Silver Excellence",
+        glow: "rgba(148, 163, 184, 0.4)",
+        shadow: "shadow-slate-400/30"
     },
     3: {
-        primary: "from-blue-200 to-blue-300",
-        secondary: "bg-blue-800",
-        accent: "text-blue-900",
+        primary: "from-amber-300 via-amber-500 to-amber-700",
+        secondary: "bg-amber-500",
+        accent: "text-amber-100",
         icon: Trophy,
-        label: "Senior Consultant",
-        glow: "rgba(30, 58, 138, 0.2)",
-        shadow: "shadow-blue-800/20"
+        label: "Gold Master",
+        glow: "rgba(245, 158, 11, 0.4)",
+        shadow: "shadow-amber-500/30"
     },
     4: {
-        primary: "from-orange-100 top-orange-200",
-        secondary: "bg-orange-500",
-        accent: "text-orange-900",
+        primary: "from-blue-400 via-indigo-500 to-purple-600",
+        secondary: "bg-indigo-600",
+        accent: "text-indigo-100",
         icon: Gem,
-        label: "Chief of Medicine",
-        glow: "rgba(249, 115, 22, 0.2)",
-        shadow: "shadow-orange-500/20"
+        label: "Platinum Elite",
+        glow: "rgba(79, 70, 229, 0.4)",
+        shadow: "shadow-indigo-600/30"
     },
     5: {
-        primary: "from-green-200 to-green-400",
-        secondary: "bg-green-700",
-        accent: "text-green-950",
+        primary: "from-emerald-400 via-teal-500 to-cyan-600",
+        secondary: "bg-emerald-600",
+        accent: "text-emerald-100",
         icon: Crown,
-        label: "Healthcare Director",
-        glow: "rgba(21, 128, 61, 0.2)",
-        shadow: "shadow-green-700/20"
+        label: "Emerald Legend",
+        glow: "rgba(16, 185, 129, 0.4)",
+        shadow: "shadow-emerald-600/30"
     }
 };
 
 const DEFAULT_THEME = {
-    primary: "from-blue-900 via-blue-950 to-black",
-    secondary: "bg-blue-900",
-    accent: "text-blue-100",
+    primary: "from-slate-800 via-indigo-950 to-black",
+    secondary: "bg-indigo-900",
+    accent: "text-indigo-200",
     icon: Crown,
-    label: "Medical Board Executive",
-    glow: "rgba(30, 58, 138, 0.5)",
-    shadow: "shadow-blue-900/40"
+    label: "Diamond Elite Sovereign",
+    glow: "rgba(79, 70, 229, 0.5)",
+    shadow: "shadow-indigo-900/40"
 };
 
 export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }: VipCelebrationCardProps) {
@@ -95,9 +95,9 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                     exit={{ opacity: 0 }}
                     className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 overflow-hidden"
                 >
-                    {/* Medical Backdrop */}
+                    {/* Immersive Backdrop with Dynamic Glow */}
                     <div
-                        className="absolute inset-0 bg-white/95 backdrop-blur-3xl"
+                        className="absolute inset-0 bg-[#EADBC8]/90 backdrop-blur-3xl"
                         onClick={onClose}
                     >
                         <motion.div
@@ -118,12 +118,12 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                         animate={{ scale: 1, y: 0, rotateX: 0, opacity: 1 }}
                         exit={{ scale: 0.9, y: 50, opacity: 0 }}
                         transition={{ type: "spring", damping: 20, stiffness: 200 }}
-                        className={`relative w-full max-w-xl bg-white rounded-[3.5rem] overflow-hidden shadow-2xl ${theme.shadow} border-4 border-blue-50`}
+                        className={`relative w-full max-w-xl bg-white rounded-[3.5rem] overflow-hidden shadow-2xl ${theme.shadow} border-4 border-white/10`}
                     >
                         {/* High-End Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-8 right-8 z-30 w-12 h-12 rounded-2xl bg-blue-50/50 backdrop-blur-2xl flex items-center justify-center text-blue-900 hover:bg-blue-100 transition-all border border-blue-100 active:scale-90 shadow-xl"
+                            className="absolute top-8 right-8 z-30 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-2xl flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/20 active:scale-90 shadow-xl"
                         >
                             <X size={24} strokeWidth={3} />
                         </button>
@@ -140,8 +140,8 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                             />
 
                             {/* Layered Overlays for Depth */}
-                            <div className={`absolute inset-0 bg-gradient-to-t from-white via-transparent to-blue-900/20`} />
-                            <div className={`absolute inset-0 bg-gradient-to-br ${theme.primary} mix-blend-overlay opacity-60`} />
+                            <div className={`absolute inset-0 bg-gradient-to-t from-[#EADBC8] via-transparent to-black/20`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${theme.primary} mix-blend-overlay opacity-40`} />
 
                             {/* Animated Level Badge */}
                             <motion.div
@@ -150,12 +150,12 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                                 transition={{ delay: 0.4, type: "spring" }}
                                 className="absolute top-0 left-0 right-0 pt-16 flex flex-col items-center"
                             >
-                                <div className={`relative ${theme.secondary} px-10 py-3 rounded-full shadow-2xl border-2 border-white/50 flex items-center gap-4 overflow-hidden group`}>
+                                <div className={`relative ${theme.secondary} px-10 py-3 rounded-full shadow-2xl border-2 border-white/30 flex items-center gap-4 overflow-hidden group`}>
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                                     <Icon className="text-white" size={22} fill="currentColor" />
                                     <div className="flex flex-col items-start leading-none">
-                                        <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.3em] mb-1">Medical Standing</span>
-                                        <span className="text-sm font-black text-white uppercase tracking-[0.1em]">TIER {vipLevel} ADVISOR</span>
+                                        <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.3em] mb-1">VIP Ranking</span>
+                                        <span className="text-sm font-black text-white uppercase tracking-[0.1em]">LEVEL {vipLevel} SUPREMACY</span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -193,18 +193,18 @@ export default function VipCelebrationCard({ vipLevel, text, imageUrl, onClose }
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.6 }}
-                                className="inline-flex items-center gap-3 px-6 py-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm"
+                                className="inline-flex items-center gap-3 px-6 py-2 rounded-xl bg-[#F5E6D3] border border-[#7B3F00]/20 shadow-sm"
                             >
-                                <PartyPopper className="text-blue-900" size={16} />
-                                <span className="text-[10px] font-black text-blue-900 uppercase tracking-[0.4em]">{theme.label}</span>
+                                <PartyPopper className={theme.accent.split(' ')[0].replace('text-', 'text-')} size={16} />
+                                <span className="text-[10px] font-black text-[#7B3F00] uppercase tracking-[0.4em]">{theme.label}</span>
                             </motion.div>
 
                             <div className="space-y-4">
-                                <h1 className="text-4xl font-black text-blue-900 tracking-tight flex flex-col leading-none">
-                                    <span className="text-sm font-black text-green-600 uppercase tracking-[0.5em] mb-3">Health Milestone</span>
-                                    PRACTICE EXCELLENCE!
+                                <h1 className="text-4xl font-black text-[#3E2723] tracking-tight flex flex-col leading-none">
+                                    <span className="text-sm font-black text-[#7B3F00] uppercase tracking-[0.5em] mb-3">Distinction Achieved</span>
+                                    YOU ARE UNSTOPPABLE!
                                 </h1>
-                                <p className="text-blue-900/60 font-bold leading-relaxed text-base px-4">
+                                <p className="text-[#3E2723]/70 font-bold leading-relaxed text-base px-4">
                                     {text}
                                 </p>
                             </div>

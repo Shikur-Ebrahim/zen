@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { ChevronLeft, MessageCircle, ExternalLink, ShieldCheck, Loader2, Headphones, BellRing, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, MessageCircle, ExternalLink, ShieldCheck, Loader2 } from "lucide-react";
 
 export default function ServicePage() {
     const router = useRouter();
@@ -38,6 +37,7 @@ export default function ServicePage() {
         fetchLinks();
     }, []);
 
+    // Helper to format telegram link (handles @username or full link)
     const formatTG = (input: string) => {
         if (!input) return "#";
         if (input.startsWith("http")) return input;
@@ -47,128 +47,136 @@ export default function ServicePage() {
 
     const contactOptions = [
         {
-            title: "Clinical Liaison",
-            description: "Dedicated 24/7 medical support team",
+            title: "Team Support",
+            description: "Contact our dedicated team for assistance",
             image: "/telegram.jpg",
+            colorClass: "from-indigo-600",
+            shadowClass: "shadow-indigo-500/30",
+            textClass: "text-indigo-400",
+            glowClass: "bg-indigo-500/5",
+            hoverGlowClass: "group-hover:bg-indigo-500/10",
             link: formatTG(links.teamLink),
-            color: "blue"
+            label: "Contact Team"
         },
         {
-            title: "MSD Protocol Channel",
-            description: "Stay updated with verified clinical news",
+            title: "Official Channel",
+            description: "Stay updated with latest news and announcements",
             image: "/telegram.jpg",
+            colorClass: "from-violet-600",
+            shadowClass: "shadow-violet-500/30",
+            textClass: "text-violet-400",
+            glowClass: "bg-violet-500/5",
+            hoverGlowClass: "group-hover:bg-violet-500/10",
             link: formatTG(links.channelLink),
-            color: "green"
+            label: "Join Channel"
         }
     ];
 
     if (!mounted || loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
+            <div className="min-h-screen flex items-center justify-center bg-[#050510]">
+                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white relative overflow-hidden font-sans selection:bg-blue-100">
-            {/* Ambient Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+        <div className="min-h-screen bg-[#050510] relative overflow-hidden font-sans selection:bg-indigo-500/30">
+            {/* Background Atmosphere */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-violet-600/10 rounded-full blur-[120px]"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-[#050510] via-transparent to-[#050510] opacity-80"></div>
             </div>
 
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-3xl z-40 px-6 py-5 flex items-center gap-4 border-b border-blue-50 shadow-sm max-w-lg mx-auto">
+            <header className="fixed top-0 left-0 right-0 bg-[#050510]/80 backdrop-blur-2xl z-50 px-6 py-5 flex items-center gap-4 border-b border-white/5 shadow-2xl">
                 <button
                     onClick={() => router.back()}
-                    className="w-11 h-11 rounded-2xl bg-white hover:bg-blue-50 flex items-center justify-center transition-all border border-blue-100 active:scale-90 group shadow-sm"
+                    className="w-11 h-11 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all border border-white/10 active:scale-90 group"
                 >
-                    <ChevronLeft size={22} className="text-blue-900 group-hover:-translate-x-0.5 transition-transform" />
+                    <ChevronLeft size={22} className="text-white group-hover:-translate-x-0.5 transition-transform" />
                 </button>
-                <div className="flex flex-col">
-                    <h1 className="text-lg font-black text-blue-900 tracking-tight leading-none uppercase">Clinical Liaison</h1>
-                    <span className="text-[10px] font-black text-blue-900/40 tracking-[0.2em] uppercase mt-1">Medical Support</span>
-                </div>
+                <h1 className="text-lg font-bold text-white tracking-tight">Customer Service</h1>
             </header>
 
             <main className="pt-32 px-6 max-w-lg mx-auto space-y-10 pb-32 relative z-10">
                 {/* Intro Section */}
-                <div className="text-center space-y-6 px-2">
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="relative w-28 h-28 mx-auto group"
-                    >
-                        <div className="absolute inset-0 bg-blue-500 rounded-[2.5rem] blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
-                        <div className="relative w-full h-full bg-white rounded-[2.8rem] flex items-center justify-center shadow-2xl border border-blue-50 group-hover:rotate-6 transition-transform duration-700">
-                            <Headphones size={42} className="text-blue-600" strokeWidth={2.5} />
+                <div className="text-center space-y-6 px-2 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="relative w-24 h-24 mx-auto mb-8 group">
+                        <div className="absolute inset-0 bg-indigo-500 rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                        <div className="relative w-full h-full bg-gradient-to-br from-indigo-600 to-violet-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-white/10 transform rotate-6 group-hover:rotate-0 transition-all duration-500">
+                            <MessageCircle size={36} className="text-white drop-shadow-2xl" />
                         </div>
-                    </motion.div>
-                    <div className="space-y-3">
-                        <h2 className="text-3xl font-black text-blue-900 tracking-tight leading-tight uppercase">Medical Help Center</h2>
-                        <p className="text-[10px] font-black text-blue-900/30 uppercase tracking-[0.2em] leading-relaxed max-w-[240px] mx-auto">
-                            Verified support channels for instantaneous clinical assistance.
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-4xl font-bold text-white tracking-tight">How can we help?</h2>
+                        <p className="text-base font-medium text-gray-400 leading-relaxed max-w-xs mx-auto">
+                            Connect with our verified channels for 24/7 priority assistance.
                         </p>
                     </div>
                 </div>
 
                 {/* Contact Options Grid */}
-                <div className="space-y-5">
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                     {contactOptions.map((option, idx) => (
-                        <motion.button
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: idx * 0.1 }}
+                        <button
                             key={idx}
-                            onClick={() => option.link && window.open(option.link, "_blank", "noopener,noreferrer")}
-                            className="group relative block w-full bg-white rounded-[2.5rem] p-7 border border-blue-50 transition-all duration-500 active:scale-[0.98] overflow-hidden shadow-xl shadow-blue-900/5 hover:border-blue-100"
+                            onClick={() => {
+                                try {
+                                    if (option.link) {
+                                        window.open(option.link, "_blank", "noopener,noreferrer");
+                                    }
+                                } catch (e) {
+                                    console.error("Navigation error:", e);
+                                }
+                            }}
+                            className="group relative block w-full bg-white/[0.03] hover:bg-white/[0.08] rounded-[2.5rem] p-6 border border-white/5 transition-all duration-500 active:scale-[0.98] overflow-hidden backdrop-blur-3xl shadow-2xl"
                         >
+                            {/* Hover Gradient */}
+                            <div className={`absolute inset-0 bg-gradient-to-br ${option.colorClass} to-transparent opacity-0 group-hover:opacity-5 transition-opacity duration-700`}></div>
+
                             <div className="flex items-center gap-6 relative z-10">
-                                <div className="w-16 h-16 shrink-0 rounded-[1.5rem] bg-blue-50 border border-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative overflow-hidden">
+                                <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative overflow-hidden backdrop-blur-xl">
                                     <img
                                         src={encodeURI(option.image)}
                                         alt={option.title}
-                                        className="w-10 h-10 object-contain drop-shadow-xl brightness-110"
+                                        className="w-10 h-10 object-contain drop-shadow-2xl brightness-110"
                                     />
                                 </div>
                                 <div className="flex-1 text-left min-w-0">
-                                    <h3 className="text-lg font-black text-blue-900 mb-1 tracking-tight leading-tight">{option.title}</h3>
-                                    <p className="text-[10px] text-blue-900/40 font-black uppercase tracking-widest leading-relaxed">
+                                    <h3 className="text-xl font-bold text-white mb-1 tracking-tight truncate">{option.title}</h3>
+                                    <p className="text-xs text-gray-400 font-medium leading-relaxed truncate opacity-70">
                                         {option.description}
                                     </p>
                                 </div>
-                                <div className={`w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center group-hover:translate-x-1 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm`}>
-                                    <ExternalLink size={20} strokeWidth={2.5} />
+                                <div className={`w-11 h-11 rounded-full bg-white/5 border border-white/10 text-white/40 group-hover:text-white flex items-center justify-center group-hover:translate-x-1 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/40 transition-all duration-500`}>
+                                    <ExternalLink size={20} />
                                 </div>
                             </div>
-                        </motion.button>
+                        </button>
                     ))}
                 </div>
 
                 {/* Trust Badge */}
-                <div className="pt-4">
-                    <div className="bg-green-50 rounded-[2.5rem] p-8 border border-green-100 flex flex-col sm:flex-row items-center gap-6 shadow-xl shadow-green-900/5">
-                        <div className="w-16 h-16 shrink-0 rounded-2xl bg-white border border-green-100 flex items-center justify-center text-green-600 shadow-sm">
-                            <ShieldCheck size={32} />
+                <div className="pt-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+                    <div className="bg-emerald-500/[0.03] rounded-[2rem] p-6 border border-emerald-500/10 flex items-center gap-5 backdrop-blur-3xl">
+                        <div className="w-14 h-14 shrink-0 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <ShieldCheck size={28} />
                         </div>
-                        <div className="text-center sm:text-left">
-                            <h4 className="text-[11px] font-black text-green-700 uppercase tracking-[0.2em] mb-1.5">Verified Medical Protocols</h4>
-                            <p className="text-[10px] text-green-600/60 font-black tracking-wide leading-relaxed uppercase">
-                                Encrypted clinical liaison sessions with certified platform delegates.
+                        <div>
+                            <h4 className="text-base font-bold text-emerald-400 mb-0.5">Verified Support</h4>
+                            <p className="text-[11px] text-emerald-500/60 font-medium tracking-wide">
+                                End-to-end encrypted connection with verified agents.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer Disclaimer */}
-                <div className="flex flex-col items-center gap-4 py-8">
-                    <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-900/20"></div>
-                        <span className="text-[9px] font-black text-blue-900/20 uppercase tracking-[0.3em]">Secure Liaison Portal</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-900/20"></div>
-                    </div>
-                </div>
+                {/* Footer Footer */}
+                <p className="text-center text-[10px] text-gray-600 font-bold tracking-[0.2em] px-8 leading-relaxed opacity-40 uppercase">
+                    Secure Channel • Protocol Active
+                </p>
             </main>
         </div>
     );

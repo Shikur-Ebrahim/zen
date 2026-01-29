@@ -161,8 +161,8 @@ export default function TeamPage() {
 
     if (!mounted || loading) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
             </div>
         );
     }
@@ -172,47 +172,62 @@ export default function TeamPage() {
         : teamData[activeTab];
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 pb-32 font-sans relative overflow-hidden">
-            {/* Medical Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
-            </div>
+        <div className="min-h-screen bg-slate-950 text-slate-200 pb-32 font-sans selection:bg-indigo-500/30">
+            {/* Background Gradients */}
+            <div className="fixed top-0 left-0 right-0 h-[500px] bg-indigo-900/20 blur-[120px] pointer-events-none"></div>
 
             {/* Header */}
-            <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-blue-50">
-                <div className="max-w-lg mx-auto px-6 h-20 flex items-center justify-between">
+            <div className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
+                <div className="max-w-lg mx-auto px-4 h-16 flex items-center justify-between">
                     <button
                         onClick={() => router.back()}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-blue-100 text-blue-900 transition-all active:scale-95 shadow-sm"
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 transition-colors active:scale-95"
                     >
                         <ChevronLeft size={22} />
                     </button>
-                    <h1 className="text-lg font-black uppercase tracking-widest text-blue-900 leading-none">Assisted network</h1>
+                    <h1 className="text-base font-black uppercase tracking-widest text-white">Team Overview</h1>
                     <div className="w-10" />
                 </div>
             </div>
 
-            <main className="max-w-lg mx-auto p-4 space-y-6">
+            <div className="max-w-lg mx-auto p-4 space-y-6">
 
                 {/* Circular Asset Gauge & Stats Section */}
-                <div className="bg-white rounded-[3rem] p-8 shadow-xl shadow-blue-900/5 border border-blue-50 mb-8 relative overflow-hidden group z-10">
-                    <div className="flex flex-col sm:flex-row items-center gap-10 relative z-10">
-                        {/* 3D Circular Asset Gauge */}
-                        <div className="relative w-40 h-40 shrink-0 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-700">
-                            {/* Medical Ring */}
-                            <div className="absolute inset-0 rounded-full border-[6px] border-blue-50 border-t-blue-500 border-l-blue-500 animate-[spin_10s_linear_infinite]"></div>
+                <div className="bg-gradient-to-br from-indigo-900/40 to-slate-900/40 backdrop-blur-md rounded-[2.5rem] p-6 sm:p-8 shadow-2xl shadow-indigo-950/20 border border-white/5 mb-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-                            <svg className="w-full h-full -rotate-90 drop-shadow-xl" viewBox="0 0 100 100">
+                    <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10 relative z-10">
+                        {/* 3D Circular Asset Gauge */}
+                        <div className="relative w-40 h-40 shrink-0 flex items-center justify-center transform hover:scale-105 transition-transform duration-500 perspective-1000">
+                            {/* Rotating Ring */}
+                            <div className="absolute inset-0 rounded-full border-[6px] border-white/5 border-t-indigo-500 border-l-indigo-500 animate-[spin_8s_linear_infinite]"></div>
+                            <div className="absolute inset-2 rounded-full border-[2px] border-dashed border-white/10 animate-[spin_12s_linear_infinite_reverse]"></div>
+
+                            <svg className="w-full h-full -rotate-90 drop-shadow-xl transform preserve-3d" viewBox="0 0 100 100">
                                 <defs>
                                     <linearGradient id="assetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#3b82f6" />
-                                        <stop offset="100%" stopColor="#22c55e" />
+                                        <stop offset="0%" stopColor="#6366f1" />
+                                        <stop offset="100%" stopColor="#8b5cf6" />
                                     </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
                                 </defs>
 
                                 {/* Track */}
-                                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f8fafc" strokeWidth="8" />
+                                <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="40"
+                                    fill="transparent"
+                                    stroke="#1e293b"
+                                    strokeWidth="8"
+                                    strokeLinecap="round"
+                                />
                                 {/* Progress Indicator */}
                                 <circle
                                     cx="50"
@@ -223,51 +238,53 @@ export default function TeamPage() {
                                     strokeWidth="8"
                                     strokeLinecap="round"
                                     strokeDasharray="251.2"
-                                    strokeDashoffset="80"
-                                    className="animate-[dash_2s_ease-out_forwards]"
+                                    strokeDashoffset="60"
+                                    filter="url(#glow)"
+                                    className="animate-[dash_1.5s_ease-out_forwards]"
                                 />
                             </svg>
 
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mb-2 border border-blue-100">
-                                    <Trophy size={18} className="text-blue-600" />
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-2 animate-in fade-in zoom-in duration-700">
+                                <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center mb-1 shadow-inner animate-bounce-slow border border-indigo-500/20">
+                                    <Trophy size={16} className="text-indigo-400 fill-indigo-400" />
                                 </div>
-                                <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-widest leading-none mb-1">Impact</span>
-                                <span className="font-black text-blue-900 text-sm tabular-nums leading-none">
+                                <span className="text-[10px] font-black text-indigo-200 uppercase tracking-widest leading-tight mb-0.5">Assets</span>
+                                <span className="font-black text-white text-sm tabular-nums leading-none tracking-tight">
                                     {stats.totalTeamRecharge >= 1000000 ? (stats.totalTeamRecharge / 1000000).toFixed(1) + "M" : stats.totalTeamRecharge.toLocaleString()}
                                 </span>
                             </div>
                         </div>
 
                         {/* List Stats */}
-                        <div className="flex-1 w-full space-y-6">
-                            <div className="bg-blue-50/50 p-6 rounded-[2rem] border border-blue-50">
-                                <div className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                                    Team Revenue <div className="h-[1px] flex-1 bg-blue-100"></div>
+                        <div className="flex-1 w-full space-y-5">
+                            <div className="bg-white/5 p-4 rounded-3xl border border-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
+                                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    Total Income <div className="h-[1px] flex-1 bg-white/10"></div>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <p className="text-4xl font-black text-blue-900 tabular-nums leading-none tracking-tighter">
-                                        {stats.totalCommission.toLocaleString()}
+                                    <p className="text-4xl sm:text-3xl font-black text-white tabular-nums leading-none tracking-tight">
+                                        {stats.totalCommission.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                     </p>
-                                    <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/20">
-                                        <Coins size={24} className="text-white" />
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-amber-400/20 blur-md opacity-40 animate-pulse"></div>
+                                        <Coins size={36} className="text-amber-500 fill-amber-500/20 drop-shadow-[0_4px_4px_rgba(245,158,11,0.2)] animate-[bounce_3s_infinite]" strokeWidth={2.5} />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-blue-50/50 p-5 rounded-[1.5rem] border border-blue-50">
-                                    <span className="text-[10px] text-blue-900/40 font-black uppercase tracking-widest leading-none block mb-3">Today New</span>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                        <span className="font-black text-blue-900 text-lg">+{stats.todayJoined}</span>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-white/5 p-3 rounded-2xl border border-white/5 shadow-sm flex flex-col justify-center hover:bg-white/10 transition-colors">
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">New Today</span>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <Users size={14} className="text-emerald-400" />
+                                        <span className="font-black text-white text-sm">+{stats.todayJoined}</span>
                                     </div>
                                 </div>
-                                <div className="bg-blue-50/50 p-5 rounded-[1.5rem] border border-blue-50">
-                                    <span className="text-[10px] text-blue-900/40 font-black uppercase tracking-widest leading-none block mb-3">Total Care</span>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                                        <span className="font-black text-blue-900 text-lg">{stats.totalMembers}</span>
+                                <div className="bg-white/5 p-3 rounded-2xl border border-white/5 shadow-sm flex flex-col justify-center hover:bg-white/10 transition-colors">
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Team Size</span>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <Layers size={14} className="text-blue-400" />
+                                        <span className="font-black text-white text-sm">{stats.totalMembers}</span>
                                     </div>
                                 </div>
                             </div>
@@ -278,88 +295,88 @@ export default function TeamPage() {
                 {/* Invite Banner */}
                 <button
                     onClick={() => router.push("/users/invite")}
-                    className="w-full relative h-[100px] rounded-[2rem] overflow-hidden group border border-blue-50 shadow-xl shadow-blue-900/5 active:scale-[0.98] transition-all z-10"
+                    className="w-full relative h-[100px] rounded-[2rem] overflow-hidden group border border-white/5 shadow-lg active:scale-[0.98] transition-all"
                 >
-                    <div className="absolute inset-0 bg-blue-900"></div>
                     <img
                         src="/invite_banner.png"
                         alt="Invite"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-30"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-blue-900/40 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
                     <div className="absolute inset-0 flex items-center justify-between px-8">
                         <div>
-                            <h3 className="text-white font-black text-lg tracking-tight uppercase">Expand Network</h3>
-                            <p className="text-blue-200 text-[10px] font-black uppercase tracking-widest mt-1">Grow your assisted team</p>
+                            <h3 className="text-white font-black text-lg tracking-tight uppercase">Invite Friends</h3>
+                            <p className="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mt-1">Earn Real Cash Rewards</p>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
                             <ChevronLeft size={20} className="rotate-180 text-white" />
                         </div>
                     </div>
                 </button>
 
                 {/* Level Selectors */}
-                <div className="space-y-4 z-10 relative">
+                <div className="space-y-4">
                     <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Network Tiers</h3>
-                        <div className="text-[10px] font-black text-green-600 uppercase tracking-widest">Rate: {rates[`level${activeTab}` as keyof typeof rates]}%</div>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Team Levels</h3>
+                        <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ratio: {rates[`level${activeTab}` as keyof typeof rates]}%</div>
                     </div>
 
-                    <div className="bg-blue-50/50 p-1.5 rounded-[1.8rem] border border-blue-100 flex shadow-inner">
+                    <div className="bg-slate-900 p-1.5 rounded-2xl border border-white/5 flex">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex-1 py-4 rounded-[1.2rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-500 ${activeTab === tab.id
-                                    ? 'bg-blue-900 text-white shadow-lg shadow-blue-900/10 scale-[1.02]'
-                                    : 'text-blue-900/30 hover:text-blue-900/60'
+                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 relative overflow-hidden ${activeTab === tab.id
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
+                                    : 'text-gray-500 hover:bg-white/5 hover:text-gray-300'
                                     }`}
                             >
-                                {tab.label.replace('Level ', 'Tier ')}
+                                {tab.label}
                             </button>
                         ))}
                     </div>
                 </div>
 
                 {/* Member List */}
-                <div className="space-y-4 min-h-[300px] z-10 relative">
+                <div className="space-y-3 min-h-[300px]">
                     {currentMembers.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 border border-blue-50 rounded-[3rem] bg-blue-50/20">
-                            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-blue-900/10 shadow-sm">
+                        <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 border border-dashed border-white/5 rounded-[2.5rem] bg-slate-900/20">
+                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-600">
                                 <Search size={24} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">No assisted members</p>
+                                <p className="text-sm font-bold text-gray-400">No members found</p>
+                                <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-widest">Share your link to grow your team</p>
                             </div>
                         </div>
                     ) : (
                         currentMembers.map((member, idx) => (
                             <div
                                 key={member.uid}
-                                className="bg-white rounded-[2rem] p-5 border border-blue-50 flex items-center gap-5 shadow-xl shadow-blue-900/5 hover:border-blue-100 transition-all hover:translate-x-1"
+                                className="bg-white/5 backdrop-blur-sm rounded-[1.8rem] p-4 border border-white/5 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500 hover:bg-white/10 transition-colors"
                                 style={{ animationDelay: `${idx * 50}ms` }}
                             >
-                                <div className="w-14 h-14 shrink-0 rounded-[1.2rem] overflow-hidden border border-blue-50 relative bg-blue-50 p-0.5">
+                                <div className="w-12 h-12 shrink-0 rounded-2xl overflow-hidden border border-white/10 relative bg-slate-800">
                                     <img
                                         src={encodeURI(`/level ${member.level === 'A' ? 1 : member.level === 'B' ? 2 : member.level === 'C' ? 3 : 4}.jpg`)}
                                         alt="Avatar"
-                                        className="w-full h-full object-cover rounded-[1rem]"
+                                        className="w-full h-full object-cover"
                                     />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="text-sm font-black text-blue-900 truncate">{formatPhone(member.phoneNumber)}</h4>
-                                        <span className="text-green-600 text-[10px] font-black bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">+{member.rewardEarned.toLocaleString()} ETB</span>
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h4 className="text-sm font-bold text-gray-200 truncate">{formatPhone(member.phoneNumber)}</h4>
+                                        <span className="text-emerald-400 text-xs font-black tracking-tight">+{member.rewardEarned.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-100/50 text-[9px] font-black text-blue-900/40 uppercase tracking-wider">
+                                            <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
                                                 Recharge {member.totalRecharge > 999 ? (member.totalRecharge / 1000).toFixed(1) + 'k' : member.totalRecharge}
                                             </span>
                                         </div>
-                                        <span className="text-[9px] font-black text-blue-900/20 uppercase tracking-widest">
-                                            {new Date(member.joinedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        <span className="text-[9px] font-medium text-gray-600">
+                                            {new Date(member.joinedAt).toLocaleDateString()}
                                         </span>
                                     </div>
                                 </div>
@@ -367,7 +384,7 @@ export default function TeamPage() {
                         ))
                     )}
                 </div>
-            </main>
-        </div >
+            </div>
+        </div>
     );
 }

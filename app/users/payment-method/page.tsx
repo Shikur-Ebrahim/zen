@@ -58,104 +58,116 @@ function PaymentMethodContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
+            <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+                <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 pb-44 relative selection:bg-blue-500/30 overflow-x-hidden font-sans">
-            {/* Medical Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+        <div className="min-h-screen bg-[#0A0A0A] text-white pb-44 relative selection:bg-[#D4AF37]/30 overflow-x-hidden">
+            {/* Background Decorative Elements - Advanced Glows */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-15%] right-[-15%] w-[60%] h-[60%] bg-[#D4AF37]/10 blur-[140px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-15%] left-[-15%] w-[50%] h-[50%] bg-[#9A7B4F]/10 blur-[120px] rounded-full" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.03),transparent_70%)]" />
             </div>
 
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-blue-50">
-                <button
-                    onClick={() => router.back()}
-                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-blue-100 text-blue-900 active:scale-90 transition-all shadow-sm"
-                >
-                    <ChevronLeft size={24} />
-                </button>
-                <div className="flex flex-col items-center">
-                    <h1 className="text-xl font-black uppercase tracking-widest text-blue-900 leading-none">
-                        Gateway selection
-                    </h1>
-                </div>
-                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100">
-                    <ShieldCheck size={22} />
+            {/* Header - Advanced Mobile Style */}
+            <header className="fixed top-0 left-0 right-0 bg-[#0A0A0A]/80 backdrop-blur-3xl z-50 px-6 py-8 flex flex-col gap-6 border-b border-[#D4AF37]/10">
+                <div className="flex items-center justify-between">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 text-[#D4AF37] active:scale-90 transition-all shadow-lg"
+                    >
+                        <ChevronLeft size={24} />
+                    </button>
+                    <div className="flex flex-col items-center">
+                        <h1 className="text-xl font-bold tracking-[0.25em] bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                            Selection
+                        </h1>
+                        <div className="h-0.5 w-8 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent mt-1"></div>
+                    </div>
+                    <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37]">
+                        <ShieldCheck size={20} />
+                    </div>
                 </div>
             </header>
 
             <main className="pt-40 px-6 max-w-lg mx-auto space-y-14 relative z-10">
-                {/* Amount Display Card */}
+                {/* Amount Display Card - Premium Elevation */}
                 <section className="animate-in fade-in slide-in-from-top-8 duration-1000">
-                    <div className="bg-white rounded-[3.5rem] p-12 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden text-center">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                    <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[3rem] p-10 border border-[#D4AF37]/20 shadow-2xl relative overflow-hidden text-center">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
 
-                        <p className="text-[10px] font-black text-blue-900/40 tracking-[0.2em] uppercase mb-4">Specified funding amount</p>
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-6xl font-black text-blue-900 tracking-tighter tabular-nums leading-none">
+                        <p className="text-[10px] font-bold text-[#D4AF37]/60 tracking-[0.4em] mb-4">Confirm recharge amount</p>
+                        <div className="flex items-center justify-center gap-4">
+                            <span className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_4px_20px_rgba(212,175,55,0.15)]">
                                 {Number(amount).toLocaleString()}
                             </span>
-                            <span className="text-blue-900/40 font-black uppercase tracking-widest text-base leading-none">ETB</span>
+                            <div className="flex flex-col items-start">
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-black uppercase tracking-widest text-lg">Br</span>
+                                <div className="h-0.5 w-full bg-[#D4AF37]/30 rounded-full"></div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Gateway Selection List */}
-                <section className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+                {/* Grid Selection System */}
+                <section className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
                     <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-4">
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-900"></div>
-                            <h2 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em] leading-none">Verified Medical Gateways</h2>
+                        <div className="flex items-center gap-3">
+                            <div className="w-2 h-4 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
+                            <h2 className="text-[10px] font-bold text-[#D4AF37]/60 tracking-[0.3em]">Gateways</h2>
                         </div>
-                        <div className="px-4 py-1.5 bg-green-500 rounded-full shadow-lg shadow-green-500/20">
-                            <p className="text-[8px] font-black text-white uppercase tracking-widest leading-none">{paymentMethods.length} Active</p>
+                        <div className="px-3 py-1 bg-[#D4AF37]/10 rounded-full border border-[#D4AF37]/20">
+                            <p className="text-[8px] font-black text-[#D4AF37] uppercase tracking-wider">{paymentMethods.length} Available</p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-2 gap-5">
                         {paymentMethods.map((method) => {
                             const isSelected = selectedMethod === method.id;
                             return (
                                 <button
                                     key={method.id}
                                     onClick={() => setSelectedMethod(method.id)}
-                                    className={`relative p-1 rounded-[2.5rem] transition-all duration-500 group ${isSelected
-                                        ? "bg-orange-500 shadow-2xl shadow-orange-500/20 scale-[1.02]"
-                                        : "bg-white border border-blue-50 hover:border-blue-200 shadow-xl shadow-blue-900/5 hover:bg-blue-50/10"
+                                    className={`relative group p-1 rounded-[2.5rem] transition-all duration-500 ${isSelected
+                                        ? "bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] shadow-[0_20px_40px_rgba(212,175,55,0.2)] scale-[1.05]"
+                                        : "bg-[#1A1A1A] border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 shadow-xl"
                                         }`}
                                 >
-                                    <div className={`h-full rounded-[2.3rem] p-8 flex items-center justify-between transition-all duration-500 relative overflow-hidden ${isSelected ? "bg-white" : "bg-transparent"}`}>
-                                        <div className="flex items-center gap-6 relative z-10 text-left">
-                                            <div className={`w-18 h-18 rounded-2xl flex items-center justify-center p-3 transition-all ${isSelected
-                                                ? "bg-blue-50 border border-blue-100 shadow-inner scale-110"
-                                                : "bg-blue-50/50 border border-blue-50"
-                                                }`}>
-                                                {method.logoUrl ? (
-                                                    <img src={method.logoUrl} className="w-full h-full object-contain" alt={method.methodName} />
-                                                ) : (
-                                                    <Wallet className="text-blue-900/20" size={32} />
-                                                )}
-                                            </div>
+                                    <div className={`h-full rounded-[2.3rem] p-6 flex flex-col items-center justify-center gap-5 transition-all duration-500 overflow-hidden relative ${isSelected ? "bg-[#0A0A0A]" : "bg-[#1A1A1A]"
+                                        }`}>
+                                        {/* Selection Glow */}
+                                        {isSelected && (
+                                            <div className="absolute top-0 right-0 w-16 h-16 bg-[#D4AF37]/10 rounded-full blur-2xl animate-pulse"></div>
+                                        )}
 
-                                            <div>
-                                                <span className={`text-lg font-black block leading-tight ${isSelected ? "text-blue-900" : "text-blue-900/40 group-hover:text-blue-900"}`}>
-                                                    {method.methodName}
-                                                </span>
-                                                <p className="text-[9px] font-black text-blue-900/20 uppercase tracking-widest mt-1">Instant medical verification</p>
-                                            </div>
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden transition-all p-2 ${isSelected
+                                            ? "bg-white shadow-[0_0_20px_rgba(212,175,55,0.3)] scale-110"
+                                            : "bg-black/40 border border-[#D4AF37]/10"
+                                            }`}>
+                                            {method.logoUrl ? (
+                                                <img src={method.logoUrl} className="w-full h-full object-contain" alt={method.methodName} />
+                                            ) : (
+                                                <Wallet className="text-[#D4AF37]/40" size={32} />
+                                            )}
                                         </div>
 
-                                        {isSelected && (
-                                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white shadow-lg shadow-green-500/30 relative z-10 border-2 border-white">
-                                                <CheckCircle2 size={16} strokeWidth={3} />
-                                            </div>
-                                        )}
+                                        <div className="text-center space-y-1">
+                                            <span className={`text-sm font-bold transition-colors block tracking-[0.1em] ${isSelected ? "text-white" : "text-white/40"
+                                                }`}>
+                                                {method.methodName}
+                                            </span>
+                                            {isSelected && (
+                                                <div className="flex justify-center">
+                                                    <div className="w-4 h-4 rounded-full bg-[#D4AF37] flex items-center justify-center text-black">
+                                                        <CheckCircle2 size={12} strokeWidth={3} />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </button>
                             );
@@ -163,32 +175,34 @@ function PaymentMethodContent() {
                     </div>
 
                     {paymentMethods.length === 0 && (
-                        <div className="py-24 text-center space-y-8 bg-blue-50/50 rounded-[3.5rem] border-2 border-dashed border-blue-100">
-                            <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto border border-blue-100">
-                                <Building2 size={36} className="text-blue-900/20" />
-                            </div>
-                            <p className="text-blue-900/20 font-black tracking-[0.3em] uppercase text-[10px]">Transmission Offline</p>
+                        <div className="py-24 text-center space-y-6 bg-[#1A1A1A] rounded-[3rem] border-2 border-dashed border-[#D4AF37]/10">
+                            <Building2 size={40} className="mx-auto text-[#D4AF37]/20" />
+                            <p className="text-white/20 font-bold tracking-[0.4em] text-[10px]">Gateways offline</p>
                         </div>
                     )}
                 </section>
             </main>
 
-            {/* Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 p-8 pb-12 relative z-[60] bg-white/90 backdrop-blur-2xl border-t border-blue-50 shadow-[0_-20px_50px_rgba(0,0,0,0.05)]">
-                <div className="max-w-lg mx-auto relative">
+            {/* Bottom Action Section - Highly Styled */}
+            <div className="fixed bottom-0 left-0 right-0 p-8 pt-12 relative z-[60]">
+                {/* Advanced Gradient Shadow Mask */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/95 to-transparent -top-20 pointer-events-none"></div>
+
+                <div className="max-w-lg mx-auto relative group">
                     <button
                         onClick={handleRecharge}
                         disabled={!selectedMethod}
-                        className="w-full bg-orange-500 text-white h-22 rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-orange-500/20 hover:shadow-orange-600/30 active:scale-95 transition-all duration-500 flex items-center justify-center gap-6 disabled:opacity-30 disabled:grayscale"
+                        className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black h-20 rounded-[2.2rem] font-black uppercase tracking-[0.35em] text-[11px] shadow-[0_20px_60px_-10px_rgba(212,175,55,0.4)] hover:shadow-[0_25px_80px_rgba(212,175,55,0.5)] active:scale-95 transition-all duration-500 overflow-hidden flex items-center justify-center gap-5 disabled:opacity-30 disabled:grayscale"
                     >
-                        <span>Initiate funding transmission</span>
-                        <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform duration-300" />
+                        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"></div>
+                        <span className="relative z-10">Proceed to merchant</span>
+                        <ArrowRight size={20} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
                     </button>
 
-                    <div className="mt-10 flex items-center justify-center gap-8 opacity-20 select-none">
-                        <CreditCard size={18} />
-                        <span className="text-[8px] font-black uppercase tracking-[0.5em]">AES-256 Medical Security</span>
-                        <ShieldCheck size={18} />
+                    <div className="mt-8 flex items-center justify-center gap-6 opacity-30 select-none">
+                        <CreditCard size={14} />
+                        <span className="text-[8px] font-black uppercase tracking-[0.5em]">End-to-End Encryption</span>
+                        <ShieldCheck size={14} />
                     </div>
                 </div>
             </div>
@@ -198,7 +212,7 @@ function PaymentMethodContent() {
 
 export default function UserPaymentMethodPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-12 h-12 animate-spin text-green-600" /></div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]"><Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" /></div>}>
             <PaymentMethodContent />
         </Suspense>
     );

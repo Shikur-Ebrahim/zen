@@ -14,11 +14,8 @@ import {
     CheckCircle2,
     AlertCircle,
     TrendingUp,
-    RefreshCw,
-    Activity,
-    ShieldCheck
+    RefreshCw
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function ExchangePage() {
     const router = useRouter();
@@ -42,6 +39,7 @@ export default function ExchangePage() {
             }
             setUser(currentUser);
 
+            // Real-time subscription to user data
             const userRef = doc(db, "users", currentUser.uid);
             const unsubscribeUser = onSnapshot(userRef, (doc) => {
                 if (doc.exists()) {
@@ -50,6 +48,7 @@ export default function ExchangePage() {
                 setLoading(false);
             });
 
+            // Fetch exchange rate from Settings
             const ratesRef = doc(db, "Settings", "currency");
             const unsubscribeRates = onSnapshot(ratesRef, (doc) => {
                 if (doc.exists()) {
@@ -67,6 +66,7 @@ export default function ExchangePage() {
         return () => unsubscribe();
     }, [router]);
 
+    // Update ETB preview when coin amount changes
     useEffect(() => {
         const amount = parseFloat(coinAmount) || 0;
         setEtbPreview(amount * exchangeRate);
@@ -75,15 +75,17 @@ export default function ExchangePage() {
 
     const handleExchange = async () => {
         if (!user || !userData) return;
+
         const amount = parseFloat(coinAmount);
 
+        // Validation
         if (amount < 100) {
-            setError("Minimum exchange amount is 100 Referral Credits");
+            setError("Minimum exchange amount is 100 Coins");
             return;
         }
 
         if (amount > (userData.teamIncome || 0)) {
-            setError("Insufficient Referral Credits");
+            setError("Insufficient Coin balance");
             return;
         }
 
@@ -94,20 +96,24 @@ export default function ExchangePage() {
             const userRef = doc(db, "users", user.uid);
             const etbAmount = amount * exchangeRate;
 
+            // Update user document
             await updateDoc(userRef, {
                 teamIncome: increment(-amount),
                 balance: increment(etbAmount),
                 totalIncome: increment(etbAmount)
             });
 
+            // Store exchanged amounts for success modal
             setExchangedCoins(amount);
             setExchangedETB(etbAmount);
+
+            // Show success animation
             setShowSuccess(true);
             setCoinAmount("");
 
         } catch (error) {
             console.error("Error exchanging coins:", error);
-            setError("Failed to process clinical exchange.");
+            setError("Failed to process exchange. Please try again.");
         } finally {
             setExchanging(false);
         }
@@ -115,182 +121,140 @@ export default function ExchangePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 font-sans relative overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
-            </div>
-
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-3xl px-6 h-20 flex items-center justify-between border-b border-blue-50 max-w-lg mx-auto w-full">
+            <header className="px-6 py-4 flex items-center justify-between sticky top-0 z-50 bg-slate-50/90 backdrop-blur-md">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
-                        className="w-11 h-11 rounded-2xl bg-white border border-blue-100 flex items-center justify-center text-blue-900 shadow-sm active:scale-95 transition-all"
+                        className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm active:scale-95 transition-all"
                     >
-                        <ChevronLeft size={22} />
+                        <ChevronLeft size={20} />
                     </button>
-                    <div className="flex flex-col">
-                        <h1 className="text-lg font-black text-blue-900 tracking-tight leading-none uppercase">Clinical Exchange</h1>
-                        <span className="text-[10px] font-black text-blue-900/40 tracking-[0.2em] uppercase mt-1">Currency Conversion</span>
-                    </div>
+                    <h1 className="text-lg font-bold text-slate-800">Exchange</h1>
                 </div>
             </header>
 
-            <main className="px-6 py-10 max-w-lg mx-auto space-y-8 relative z-10 pb-32">
+            <main className="px-6 space-y-6 mt-2 pb-20">
+
                 {/* Available Balance Card */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-blue-900/5 border border-blue-50 flex items-center justify-between group overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-orange-100/50 transition-colors"></div>
-                    <div className="relative z-10">
-                        <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-[0.2em] block mb-2">Network Credits</span>
-                        <div className="flex items-center gap-3">
-                            <Activity size={24} className="text-orange-500" />
-                            <span className="text-3xl font-black text-blue-900 tabular-nums">{Number(userData?.teamIncome || 0).toLocaleString()}</span>
+                <div className="bg-white rounded-[1.5rem] p-6 shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <span className="text-xs font-medium text-slate-400 block mb-1">Available Coins</span>
+                        <div className="flex items-center gap-2">
+                            <Coins size={20} className="text-amber-500" />
+                            <span className="text-2xl font-bold text-slate-900">{Number(userData?.teamIncome || 0).toLocaleString()}</span>
                         </div>
                     </div>
-                    <div className="w-16 h-16 bg-orange-50 rounded-[1.5rem] flex items-center justify-center text-orange-500 border border-orange-100 shadow-inner group-hover:scale-105 transition-transform duration-500">
-                        <Coins size={32} />
+                    <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500">
+                        <Coins size={24} />
                     </div>
                 </div>
 
                 {/* Exchange Rate Info */}
-                <div className="bg-blue-900 rounded-[2.5rem] p-8 shadow-2xl shadow-blue-900/20 text-white relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-3xl -mr-24 -mt-24 group-hover:bg-white/10 transition-colors duration-700"></div>
+                <div className="bg-blue-600 rounded-[1.5rem] p-6 shadow-lg shadow-blue-600/20 text-white relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <div className="relative z-10 flex justify-between items-center">
-                        <div className="space-y-4">
-                            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Settlement Rate</span>
-                            <div className="flex items-center gap-4">
-                                <div className="flex flex-col items-center">
-                                    <span className="text-2xl font-black">1.00</span>
-                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-widest mt-1">Credit</span>
-                                </div>
-                                <ArrowLeftRight size={20} className="text-white/20" />
-                                <div className="flex flex-col items-center">
-                                    <span className="text-2xl font-black text-green-400">{exchangeRate.toFixed(2)}</span>
-                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-widest mt-1">ETB</span>
-                                </div>
+                        <div>
+                            <span className="text-xs font-medium text-blue-100 block mb-1">Exchange Rate</span>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-2xl font-bold">1 Coin</span>
+                                <span className="text-blue-200">=</span>
+                                <span className="text-2xl font-bold">{exchangeRate} ETB</span>
                             </div>
                         </div>
-                        <div className="w-16 h-16 bg-white/10 rounded-[1.8rem] flex items-center justify-center backdrop-blur-xl border border-white/10 shadow-inner group-hover:rotate-12 transition-transform duration-700">
-                            <TrendingUp size={28} className="text-white" />
+                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <TrendingUp size={20} />
                         </div>
                     </div>
                 </div>
 
                 {/* Exchange Form */}
-                <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-blue-900/5 border border-blue-50 space-y-10">
-                    <div className="space-y-8">
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center px-2">
-                                <label className="text-[10px] font-black text-blue-900/30 uppercase tracking-[0.2em]">Source Credits</label>
-                                <span className="text-[9px] font-black text-blue-900/10 uppercase tracking-widest">Min. 100 Cr</span>
+                <div className="bg-white rounded-[1.5rem] p-6 shadow-sm border border-slate-100 space-y-6">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <div className="flex justify-between">
+                                <label className="text-sm font-bold text-slate-700">Amount to exchange</label>
+                                <span className="text-xs text-slate-400">Min: 100</span>
                             </div>
-                            <div className="relative group/input">
+                            <div className="relative">
                                 <input
                                     type="number"
                                     value={coinAmount}
                                     onChange={(e) => setCoinAmount(e.target.value)}
-                                    className="w-full bg-blue-50 border border-blue-100 rounded-[1.5rem] px-8 py-6 text-2xl font-black text-blue-900 focus:outline-none focus:border-blue-300 focus:bg-white transition-all shadow-inner placeholder:text-blue-900/5"
-                                    placeholder="0.00"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-lg font-bold text-slate-900 focus:outline-none focus:border-blue-500 transition-colors"
+                                    placeholder="0"
                                 />
-                                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-blue-900/40 bg-white border border-blue-50 px-4 py-2 rounded-xl shadow-sm uppercase tracking-widest">
-                                    Credits
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">
+                                    COINS
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex justify-center -my-4 relative z-10">
-                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border-4 border-blue-50 shadow-lg text-blue-900 animate-spin-slow">
-                                <RefreshCw size={20} strokeWidth={2.5} />
+                        <div className="flex justify-center -my-2 relative z-10">
+                            <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center border-4 border-white">
+                                <RefreshCw size={14} className="text-slate-400" />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-blue-900/30 uppercase tracking-[0.2em] px-2">Projected Balance</label>
-                            <div className="w-full bg-blue-50 border border-blue-100 rounded-[1.5rem] px-8 py-6 flex justify-between items-center shadow-inner">
-                                <span className="text-2xl font-black text-green-600 tabular-nums">{etbPreview.toLocaleString()}</span>
-                                <span className="text-[10px] font-black text-blue-900/40 bg-white border border-blue-50 px-4 py-2 rounded-xl shadow-sm uppercase tracking-widest">ETB</span>
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-slate-700">You will receive</label>
+                            <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 flex justify-between items-center">
+                                <span className="text-lg font-bold text-slate-900">{etbPreview.toLocaleString()}</span>
+                                <span className="text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">ETB</span>
                             </div>
                         </div>
                     </div>
 
-                    <AnimatePresence>
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="flex items-center gap-3 p-5 bg-red-50 text-red-600 rounded-[1.5rem] border border-red-100 text-[11px] font-black uppercase tracking-widest"
-                            >
-                                <AlertCircle size={18} />
-                                {error}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {error && (
+                        <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-xl text-sm font-medium">
+                            <AlertCircle size={16} />
+                            {error}
+                        </div>
+                    )}
 
                     <button
                         onClick={handleExchange}
                         disabled={exchanging || !coinAmount}
-                        className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-[1.8rem] h-18 font-black text-sm tracking-[0.25em] shadow-xl shadow-orange-500/20 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-20 disabled:cursor-not-allowed uppercase"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-4 font-bold text-sm shadow-lg shadow-blue-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {exchanging ? (
-                            <Loader2 className="animate-spin" size={24} strokeWidth={2.5} />
+                            <Loader2 className="animate-spin" size={18} />
                         ) : (
-                            <ShieldCheck size={24} strokeWidth={2.5} />
+                            <ArrowLeftRight size={18} />
                         )}
-                        Authorize Exchange
+                        Confirm Exchange
                     </button>
                 </div>
             </main>
 
             {/* Success Modal */}
-            <AnimatePresence>
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="fixed inset-0 bg-white/95 backdrop-blur-2xl flex items-center justify-center z-[100] px-6"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="bg-white rounded-[3rem] p-12 max-w-sm w-full shadow-3xl text-center border border-blue-50 relative overflow-hidden"
+            {showSuccess && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 px-6 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+                        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <CheckCircle2 size={32} className="text-emerald-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2">Exchange Successful</h3>
+                        <p className="text-sm text-slate-500 mb-6">
+                            You have successfully exchanged <span className="font-bold text-slate-800">{exchangedCoins} Coins</span> for <span className="font-bold text-slate-800">{exchangedETB} ETB</span>.
+                        </p>
+                        <button
+                            onClick={() => setShowSuccess(false)}
+                            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-xl py-3.5 font-bold text-sm transition-colors"
                         >
-                            <div className="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
-
-                            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
-                                <CheckCircle2 size={48} className="text-green-600" strokeWidth={2.5} />
-                            </div>
-
-                            <div className="space-y-4 mb-10">
-                                <h3 className="text-2xl font-black text-blue-900 uppercase tracking-tight leading-none">Settlement Finalized</h3>
-                                <p className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.15em] leading-relaxed">
-                                    Conversion of <span className="text-blue-900">{exchangedCoins} Cr</span> to <span className="text-green-600">{exchangedETB} ETB</span> has been successfully encrypted and settled.
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={() => setShowSuccess(false)}
-                                className="w-full h-16 bg-blue-900 hover:bg-blue-950 text-white rounded-[1.5rem] font-black text-[11px] tracking-[0.3em] uppercase transition-all shadow-xl shadow-blue-900/10"
-                            >
-                                Process Complete
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            Done
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
-
-// In index.css, ensure animate-spin-slow is defined:
-// @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-// .animate-spin-slow { animation: spin-slow 8s linear infinite; }

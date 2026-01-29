@@ -174,43 +174,43 @@ export default function WithdrawalPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+            <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-[#D4AF37] animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 font-sans pb-32 relative selection:bg-blue-500/30 overflow-hidden">
-            {/* Medical Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+        <div className="min-h-screen bg-[#0A0A0A] text-white font-sans pb-32 relative selection:bg-[#D4AF37]/30">
+            {/* Background Decorative Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#9A7B4F]/5 blur-[100px] rounded-full" />
             </div>
 
             {/* Advanced Error Modal */}
             {errorModal?.show && (
-                <div className="fixed inset-0 z-[100] bg-blue-900/60 backdrop-blur-3xl flex items-center justify-center p-6 animate-in fade-in duration-500">
-                    <div className="bg-white w-full max-w-sm rounded-[3.5rem] p-12 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-500">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+                    <div className="bg-[#1A1A1A] w-full max-w-xs rounded-[3rem] p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-red-500/20 relative overflow-hidden animate-in zoom-in-95 duration-500">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
 
-                        <div className="relative z-10 flex flex-col items-center text-center gap-10">
-                            <div className="w-24 h-24 rounded-[2.5rem] bg-red-50 flex items-center justify-center border border-red-100 shadow-sm">
+                        <div className="relative z-10 flex flex-col items-center text-center gap-8">
+                            <div className="w-24 h-24 rounded-[2rem] bg-red-500/10 flex items-center justify-center animate-pulse">
                                 <XCircle size={48} strokeWidth={1.5} className="text-red-500" />
                             </div>
 
-                            <div className="space-y-4">
-                                <h3 className="text-2xl font-black text-blue-900 tracking-tight uppercase">Protocol Alert</h3>
-                                <p className="text-sm font-black text-blue-900/40 leading-relaxed px-2">
+                            <div className="space-y-3">
+                                <h3 className="text-2xl font-bold text-white tracking-tight">Attention</h3>
+                                <p className="text-sm font-medium text-white/40 leading-relaxed px-2">
                                     {errorModal.message}
                                 </p>
                             </div>
 
                             <button
                                 onClick={() => setErrorModal(null)}
-                                className="w-full py-6 bg-red-500 text-white rounded-[1.8rem] text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-red-500/20 active:scale-95 transition-all"
+                                className="w-full py-5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-[1.5rem] text-sm font-bold tracking-widest transition-all active:scale-95 shadow-lg"
                             >
-                                Acknowledge
+                                Continue
                             </button>
                         </div>
                     </div>
@@ -218,15 +218,15 @@ export default function WithdrawalPage() {
             )}
 
             {/* Header */}
-            <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-blue-50">
+            <header className="fixed top-0 left-0 right-0 bg-[#0A0A0A]/60 backdrop-blur-2xl z-50 px-6 py-6 flex items-center justify-between border-b border-[#D4AF37]/10">
                 <button
                     onClick={() => router.back()}
-                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-blue-100 text-blue-900 active:scale-90 transition-all shadow-sm"
+                    className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 text-[#D4AF37] active:scale-90 transition-all shadow-lg shadow-black/50"
                 >
                     <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-xl font-black uppercase tracking-widest text-blue-900 leading-none text-center flex-1">
-                    Health refund
+                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">
+                    Withdrawal
                 </h1>
                 <div className="w-12" /> {/* Spacer */}
             </header>
@@ -248,13 +248,13 @@ export default function WithdrawalPage() {
 
                         if (!isOpenToday || !isWithinHours) {
                             return (
-                                <div className="bg-white border border-red-100 rounded-[3rem] p-8 flex items-center gap-6 shadow-xl shadow-red-900/5">
-                                    <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center text-red-500 border border-red-100">
-                                        <Clock size={32} />
+                                <div className="bg-[#1A1A1A] border border-red-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                    <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 animate-pulse">
+                                        <Clock size={28} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-[10px] font-black text-red-500 tracking-[0.2em] uppercase mb-1">Clinic Closed</p>
-                                        <p className="text-base font-black text-blue-900">
+                                        <p className="text-[10px] font-bold text-red-500 tracking-wider opacity-80">Withdrawals Closed</p>
+                                        <p className="text-sm font-bold text-white/90">
                                             Opens at {withdrawalSettings.startTime} tomorrow
                                         </p>
                                     </div>
@@ -262,17 +262,17 @@ export default function WithdrawalPage() {
                             );
                         }
                         return (
-                            <div className="bg-white border border-green-100 rounded-[3rem] p-8 flex items-center gap-6 shadow-xl shadow-green-900/5">
-                                <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 border border-green-100">
-                                    <CheckCircle2 size={32} />
+                            <div className="bg-[#1A1A1A] border border-emerald-500/20 rounded-[2.5rem] p-6 flex items-center gap-5 shadow-xl">
+                                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                    <CheckCircle2 size={28} />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black text-green-600 tracking-[0.2em] uppercase mb-1">Clinic Active</p>
-                                    <p className="text-base font-black text-blue-900">
+                                    <p className="text-[10px] font-bold text-emerald-500 tracking-wider opacity-80">Withdrawals Available</p>
+                                    <p className="text-sm font-bold text-white">
                                         Available until {withdrawalSettings.endTime}
                                     </p>
                                 </div>
-                                <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.5)]"></div>
+                                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-ping opacity-30"></div>
                             </div>
                         );
                     })()}
@@ -280,104 +280,107 @@ export default function WithdrawalPage() {
 
                 {/* Amount Input Card */}
                 <section className="relative group animate-in fade-in slide-in-from-top-6 duration-700 delay-100">
-                    <div className="bg-white rounded-[3rem] p-12 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden h-64 flex flex-col justify-center">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    <div className="bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-[2.5rem] p-1 shadow-[0_20px_50px_rgba(212,175,55,0.25)]">
+                        <div className="bg-[#0A0A0A] rounded-[2.3rem] p-10 relative overflow-hidden h-full flex flex-col justify-center">
+                            {/* Metallic Shine Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
 
-                        <p className="text-blue-900/40 text-[10px] font-black uppercase tracking-[0.2em] mb-4">Refund Amount</p>
-                        <div className="flex items-baseline gap-4 relative z-10">
-                            <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                placeholder="0"
-                                className="w-full bg-transparent text-6xl font-black text-blue-900 placeholder:text-blue-900/10 outline-none border-none p-0 tabular-nums leading-none"
-                            />
-                            <span className="text-blue-900/40 font-black uppercase tracking-widest text-base shrink-0">ETB</span>
-                        </div>
-
-                        <div className="mt-10 flex gap-2">
-                            {[...Array(10)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${amount && i < amount.length ? "bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.3)]" : "bg-blue-50"
-                                        }`}
+                            <p className="text-[#D4AF37] text-[10px] font-bold tracking-wider mb-4 opacity-70">Enter Amount</p>
+                            <div className="flex items-baseline gap-4">
+                                <input
+                                    type="number"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    placeholder="0"
+                                    className="w-full bg-transparent text-6xl font-bold text-white placeholder:text-white/5 outline-none border-none p-0 z-10 relative tabular-nums"
                                 />
-                            ))}
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-bold tracking-tight text-base shrink-0">ETB</span>
+                            </div>
+
+                            <div className="mt-8 flex gap-1">
+                                {[...Array(12)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-0.5 flex-1 rounded-full transition-all duration-700 ${amount && i < Math.min(amount.length * 2, 12) ? "bg-[#D4AF37]" : "bg-white/5"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Info Card */}
-                <section className="bg-white rounded-[3.5rem] p-10 border border-blue-50 space-y-8 shadow-xl shadow-blue-900/5 relative overflow-hidden group/info">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-6 shadow-xl relative overflow-hidden group/info">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover/info:bg-[#D4AF37]/10 transition-all duration-500"></div>
 
-                    <div className="flex justify-between items-center p-6 rounded-[2rem] bg-blue-50/50 border border-blue-100">
-                        <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Health Balance</span>
-                        <span className="text-xl font-black text-blue-900 tabular-nums">
-                            {Number(userData?.balance || 0).toLocaleString()} <span className="text-[10px] text-blue-900/40">ETB</span>
+                    <div className="flex justify-between items-center p-5 rounded-[1.5rem] bg-[#0A0A0A] border border-[#D4AF37]/5 group-hover/info:border-[#D4AF37]/20 transition-all">
+                        <span className="text-[10px] font-bold text-white/40 tracking-wider">Your Balance</span>
+                        <span className="text-lg font-bold text-[#D4AF37] tabular-nums">
+                            {Number(userData?.balance || 0).toLocaleString()}
                         </span>
                     </div>
 
-                    <div className="space-y-4 px-2">
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Clinical Fee</span>
-                                <div className="px-3 py-1 rounded-lg bg-green-500 text-white text-[9px] font-black uppercase tracking-widest leading-none">5%</div>
-                            </div>
-                            <span className="text-sm font-black text-red-500 tabular-nums">-{fee.toLocaleString()} ETB</span>
+                    <div className="flex justify-between items-center px-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-white/40 tracking-wider">Service Fee</span>
+                            <div className="px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400">5%</div>
                         </div>
-                        <div className="h-[1px] bg-blue-50"></div>
-                        <div className="flex justify-between items-end pt-2">
-                            <span className="text-[10px] font-black text-blue-900 uppercase tracking-[0.2em] mb-1">Actual yield</span>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-green-600 tabular-nums tracking-tighter">
+                        <span className="text-xs font-bold text-white/40 tabular-nums">-{fee.toLocaleString()}</span>
+                    </div>
+
+                    <div className="pt-6 border-t border-[#D4AF37]/10 flex justify-between items-end">
+                        <span className="text-[10px] font-bold text-white tracking-widest mb-1.5">Total you get</span>
+                        <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-2">
+                                <span className="text-4xl font-bold text-white tabular-nums tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                                     {actualReceipt.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                 </span>
-                                <span className="text-green-600/40 font-black text-sm uppercase tracking-widest">ETB</span>
+                                <span className="bg-gradient-to-b from-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent font-bold text-xs">ETB</span>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Bank Selection */}
-                <section className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-                    <div className="flex items-center gap-3 px-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-900"></div>
-                        <h2 className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em]">Receiving Medical account</h2>
+                <section className="space-y-5 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+                    <div className="flex items-center gap-2 px-1">
+                        <div className="w-1.5 h-3 bg-gradient-to-b from-[#FCF6BA] to-[#B38728] rounded-full"></div>
+                        <h2 className="text-[10px] font-bold text-[#D4AF37]/60 tracking-wider">Withdraw to</h2>
                     </div>
 
                     {linkedBank ? (
-                        <div className="bg-white rounded-[3rem] p-2 border border-blue-50 hover:border-blue-200 transition-all group/bank shadow-xl shadow-blue-900/5">
-                            <div className="p-10 relative overflow-hidden flex flex-col gap-10">
-                                <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                        <div className="bg-[#1A1A1A] rounded-[2.5rem] p-1 border border-[#D4AF37]/10 hover:border-[#D4AF37]/40 transition-all group/bank shadow-xl">
+                            <div className="p-8 relative overflow-hidden flex flex-col gap-8">
+                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover/bank:bg-[#D4AF37]/10 transition-all"></div>
 
                                 <div className="flex items-center gap-6 relative z-10">
-                                    <div className="w-20 h-20 rounded-[1.8rem] bg-blue-50 border border-blue-100 flex items-center justify-center p-3 shadow-inner group-hover/bank:scale-105 transition-all">
+                                    <div className="w-16 h-16 rounded-2xl bg-[#0A0A0A] border border-[#D4AF37]/20 flex items-center justify-center p-2 shadow-inner group-hover/bank:scale-105 transition-all">
                                         {linkedBank.bankLogoUrl ? (
-                                            <img src={linkedBank.bankLogoUrl} alt={linkedBank.bankName} className="w-full h-full object-contain filter drop-shadow-[0_2px_5px_rgba(30,58,138,0.1)]" />
+                                            <img src={linkedBank.bankLogoUrl} alt={linkedBank.bankName} className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(212,175,55,0.2)]" />
                                         ) : (
-                                            <Wallet className="text-blue-900/40" size={36} />
+                                            <Wallet className="text-[#D4AF37]" size={32} />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="text-2xl font-black text-blue-900 truncate tracking-tight leading-none">{linkedBank.bankName}</h4>
-                                        <p className="text-[10px] font-black text-blue-900/40 tracking-[0.2em] uppercase mt-2">{linkedBank.holderName}</p>
+                                        <h4 className="text-xl font-bold text-white truncate tracking-tight">{linkedBank.bankName}</h4>
+                                        <p className="text-[10px] font-bold text-[#D4AF37] tracking-wider truncate mt-1">{linkedBank.holderName}</p>
                                     </div>
-                                    <div className="text-blue-900/10 group-hover/bank:text-blue-900 transition-all">
-                                        <ChevronRight size={28} />
+                                    <div className="text-[#D4AF37]/20 group-hover/bank:text-[#D4AF37] transition-all">
+                                        <ChevronRight size={24} />
                                     </div>
                                 </div>
 
-                                <div className="pt-10 border-t border-blue-50 grid grid-cols-2 gap-8 relative z-10">
-                                    <div className="space-y-2">
-                                        <p className="text-[10px] font-black text-blue-900/20 uppercase tracking-[0.15em]">Health ID No.</p>
-                                        <p className="text-base font-black text-blue-900 tracking-widest font-mono truncate">{linkedBank.accountNumber}</p>
+                                <div className="pt-8 border-t border-[#D4AF37]/10 grid grid-cols-2 gap-6 relative z-10">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-bold text-white/30 tracking-wider">Account Number</p>
+                                        <p className="text-sm font-bold text-white tracking-widest font-mono truncate">{linkedBank.accountNumber}</p>
                                     </div>
-                                    <div className="space-y-2 text-right">
-                                        <p className="text-[10px] font-black text-blue-900/20 uppercase tracking-[0.15em]">Account Status</p>
-                                        <div className="flex items-center justify-end gap-2">
-                                            <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                                            <p className="text-xs font-black text-green-600 uppercase tracking-widest">Medical Verified</p>
+                                    <div className="space-y-1 text-right">
+                                        <p className="text-[10px] font-bold text-white/30 tracking-wider">Account Status</p>
+                                        <div className="flex items-center justify-end gap-1.5">
+                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                                            <p className="text-xs font-bold text-emerald-500 tracking-tight">Verified</p>
                                         </div>
                                     </div>
                                 </div>
@@ -386,45 +389,45 @@ export default function WithdrawalPage() {
                     ) : (
                         <div
                             onClick={() => router.push('/users/bank')}
-                            className="bg-white rounded-[3.5rem] p-12 text-center border-2 border-dashed border-blue-100 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group/add shadow-xl shadow-blue-900/5"
+                            className="bg-[#1A1A1A] rounded-[2.5rem] p-10 text-center border-2 border-dashed border-[#D4AF37]/10 hover:border-[#D4AF37]/40 hover:bg-[#D4AF37]/5 transition-all cursor-pointer group/add shadow-xl"
                         >
-                            <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6 group-hover/add:scale-110 transition-all text-blue-600 border border-blue-100">
-                                <CreditCard size={36} />
+                            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-6 group-hover/add:scale-110 transition-all">
+                                <CreditCard className="text-[#D4AF37]" size={32} />
                             </div>
-                            <p className="text-[10px] font-black text-blue-900 uppercase tracking-[0.2em] mb-2">No Clinical account</p>
-                            <p className="text-sm text-blue-900/40 font-black tracking-tight">Tap to register receiving bank details</p>
+                            <p className="text-[10px] font-bold text-[#D4AF37] tracking-widest mb-2">No bank account added</p>
+                            <p className="text-sm text-white/50 font-medium tracking-tight">Tap to add your receiving bank details</p>
                         </div>
                     )}
                 </section>
 
                 {/* Usage Tips */}
-                <section className="bg-white rounded-[3rem] p-10 border border-blue-50 space-y-10 shadow-xl shadow-blue-900/5 relative overflow-hidden group/rules z-10">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <section className="bg-[#1A1A1A] rounded-[2.5rem] p-8 border border-[#D4AF37]/10 space-y-8 shadow-xl relative overflow-hidden group/rules">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-900 border border-blue-100">
+                        <div className="w-10 h-10 bg-[#D4AF37]/10 rounded-xl flex items-center justify-center text-[#D4AF37]">
                             <AlertCircle size={22} />
                         </div>
-                        <h3 className="text-[10px] font-black text-blue-900 uppercase tracking-[0.2em]">Clinical Rules</h3>
+                        <h3 className="text-xs font-bold text-[#D4AF37] tracking-wider">Important Rules</h3>
                     </div>
 
-                    <ul className="space-y-8">
+                    <ul className="space-y-5">
                         {[
-                            `Hospital Hours: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
-                            `Dosage Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} ETB per request`,
-                            `Frequency: One refund per ${withdrawalSettings.frequency} day(s)`,
-                            "Processing: Clinical verification takes 2-72 hours",
-                            "Identity: Bank name must match medical profile"
+                            `Available Hours: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
+                            `Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} ETB per request`,
+                            `Frequency: Once every ${withdrawalSettings.frequency} day(s) (Reset at Midnight)`,
+                            "Processing: Funds usually arrive within 2-72 hours",
+                            "Security: Account name must match your profile name"
                         ].map((rule, i) => {
                             const [label, ...val] = rule.split(": ");
                             return (
                                 <li key={i} className="flex gap-4 items-start group/tip">
-                                    <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-blue-900 group-hover/tip:text-white transition-all">
-                                        <span className="text-[11px] font-black transition-colors">{i + 1}</span>
+                                    <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/tip:bg-[#D4AF37]/20 transition-all">
+                                        <span className="text-[10px] font-bold text-[#D4AF37]">{i + 1}</span>
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-xs font-black text-blue-900/40 leading-relaxed group-hover/tip:text-blue-900 transition-all tracking-tight">
-                                            <span className="text-blue-900/20 mr-1 uppercase tracking-widest">{label}:</span> {val.join(": ")}
+                                        <p className="text-[11px] font-bold text-white/80 leading-relaxed group-hover/tip:text-white transition-all tracking-tight">
+                                            <span className="text-white/30 mr-1">{label}:</span> {val.join(": ")}
                                         </p>
                                     </div>
                                 </li>
@@ -435,13 +438,13 @@ export default function WithdrawalPage() {
             </main>
 
             {/* Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl p-8 pb-12 border-t border-blue-50 shadow-[0_-20px_50px_rgba(0,0,0,0.05)] relative z-[60]">
+            <div className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 pb-10 border-t border-[#D4AF37]/10 shadow-[0_-20px_40px_rgba(0,0,0,0.5)] relative z-[60]">
                 <button
                     onClick={handleWithdrawClick}
-                    className="w-full bg-orange-500 text-white py-7 rounded-[2.5rem] font-black uppercase tracking-[0.25em] text-xs shadow-xl shadow-orange-500/20 hover:shadow-2xl hover:bg-orange-600 transition-all duration-500 flex items-center justify-center gap-4 group"
+                    className="w-full bg-gradient-to-br from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-[#0A0A0A] py-7 rounded-[2rem] font-bold tracking-widest text-xs shadow-[0_15px_40px_rgba(212,175,55,0.25)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.4)] hover:-translate-y-1 active:scale-[0.97] transition-all duration-300 flex items-center justify-center gap-4 group"
                 >
-                    <Lock size={20} className="group-hover:scale-110 transition-transform" />
-                    <span>Initiate refund</span>
+                    <Lock size={18} className="opacity-70 group-hover:scale-110 transition-transform" />
+                    <span>Withdraw Now</span>
                 </button>
             </div>
         </div>

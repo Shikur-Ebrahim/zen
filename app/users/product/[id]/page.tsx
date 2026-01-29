@@ -167,25 +167,30 @@ export default function UserProductDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
-                <p className="mt-8 text-blue-900/40 font-black tracking-widest text-[9px] uppercase">Reviewing Medication</p>
+            <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-6">
+                <div className="relative">
+                    <div className="w-20 h-20 border-4 border-blue-900 border-t-blue-500 rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 m-auto w-8 h-8 flex items-center justify-center">
+                        <Zap className="text-blue-500 animate-pulse" size={24} />
+                    </div>
+                </div>
+                <p className="mt-8 text-blue-500/30 font-black tracking-widest text-[9px] uppercase">Luxury Store Initializing</p>
             </div>
         );
     }
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
-                <div className="w-24 h-24 bg-blue-50 rounded-[2.5rem] flex items-center justify-center mb-8 border border-blue-100 shadow-sm">
-                    <AlertCircle size={48} className="text-blue-900/20" />
+            <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-8 text-center">
+                <div className="w-24 h-24 bg-blue-900/20 rounded-[2.5rem] flex items-center justify-center mb-8 border border-blue-500/20 shadow-sm">
+                    <AlertCircle size={48} className="text-blue-500/40" />
                 </div>
-                <h1 className="text-2xl font-black tracking-tight mb-4 text-blue-900">Product Not Found</h1>
-                <p className="text-blue-900/40 max-w-xs mb-10 text-[10px] font-black tracking-widest uppercase leading-relaxed">The requested medication could not be located.</p>
+                <h1 className="text-2xl font-black tracking-tight mb-4 text-white">Product not found</h1>
+                <p className="text-blue-400/40 max-w-xs mb-10 text-[10px] font-black tracking-widest uppercase leading-relaxed">The requested item could not be found in our collection.</p>
                 <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => router.back()}
-                    className="px-12 py-5 bg-orange-500 text-white rounded-2xl font-black tracking-widest text-[10px] shadow-lg shadow-orange-500/20"
+                    className="px-12 py-5 bg-blue-600 text-white rounded-2xl font-black tracking-widest text-[10px] shadow-lg shadow-blue-500/20"
                 >
                     BACK TO CATALOG
                 </motion.button>
@@ -194,43 +199,43 @@ export default function UserProductDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white text-blue-900 pb-32 overflow-hidden relative font-sans">
+        <div className="min-h-screen bg-[#F0F2F5] text-slate-900 pb-32 overflow-hidden relative font-sans">
             {/* Minimal Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md px-6 h-20 flex items-center justify-between border-b border-blue-50 max-w-lg mx-auto">
+            <header className="fixed top-0 left-0 right-0 z-50 bg-[#F0F2F5]/90 backdrop-blur-md px-6 h-16 flex items-center justify-between max-w-lg mx-auto">
                 <button
                     onClick={() => router.back()}
-                    className="w-10 h-10 rounded-full bg-white border border-blue-100 flex items-center justify-center text-blue-900 shadow-sm active:scale-95 transition-transform"
+                    className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm active:scale-95 transition-transform"
                 >
                     <ChevronLeft size={24} />
                 </button>
                 <div className="flex flex-col items-center">
-                    <h1 className="text-lg font-black text-blue-900 leading-none">Details</h1>
-                    <span className="text-[10px] font-black text-blue-900/40 tracking-widest uppercase mt-1">Pharmacy</span>
+                    <h1 className="text-lg font-bold text-slate-900">Details</h1>
+                    <span className="text-[10px] font-bold text-blue-600 tracking-widest uppercase">DPM Store</span>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white border border-blue-100 flex items-center justify-center shadow-sm">
-                    <img src="/msd-logo.png" alt="MSD" className="w-6 h-6 object-contain" />
+                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                    <img src="/dpm-logo.png" alt="DPM" className="w-6 h-6 object-contain" />
                 </div>
             </header>
 
-            <main className="pt-28 px-6 max-w-lg mx-auto space-y-8 relative z-10">
+            <main className="pt-24 px-6 max-w-lg mx-auto space-y-8 relative z-10">
                 {/* Product Image */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="relative"
                 >
-                    <div className="aspect-[1.3/1] rounded-[2.5rem] overflow-hidden bg-white shadow-xl shadow-blue-900/5 border border-blue-50 relative">
+                    <div className="aspect-[1.3/1] rounded-[2.5rem] overflow-hidden bg-white shadow-xl shadow-slate-200/60 border border-slate-100 relative">
                         {product.imageUrl ? (
                             <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center text-blue-50 gap-4">
+                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-4">
                                 <Award size={64} strokeWidth={1.5} />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-blue-900/20">Health Product</span>
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Premium Product</span>
                             </div>
                         )}
 
                         <div className="absolute top-6 left-6">
-                            <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md text-blue-900 text-[10px] font-black uppercase tracking-wider rounded-full border border-blue-100 shadow-sm">
+                            <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md text-blue-600 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
                                 {product.category || "General"}
                             </span>
                         </div>
@@ -244,42 +249,43 @@ export default function UserProductDetailPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-blue-900/5 border border-blue-50"
+                    className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100"
                 >
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-900"></div>
-                        <h2 className="text-[10px] font-black text-blue-900/30 uppercase tracking-[0.3em]">Medication Data</h2>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Product Data</h2>
                     </div>
 
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Scientific Tier</span>
-                            <span className="text-sm font-black text-blue-900">{product.category || "Level 1"}</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Category</span>
+                            <span className="text-sm font-bold text-slate-800">{product.category || "Level 1"}</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Product SKU</span>
-                            <span className="text-sm font-black text-blue-900">{product.name}</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Product Name</span>
+                            <span className="text-sm font-bold text-slate-800">{product.name}</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Entry Price</span>
-                            <span className="text-sm font-black text-green-600">{product.price?.toLocaleString()} ETB</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Price</span>
+                            <span className="text-sm font-bold text-blue-600">{product.price?.toLocaleString()} ETB</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Daily Yield</span>
-                            <span className="text-sm font-black text-blue-900">{product.dailyIncome?.toLocaleString()} ETB</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Daily Income</span>
+                            <span className="text-sm font-bold text-slate-800">{product.dailyIncome?.toLocaleString()} ETB</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Cycle Period</span>
-                            <span className="text-sm font-black text-blue-900">{product.contractPeriod} Days</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Contract Period</span>
+                            <span className="text-sm font-bold text-slate-800">{product.contractPeriod} Days</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Total Outcome</span>
-                            <span className="text-sm font-black text-green-600">{product.totalProfit?.toLocaleString()} ETB</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Profit</span>
+                            <span className="text-sm font-bold text-emerald-600">{product.totalProfit?.toLocaleString()} ETB</span>
                         </div>
-                        <div className="flex items-center justify-between pb-4 border-b border-blue-50 last:border-0 last:pb-0">
-                            <span className="text-[10px] font-black text-blue-900/30 uppercase tracking-widest">Unit Limit</span>
-                            <span className="text-sm font-black text-blue-900">{product.purchaseLimit || 1} Unit</span>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Purchase Limit</span>
+                            <span className="text-sm font-bold text-slate-800">{product.purchaseLimit || 1} Unit</span>
                         </div>
+
                     </div>
                 </motion.div>
 
@@ -290,8 +296,8 @@ export default function UserProductDetailPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className={`p-4 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-center ${statusMsg.type === 'success'
-                                ? 'bg-green-50 text-green-600 border border-green-100'
+                            className={`p-4 rounded-2xl flex items-center justify-center gap-3 text-sm font-bold text-center ${statusMsg.type === 'success'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                                 : 'bg-red-50 text-red-600 border border-red-100'
                                 }`}
                         >
@@ -304,19 +310,18 @@ export default function UserProductDetailPage() {
             </main>
 
             {/* Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/95 backdrop-blur-md border-t border-blue-50 z-50 flex flex-col gap-4 max-w-lg mx-auto pb-10">
+            <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-slate-100 z-50 flex flex-col gap-4 max-w-lg mx-auto">
                 <button
                     onClick={handlePurchase}
                     disabled={isBuying || (statusMsg?.type === 'success')}
-                    className={`w-full h-16 rounded-2xl font-black text-xs tracking-[0.2em] uppercase transition-all shadow-lg shadow-orange-500/20 active:scale-[0.98] flex items-center justify-center gap-2 ${isBuying ? "bg-blue-50 text-blue-900/20" : "bg-orange-500 text-white hover:bg-orange-600"
+                    className={`w-full h-14 rounded-2xl font-bold text-sm tracking-widest uppercase transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98] flex items-center justify-center gap-2 ${isBuying ? "bg-slate-100 text-slate-400" : "bg-blue-600 text-white hover:bg-blue-700"
                         }`}
                 >
                     {isBuying ? (
                         <Loader2 className="animate-spin" size={20} />
                     ) : (
                         <>
-                            Order Medication
-                            <ArrowRight size={18} strokeWidth={3} />
+                            Buy Now
                         </>
                     )}
                 </button>

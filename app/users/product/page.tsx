@@ -73,7 +73,10 @@ export default function UserProductsPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
+                <div className="relative">
+                    <div className="w-16 h-16 border-4 border-[#C9A24D]/20 border-t-[#C9A24D] rounded-full animate-spin"></div>
+                    <Loader2 className="w-6 h-6 animate-spin text-[#C9A24D] absolute inset-0 m-auto" />
+                </div>
             </div>
         );
     }
@@ -95,34 +98,34 @@ export default function UserProductsPage() {
 
     return (
         <div className="min-h-screen bg-white text-[#1A1A1A] pb-44 overflow-x-hidden">
-            {/* Medical Background Glow */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-50/50 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-50/30 blur-[100px] rounded-full"></div>
+            {/* Ambient Background Elements - Subtle */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#C9A24D]/5 blur-[120px] rounded-full"></div>
+                <div className="absolute bottom-[20%] left-[-10%] w-[50%] h-[50%] bg-[#8B5E3C]/5 blur-[100px] rounded-full"></div>
             </div>
 
-            {/* Premium Top Bar */}
-            <header className="fixed top-0 left-0 right-0 h-24 bg-white/95 backdrop-blur-3xl z-40 px-6 flex items-center justify-between border-b border-blue-50 mx-auto max-w-lg">
+            {/* Premium Glass Header */}
+            <header className="fixed top-0 left-0 right-0 h-24 bg-white/80 backdrop-blur-3xl z-40 px-6 flex items-center justify-between border-b border-[#EDEDED] mx-auto max-w-lg shadow-sm">
                 <div className="flex items-center gap-5">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => router.push("/users/welcome")}
-                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-blue-100 text-blue-900/70 hover:text-blue-900 transition-all shadow-sm"
+                        className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-[#EDEDED] text-[#1A1A1A]/70 hover:text-[#1A1A1A] transition-all shadow-sm"
                     >
                         <ChevronLeft size={22} strokeWidth={2.5} />
                     </motion.button>
                     <div className="flex flex-col">
-                        <h1 className="text-xl font-bold tracking-tight leading-tight text-blue-900">Pharmacy</h1>
-                        <span className="text-[10px] font-black text-blue-900/40 tracking-wider uppercase">MSD Inventory</span>
+                        <h1 className="text-xl font-bold tracking-tight leading-tight text-[#1A1A1A]">Store</h1>
+                        <span className="text-[10px] font-medium text-[#C9A24D] tracking-wider uppercase font-black">DPM Catalog</span>
                     </div>
                 </div>
                 <motion.div
                     initial={{ rotate: -10 }}
                     animate={{ rotate: 0 }}
-                    className="w-12 h-12 relative p-1 bg-white rounded-2xl border border-blue-100 shadow-sm"
+                    className="w-12 h-12 relative p-1 bg-[#F9F9F9] rounded-2xl border border-[#EDEDED]"
                 >
-                    <img src="/msd-logo.png" alt="MSD Logo" className="w-full h-full object-contain" />
+                    <img src="/dpm-logo.png" alt="DPM Logo" className="w-full h-full object-contain" />
                 </motion.div>
             </header>
 
@@ -130,7 +133,7 @@ export default function UserProductsPage() {
                 <div className="space-y-10">
 
                     {/* Elite Category Navigation */}
-                    <div className="bg-blue-50/50 p-1.5 rounded-[2rem] border border-blue-100 flex gap-1 justify-between items-center max-w-full overflow-x-auto no-scrollbar">
+                    <div className="bg-[#F9F9F9] p-1.5 rounded-[2rem] border border-[#EDEDED] flex gap-1 justify-between items-center max-w-full overflow-x-auto no-scrollbar">
                         {[
                             { id: "ALL", label: "ALL" },
                             { id: "Level A", label: "LEVEL A" },
@@ -144,9 +147,9 @@ export default function UserProductsPage() {
                                 transition={{ delay: idx * 0.05 }}
                                 key={cat.id}
                                 onClick={() => setActiveCategory(cat.id)}
-                                className={`flex-1 py-3 px-6 rounded-2xl text-[10px] font-black tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id
-                                    ? "bg-blue-900 text-white shadow-lg shadow-blue-900/10 scale-[1.02]"
-                                    : "text-blue-900/40 hover:text-blue-900/60"
+                                className={`flex-1 py-3 rounded-2xl text-[8px] font-black tracking-widest transition-all市场 whitespace-nowrap市场 ${activeCategory === cat.id
+                                    ? "bg-[#C9A24D] text-white shadow-[0_10px_20px_rgba(201,162,77,0.2)] scale-[1.02]"
+                                    : "text-[#1A1A1A]/30 hover:text-[#1A1A1A]/60"
                                     }`}
                             >
                                 {cat.label}
@@ -157,18 +160,18 @@ export default function UserProductsPage() {
                     {/* Boutique Grid */}
                     <div className="pb-20">
                         {fetchingProducts ? (
-                            <div className="py-32 flex flex-col items-center justify-center space-y-6">
-                                <Loader2 className="w-12 h-12 animate-spin text-green-600" />
-                                <p className="text-[10px] font-black text-blue-900/30 tracking-widest uppercase">Consulting Database</p>
+                            <div className="py-32 flex flex-col items-center justify-center space-y-4">
+                                <div className="w-12 h-12 border-2 border-[#EDEDED] border-t-[#C9A24D] rounded-full animate-spin"></div>
+                                <p className="text-[11px] font-black text-[#1A1A1A]/20 tracking-widest uppercase">Initializing Store</p>
                             </div>
                         ) : filteredProducts.length === 0 ? (
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="py-24 flex flex-col items-center justify-center bg-blue-50/30 rounded-[3rem] border border-blue-50 text-blue-900/20"
+                                className="py-24 flex flex-col items-center justify-center bg-[#F9F9F9] rounded-[3rem] border border-[#EDEDED] italic text-[#1A1A1A]/20"
                             >
                                 <Package size={48} className="mb-6 opacity-10" />
-                                <p className="text-[10px] font-black tracking-widest uppercase">No health products found</p>
+                                <p className="text-[10px] font-medium tracking-widest uppercase">No products in {activeCategory}</p>
                             </motion.div>
                         ) : (
                             <div className="grid grid-cols-1 gap-8">
@@ -182,33 +185,34 @@ export default function UserProductsPage() {
                                             exit={{ opacity: 0, scale: 0.95 }}
                                             transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
                                             onClick={() => router.push(`/users/product/${product.id}`)}
-                                            className="group relative bg-white rounded-[2.5rem] p-7 border border-blue-50 active:scale-[0.98] transition-all cursor-pointer overflow-hidden shadow-xl shadow-blue-900/5 hover:shadow-2xl hover:border-green-100">
-                                            {/* Luxury Medical Glow */}
-                                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            className="group relative bg-white rounded-[2.5rem] p-7 border border-[#EDEDED] active:scale-[0.98] transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-xl hover:border-[#EDEDED]/50"
+                                        >
+                                            {/* Luxury Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#C9A24D]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                                             {/* Tracking Bar - Enhanced Vibrant Colors */}
                                             {product.showTracking && (
                                                 <div className="absolute top-0 left-0 right-0 z-20 p-4">
-                                                    <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 border border-green-100 shadow-xl shadow-green-900/5">
+                                                    <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 border border-purple-200/50 shadow-xl shadow-purple-500/10">
                                                         <div className="flex justify-between items-end mb-2">
                                                             <div className="flex items-center gap-1.5">
                                                                 <div className="relative flex h-2 w-2">
-                                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+                                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75"></span>
+                                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
                                                                 </div>
-                                                                <span className="text-[9px] font-black text-green-600 uppercase tracking-widest">In Stock</span>
+                                                                <span className="text-[9px] font-black text-purple-600 uppercase tracking-widest">Selling Fast</span>
                                                             </div>
-                                                            <span className="text-[10px] font-black text-blue-900">
-                                                                <span className="text-green-600">{Math.min(100, Math.round(((product.trackingCurrent || 0) / (product.trackingTarget || 100)) * 100))}%</span>
-                                                                <span className="text-blue-900/40 ml-1">Claimed</span>
+                                                            <span className="text-[10px] font-bold text-[#1A1A1A]">
+                                                                <span className="text-purple-600">{Math.min(100, Math.round(((product.trackingCurrent || 0) / (product.trackingTarget || 100)) * 100))}%</span>
+                                                                <span className="text-[#1A1A1A]/40 ml-1">Sold</span>
                                                             </span>
                                                         </div>
-                                                        <div className="h-2 w-full bg-blue-50 rounded-full overflow-hidden shadow-inner">
+                                                        <div className="h-2 w-full bg-gradient-to-r from-purple-100 to-blue-100 rounded-full overflow-hidden shadow-inner">
                                                             <motion.div
                                                                 initial={{ width: 0 }}
                                                                 animate={{ width: `${Math.min(100, ((product.trackingCurrent || 0) / (product.trackingTarget || 100)) * 100)}%` }}
                                                                 transition={{ duration: 1.5, ease: "easeOut" }}
-                                                                className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full shadow-[0_0_15px_rgba(22,163,74,0.3)]"
+                                                                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]"
                                                             ></motion.div>
                                                         </div>
                                                     </div>
@@ -216,7 +220,7 @@ export default function UserProductsPage() {
                                             )}
 
                                             {/* Product Image Stage */}
-                                            <div className="aspect-[16/10] w-full rounded-[2rem] overflow-hidden bg-blue-50/30 relative shadow-inner border border-blue-50 group-hover:border-green-200 transition-all duration-500">
+                                            <div className="aspect-[16/10] w-full rounded-[2rem] overflow-hidden bg-[#F9F9F9] relative shadow-inner border border-[#EDEDED] group-hover:border-[#C9A24D]/30 transition-all duration-500">
                                                 {product.imageUrl ? (
                                                     <motion.img
                                                         whileHover={{ scale: 1.1 }}
@@ -226,14 +230,14 @@ export default function UserProductsPage() {
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-blue-100">
+                                                    <div className="w-full h-full flex items-center justify-center text-[#EDEDED]">
                                                         <Package size={52} strokeWidth={1} />
                                                     </div>
                                                 )}
 
                                                 {/* Category Badge Floating */}
-                                                <div className="absolute top-5 right-5 px-4 py-1.5 bg-white/95 backdrop-blur-xl border border-blue-100 rounded-full shadow-sm">
-                                                    <span className="text-[10px] font-black text-blue-900 tracking-[0.1em]">{(product.category || "LEVEL A").toUpperCase()}</span>
+                                                <div className="absolute top-5 right-5 px-4 py-1.5 bg-white/90 backdrop-blur-xl border border-[#EDEDED] rounded-full shadow-sm">
+                                                    <span className="text-[9px] font-black text-[#C9A24D] tracking-[0.15em]">{(product.category || "LEVEL A").toUpperCase()}</span>
                                                 </div>
                                             </div>
 
@@ -241,32 +245,31 @@ export default function UserProductsPage() {
                                                 {/* Header Info */}
                                                 <div className="flex justify-between items-start">
                                                     <div className="space-y-1">
-                                                        <h3 className="text-2xl font-black text-blue-900 tracking-tight leading-none">{product.name}</h3>
-                                                        <p className="text-[10px] font-black text-blue-900/40 uppercase tracking-widest mt-1">Medical Supply</p>
+                                                        <h3 className="text-2xl font-bold text-[#1A1A1A] tracking-tight leading-none">{product.name}</h3>
                                                     </div>
                                                     <div className="text-right">
-                                                        <span className="text-[10px] font-black text-blue-900/20 uppercase tracking-widest block mb-1">Price</span>
-                                                        <span className="text-2xl font-black text-green-600">
+                                                        <span className="text-[10px] font-medium text-[#1A1A1A]/20 tracking-wide block mb-1">Price</span>
+                                                        <span className="text-2xl font-bold text-[#8B5E3C]">
                                                             {product.price?.toLocaleString()}
-                                                            <span className="text-[10px] ml-1.5 text-green-600/60 font-black tracking-tight">ETB</span>
+                                                            <span className="text-[10px] ml-1.5 text-[#8B5E3C]/60 font-bold tracking-tight">ETB</span>
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 {/* ROI Stats Grid */}
                                                 <div className="grid grid-cols-2 gap-4">
-                                                    <div className="bg-blue-50/50 rounded-2xl p-5 border border-blue-50 flex flex-col gap-2 group-hover:bg-blue-50 transition-colors">
-                                                        <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-widest">Daily Yield</span>
-                                                        <p className="text-xl font-black text-blue-900 leading-none">
+                                                    <div className="bg-[#F9F9F9] rounded-2xl p-5 border border-[#EDEDED] flex flex-col gap-2">
+                                                        <span className="text-[10px] font-medium text-[#1A1A1A]/40 tracking-wide">Daily Profit</span>
+                                                        <p className="text-xl font-bold text-[#8B5E3C] leading-none">
                                                             {product.dailyIncome?.toLocaleString()}
-                                                            <span className="text-[10px] ml-1.5 font-bold text-blue-900/30 uppercase">ETB</span>
+                                                            <span className="text-[10px] ml-1.5 font-medium text-[#1A1A1A]/30">ETB</span>
                                                         </p>
                                                     </div>
-                                                    <div className="bg-blue-50/50 rounded-2xl p-5 border border-blue-50 flex flex-col gap-2 group-hover:bg-blue-50 transition-colors">
-                                                        <span className="text-[10px] font-black text-blue-900/40 uppercase tracking-widest">Cycle</span>
-                                                        <p className="text-xl font-black text-blue-900 leading-none">
+                                                    <div className="bg-[#F9F9F9] rounded-2xl p-5 border border-[#EDEDED] flex flex-col gap-2">
+                                                        <span className="text-[10px] font-medium text-[#1A1A1A]/40 tracking-wide">Duration</span>
+                                                        <p className="text-xl font-bold text-[#8B5E3C] leading-none">
                                                             {product.contractPeriod}
-                                                            <span className="text-[10px] ml-1.5 font-bold text-blue-900/30 uppercase">Days</span>
+                                                            <span className="text-[10px] ml-1.5 font-medium text-[#1A1A1A]/30">Days</span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -275,9 +278,9 @@ export default function UserProductsPage() {
                                                 <motion.button
                                                     whileHover={{ scale: 1.02 }}
                                                     whileTap={{ scale: 0.98 }}
-                                                    className="w-full h-16 bg-orange-500 rounded-[1.5rem] flex items-center justify-center shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all border border-orange-400/20"
+                                                    className="w-full h-16 bg-[#C9A24D] rounded-[1.5rem] flex items-center justify-center shadow-[0_15px_30px_-5px_rgba(201,162,77,0.3)] hover:shadow-[#C9A24D]/40 transition-all border border-[#C9A24D]/10"
                                                 >
-                                                    <span className="text-[12px] font-black text-white tracking-[0.25em] uppercase">Order Now</span>
+                                                    <span className="text-[12px] font-black text-white tracking-[0.25em] uppercase">BUY</span>
                                                 </motion.button>
                                             </div>
                                         </motion.div>
@@ -289,36 +292,6 @@ export default function UserProductsPage() {
                 </div>
             </main>
 
-            {/* Bottom Hospital Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl z-40 border-t border-blue-50 px-6 py-4 pb-8 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.02)] mx-auto max-w-lg">
-                {[
-                    { id: 'home', icon: Home, label: 'Clinic' },
-                    { id: 'product', icon: Package, label: 'Pharmacy' },
-                    { id: 'team', icon: Users, label: 'Assisted' },
-                    { id: 'wallet', icon: Wallet, label: 'Finance' },
-                ].map((item) => (
-                    <button
-                        key={item.id}
-                        onClick={() => {
-                            if (item.id === 'home') router.push('/users/welcome');
-                            else if (item.id === 'product') router.push('/users/product');
-                            else if (item.id === 'team') router.push('/users/team');
-                            else if (item.id === 'wallet') router.push('/users/profile');
-                        }}
-                        className="flex flex-col items-center gap-1.5 group relative"
-                    >
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 scale-90 group-active:scale-75 ${item.id === 'product' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 rotate-[-5deg]' : 'text-blue-900/40 group-hover:bg-blue-50 group-hover:text-blue-900'}`}>
-                            <item.icon size={22} strokeWidth={item.id === 'product' ? 2.5 : 2} />
-                        </div>
-                        <span className={`text-[9px] font-black uppercase tracking-widest transition-colors duration-500 ${item.id === 'product' ? 'text-blue-900' : 'text-blue-900/30'}`}>
-                            {item.label}
-                        </span>
-                        {item.id === 'product' && (
-                            <motion.div layoutId="nav-dot" className="absolute -bottom-1 w-1 h-1 bg-orange-500 rounded-full" />
-                        )}
-                    </button>
-                ))}
-            </nav>
         </div>
     );
 }
