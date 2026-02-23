@@ -34,17 +34,45 @@ import {
     TrendingUp,
     ShieldCheck,
     History,
-    AlertCircle
+    AlertCircle,
+    Edit3,
+    Save,
+    X
 } from "lucide-react";
 import AdminSidebar from "@/components/AdminSidebar";
 import { toast } from "sonner";
+
+interface BankDetails {
+    accountNumber: string;
+    holderName: string;
+    bankName: string;
+    bankLogoUrl?: string;
+}
+
+interface Withdrawal {
+    id: string;
+    userId: string;
+    amount: number | string;
+    actualReceipt: number | string;
+    fee: number | string;
+    status: string;
+    userPhone: string;
+    bankDetails: BankDetails;
+    createdAt: any; // Using any for Timestamp/Date flexibility as seen in code
+    verifiedAt?: any;
+}
+
+interface WithdrawalGroup {
+    timestamp: number;
+    items: Withdrawal[];
+}
 
 export default function WithdrawalWalletPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [verifying, setVerifying] = useState<string | null>(null);
-    const [withdrawals, setWithdrawals] = useState<any[]>([]);
+    const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [confirmAction, setConfirmAction] = useState<{ type: 'verify', data: any } | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -70,7 +98,7 @@ export default function WithdrawalWalletPage() {
         );
 
         const unsubscribeWithdrawals = onSnapshot(q, (snapshot) => {
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Withdrawal));
             setWithdrawals(data);
         });
 
@@ -80,7 +108,7 @@ export default function WithdrawalWalletPage() {
         };
     }, [router]);
 
-    const handleVerify = async (withdrawal: any) => {
+    const handleVerify = async (withdrawal: Withdrawal) => {
         if (verifying) return;
         setVerifying(withdrawal.id);
         setConfirmAction(null);
@@ -126,6 +154,7 @@ export default function WithdrawalWalletPage() {
     };
 
     const copyToClipboard = (text: string, id: string, message: string = "Copied to clipboard") => {
+        if (!text) return;
         navigator.clipboard.writeText(text);
         setCopiedId(id);
         setTimeout(() => setCopiedId(null), 2000);
@@ -223,19 +252,77 @@ export default function WithdrawalWalletPage() {
     };
 
     // Organized Data
-    const { pending, history, stats } = useMemo(() => {
+    const { groupedWithdrawals, stats } = useMemo(() => {
         const filtered = withdrawals.filter(w =>
             w.userPhone?.includes(searchTerm) ||
             w.amount?.toString().includes(searchTerm) ||
             w.bankDetails?.accountNumber?.includes(searchTerm)
         );
 
-        const p = filtered.filter(w => w.status === 'pending');
-        const h = filtered.filter(w => w.status !== 'pending');
+        // 1. Separate Pending and Others
+        const pendingItems = filtered.filter(w => w.status === 'pending');
+        const otherItems = filtered.filter(w => w.status !== 'pending');
+
+        // 2. Sort Pending: Oldest First (FIFO)
+        const sortedPending = [...pendingItems].sort((a, b) => {
+            const timeA = a.createdAt?.seconds ? a.createdAt.seconds : new Date(a.createdAt).getTime() / 1000;
+            const timeB = b.createdAt?.seconds ? b.createdAt.seconds : new Date(b.createdAt).getTime() / 1000;
+            return timeA - timeB;
+        });
+
+        // 3. Group Others by Date
+        const groupsMap = new Map<string, WithdrawalGroup>();
+        otherItems.forEach(w => {
+            const date = w.createdAt?.toDate ? w.createdAt.toDate() : new Date(w.createdAt);
+            const dateKey = date.toDateString();
+
+            let group = groupsMap.get(dateKey);
+            if (!group) {
+                group = {
+                    timestamp: new Date(date).setHours(0, 0, 0, 0),
+                    items: []
+                };
+                groupsMap.set(dateKey, group);
+            }
+            group.items.push(w);
+        });
+
+        const sortedDateGroups = Array.from(groupsMap.values())
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .map(group => {
+                const sortedItems = group.items.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds ? a.createdAt.seconds : new Date(a.createdAt).getTime() / 1000;
+                    const timeB = b.createdAt?.seconds ? b.createdAt.seconds : new Date(b.createdAt).getTime() / 1000;
+                    return timeB - timeA; // Newest First for history
+                });
+
+                const date = new Date(group.timestamp);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const yesterday = new Date();
+                yesterday.setDate(today.getDate() - 1);
+                yesterday.setHours(0, 0, 0, 0);
+
+                let label = date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+                if (date.getTime() === today.getTime()) label = "Today";
+                else if (date.getTime() === yesterday.getTime()) label = "Yesterday";
+
+                return { label, items: sortedItems };
+            });
+
+        // 4. Combine
+        const finalGroups = [];
+        if (sortedPending.length > 0) {
+            finalGroups.push({
+                label: "Action Required • Oldest First",
+                items: sortedPending,
+                isPendingGroup: true
+            });
+        }
+        finalGroups.push(...sortedDateGroups);
 
         return {
-            pending: p,
-            history: h,
+            groupedWithdrawals: finalGroups,
             stats: {
                 totalVerified: withdrawals
                     .filter(w => w.status === 'verified' || w.status === 'approved')
@@ -458,43 +545,34 @@ export default function WithdrawalWalletPage() {
 
 
                     <div className="space-y-12 pb-24">
-                        {/* PENDING SECTION */}
-                        {pending.length > 0 && (
-                            <div className="space-y-6">
+                        {groupedWithdrawals.map(group => (
+                            <div key={group.label} className="space-y-6">
                                 <div className="flex items-center gap-4 px-2">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                        <AlertCircle size={18} strokeWidth={3} />
+                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${group.label === "Today" ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
+                                        <Calendar size={18} strokeWidth={3} />
                                     </div>
-                                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.3em]">Pending Actions ({pending.length})</h3>
-                                    <div className="flex-1 h-[2px] bg-amber-100/50 rounded-full"></div>
+                                    <h3 className={`text-xs font-black uppercase tracking-[0.3em] ${group.label === "Today" ? 'text-slate-900' : 'text-slate-400'}`}>
+                                        {group.label}
+                                    </h3>
+                                    <div className="flex-1 h-[2px] bg-slate-100/50 rounded-full"></div>
                                 </div>
                                 <div className="space-y-6">
-                                    {pending.map(item => (
-                                        <WithdrawalCard key={item.id} item={item} isPending={true} verifying={verifying} setConfirmAction={setConfirmAction} copyToClipboard={copyToClipboard} copiedId={copiedId} />
+                                    {group.items.map(item => (
+                                        <WithdrawalCard
+                                            key={item.id}
+                                            item={item}
+                                            isPending={item.status === 'pending'}
+                                            verifying={verifying}
+                                            setConfirmAction={setConfirmAction}
+                                            copyToClipboard={copyToClipboard}
+                                            copiedId={copiedId}
+                                        />
                                     ))}
                                 </div>
                             </div>
-                        )}
+                        ))}
 
-                        {/* HISTORY SECTION */}
-                        {history.length > 0 && (
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-4 px-2">
-                                    <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center">
-                                        <History size={18} strokeWidth={3} />
-                                    </div>
-                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Processed History</h3>
-                                    <div className="flex-1 h-[2px] bg-slate-100 rounded-full"></div>
-                                </div>
-                                <div className="space-y-6">
-                                    {history.map(item => (
-                                        <WithdrawalCard key={item.id} item={item} isPending={false} verifying={verifying} setConfirmAction={setConfirmAction} copyToClipboard={copyToClipboard} copiedId={copiedId} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {pending.length === 0 && history.length === 0 && (
+                        {groupedWithdrawals.length === 0 && (
                             <div className="flex flex-col items-center justify-center py-32 text-center space-y-6 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
                                 <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center text-slate-200">
                                     <Banknote size={48} strokeWidth={1} />
@@ -513,7 +591,56 @@ export default function WithdrawalWalletPage() {
 }
 
 // Sub-component for clarity and re-renders
-function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToClipboard, copiedId }: any) {
+function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToClipboard, copiedId }: {
+    item: Withdrawal;
+    isPending: boolean;
+    verifying: string | null;
+    setConfirmAction: (action: { type: 'verify', data: Withdrawal } | null) => void;
+    copyToClipboard: (text: string, id: string, message?: string) => void;
+    copiedId: string | null;
+}) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedAccountNumber, setEditedAccountNumber] = useState(item.bankDetails?.accountNumber || "");
+    const [editedHolderName, setEditedHolderName] = useState(item.bankDetails?.holderName || "");
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleUpdateDetails = async () => {
+        if (!editedAccountNumber || !editedHolderName) {
+            toast.error("Both fields are required");
+            return;
+        }
+
+        setIsUpdating(true);
+        try {
+            const bankQ = query(collection(db, "Bank"), where("uid", "==", item.userId));
+            const bankSnap = await getDocs(bankQ);
+
+            await runTransaction(db, async (transaction) => {
+                const withdrawalRef = doc(db, "Withdrawals", item.id);
+                transaction.update(withdrawalRef, {
+                    "bankDetails.accountNumber": editedAccountNumber,
+                    "bankDetails.holderName": editedHolderName
+                });
+
+                if (!bankSnap.empty) {
+                    const bankDocRef = doc(db, "Bank", bankSnap.docs[0].id);
+                    transaction.update(bankDocRef, {
+                        accountNumber: editedAccountNumber,
+                        holderName: editedHolderName
+                    });
+                }
+            });
+
+            toast.success("Details updated & synced!");
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Update error:", error);
+            toast.error("Failed to update details");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     return (
         <div
             className={`relative rounded-[3rem] overflow-hidden transition-all duration-700 animate-in fade-in slide-in-from-bottom-4 shadow-2xl border-2
@@ -525,7 +652,38 @@ function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToCl
             {/* Top Accent Line (Boundary) */}
             <div className={`absolute top-0 left-0 right-0 h-1.5 ${isPending ? 'bg-amber-400' : 'bg-emerald-400'}`}></div>
 
-            {isPending && <div className="absolute inset-0 bg-white/40 pointer-events-none"></div>}
+            <div className="absolute top-4 right-8 z-20 flex gap-2">
+                {isEditing ? (
+                    <>
+                        <button
+                            onClick={handleUpdateDetails}
+                            disabled={isUpdating}
+                            className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg active:scale-90 transition-all disabled:opacity-50"
+                        >
+                            {isUpdating ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsEditing(false);
+                                setEditedAccountNumber(item.bankDetails?.accountNumber);
+                                setEditedHolderName(item.bankDetails?.holderName);
+                            }}
+                            className="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg active:scale-90 transition-all"
+                        >
+                            <X size={18} />
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="w-10 h-10 rounded-xl bg-white text-slate-400 border border-slate-100 flex items-center justify-center shadow-sm hover:text-indigo-600 active:scale-90 transition-all"
+                    >
+                        <Edit3 size={18} />
+                    </button>
+                )}
+            </div>
+
+            {isPending && !isEditing && <div className="absolute inset-0 bg-white/40 pointer-events-none"></div>}
 
             <div className="relative p-7 space-y-7 z-10">
                 <div className="flex justify-between items-start">
@@ -569,12 +727,22 @@ function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToCl
                         </div>
                         <p className="text-sm font-black text-slate-900 leading-none">{item.userPhone}</p>
                     </button>
-                    <div className="bg-white/60 backdrop-blur-xl rounded-[1.8rem] p-5 border border-white/80 shadow-sm transition-all hover:bg-white">
+                    <div className="bg-white/60 backdrop-blur-xl rounded-[1.8rem] p-5 border border-white/80 shadow-sm transition-all hover:bg-white min-h-[5.5rem] flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-2">
                             <User size={12} className="text-indigo-400" />
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</span>
                         </div>
-                        <p className="text-xs font-black text-slate-800 leading-none truncate uppercase tracking-tighter">{item.bankDetails?.holderName}</p>
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={editedHolderName}
+                                onChange={(e) => setEditedHolderName(e.target.value)}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[11px] font-black uppercase text-slate-900 focus:outline-none focus:border-indigo-500"
+                                placeholder="Holder Name"
+                            />
+                        ) : (
+                            <p className="text-xs font-black text-slate-800 leading-none truncate uppercase tracking-tighter">{item.bankDetails?.holderName}</p>
+                        )}
                     </div>
                 </div>
 
@@ -583,24 +751,44 @@ function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToCl
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Vault</span>
                         <span className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter bg-indigo-50 px-3 py-1 rounded-lg">{item.bankDetails?.bankName}</span>
                     </div>
-                    <button
-                        onClick={() => copyToClipboard(item.bankDetails?.accountNumber, item.id)}
-                        className="w-full bg-slate-900 rounded-[1.8rem] p-6 flex items-center justify-between group overflow-hidden relative shadow-2xl active:scale-95 transition-all"
-                    >
-                        <span className="text-lg font-mono font-black text-indigo-400 tracking-[0.25em] drop-shadow-sm">
-                            {item.bankDetails?.accountNumber}
-                        </span>
-                        <div className={`p-3 rounded-2xl transition-all ${copiedId === item.id ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/40'}`}>
-                            {copiedId === item.id ? <Check size={18} strokeWidth={3} /> : <Copy size={18} strokeWidth={2.5} />}
+                    {isEditing ? (
+                        <div className="w-full bg-slate-900 rounded-[1.8rem] p-6 shadow-2xl">
+                            <input
+                                type="text"
+                                value={editedAccountNumber}
+                                onChange={(e) => setEditedAccountNumber(e.target.value)}
+                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-lg font-mono font-black text-indigo-400 tracking-[0.25em] focus:outline-none focus:border-indigo-500"
+                                placeholder="Account Number"
+                            />
                         </div>
-                    </button>
+                    ) : (
+                        <button
+                            onClick={() => copyToClipboard(item.bankDetails?.accountNumber, item.id)}
+                            className="w-full bg-slate-900 rounded-[1.8rem] p-6 flex items-center justify-between group overflow-hidden relative shadow-2xl active:scale-95 transition-all"
+                        >
+                            <span className="text-lg font-mono font-black text-indigo-400 tracking-[0.25em] drop-shadow-sm">
+                                {item.bankDetails?.accountNumber}
+                            </span>
+                            <div className={`p-3 rounded-2xl transition-all ${copiedId === item.id ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/40'}`}>
+                                {copiedId === item.id ? <Check size={18} strokeWidth={3} /> : <Copy size={18} strokeWidth={2.5} />}
+                            </div>
+                        </button>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-slate-100/50">
                     <div className="flex items-center gap-2">
                         <Calendar size={14} className="text-slate-300" />
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
-                            {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()}
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-tighter">
+                            {(() => {
+                                try {
+                                    const date = item.createdAt?.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+                                    if (isNaN(date.getTime())) return "Unknown Date";
+                                    return `${date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} • ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+                                } catch (e) {
+                                    return "Unknown Date";
+                                }
+                            })()}
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -611,7 +799,18 @@ function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToCl
                     </div>
                 </div>
 
-                {isPending ? (
+                {isEditing ? (
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleUpdateDetails}
+                            disabled={isUpdating}
+                            className="flex-1 h-18 rounded-[2rem] bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20 py-5 active:scale-95 disabled:opacity-50"
+                        >
+                            {isUpdating ? <Loader2 className="animate-spin" /> : <Save size={20} />}
+                            Save Modifications
+                        </button>
+                    </div>
+                ) : isPending ? (
                     <button
                         onClick={() => setConfirmAction({ type: 'verify', data: item })}
                         disabled={verifying === item.id}

@@ -28,7 +28,9 @@ import {
     Crown,
     PartyPopper,
     BarChart3,
-    TrendingUp
+    TrendingUp,
+    ShoppingCart,
+    LineChart
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -92,7 +94,9 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         { id: "withdrawal-rules", label: "Withdrawal Rules", icon: BookOpen, path: "/admin/withdrawal-rules" },
         { id: "unlink-account", label: "Unlink Account", icon: UserX, path: "/admin/unlink-account" },
         { id: "notifications", label: "Withdrawal Alerts", icon: Bell, path: "/admin/notifications" },
+        { id: "buy-product", label: "Buy Product", icon: ShoppingCart, path: "/admin/buy-product" },
         { id: "products", label: "Products", icon: Package, path: "/admin/product" },
+        { id: "sales-tracking", label: "Sales Tracking", icon: LineChart, path: "/admin/sales-tracking" },
         { id: "referral", label: "Referral Rule", icon: Percent, path: "/admin/referral-settings" },
         { id: "vip-rules", label: "VIP Rules", icon: Crown, path: "/admin/vip-rules" },
         { id: "vip-notifications", label: "VIP Celebration", icon: PartyPopper, path: "/admin/vip-notifications" },
