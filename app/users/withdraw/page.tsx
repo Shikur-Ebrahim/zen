@@ -154,7 +154,7 @@ export default function WithdrawalPage() {
         }
 
         if (currentTime < startTotal || currentTime > endTotal) {
-            setErrorModal({ show: true, message: `Withdrawals are only available between ${withdrawalSettings.startTime} and ${withdrawalSettings.endTime}.` });
+            setErrorModal({ show: true, message: `Withdrawals are only available between 2:00 and 11:00.` });
             return;
         }
 
@@ -255,7 +255,7 @@ export default function WithdrawalPage() {
                                     <div className="flex-1">
                                         <p className="text-[10px] font-bold text-red-500 tracking-wider opacity-80">Withdrawals Closed</p>
                                         <p className="text-sm font-bold text-white/90">
-                                            Opens at {withdrawalSettings.startTime} tomorrow
+                                            Opens at 2:00 tomorrow
                                         </p>
                                     </div>
                                 </div>
@@ -269,7 +269,7 @@ export default function WithdrawalPage() {
                                 <div className="flex-1">
                                     <p className="text-[10px] font-bold text-emerald-500 tracking-wider opacity-80">Withdrawals Available</p>
                                     <p className="text-sm font-bold text-white">
-                                        Available until {withdrawalSettings.endTime}
+                                        Available until 11:00
                                     </p>
                                 </div>
                                 <div className="w-3 h-3 bg-emerald-500 rounded-full animate-ping opacity-30"></div>
@@ -413,7 +413,7 @@ export default function WithdrawalPage() {
 
                     <ul className="space-y-5">
                         {[
-                            `Available Hours: ${withdrawalSettings.startTime} - ${withdrawalSettings.endTime} (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
+                            `Available Hours: 2:00 - 11:00 (${withdrawalSettings.activeDays.map((d: number) => DAYS_MAP[d]).join(", ")})`,
                             `Limits: ${withdrawalSettings.minAmount} - ${withdrawalSettings.maxAmount.toLocaleString()} ETB per request`,
                             `Frequency: Once every ${withdrawalSettings.frequency} day(s) (Reset at Midnight)`,
                             "Processing: Funds usually arrive within 2-72 hours",
