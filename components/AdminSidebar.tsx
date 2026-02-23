@@ -155,10 +155,10 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
             <aside className={`fixed md:sticky top-0 left-0 h-screen w-72 bg-white border-r border-gray-100 z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex items-center gap-3 mb-12">
-                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
-                            <LayoutDashboard size={20} />
+                        <div className="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-gray-50 p-2 shadow-lg shadow-black/5">
+                            <img src="/dpm-logo.png" alt="DPM Logo" className="w-full h-full object-contain" />
                         </div>
-                        <h1 className="text-xl font-black text-gray-900 tracking-tight">Turner Boss</h1>
+                        <h1 className="text-xl font-black text-gray-900 tracking-tight">DPM</h1>
                     </div>
 
                     <nav className="flex-1 space-y-2 overflow-y-auto pr-2 custom-scrollbar">
