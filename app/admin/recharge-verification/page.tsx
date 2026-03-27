@@ -164,6 +164,8 @@ export default function RechargeVerificationPage() {
                         if (isFirstRecharge) {
                             const bonus = amount * pct;
                             inviterUpdate.teamIncome = increment(bonus);
+                            inviterUpdate.balance = increment(bonus);
+                            inviterUpdate.totalIncome = increment(bonus);
                             inviterUpdate.investedTeamSize = increment(1);
 
                             // VIP Eligibility Check

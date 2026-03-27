@@ -153,7 +153,7 @@ export default function InvitePage() {
                         <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-3 text-emerald-400 group-hover:scale-110 transition-transform">
                             <Coins size={22} />
                         </div>
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Earned</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Earned (Birr)</span>
                         <span className="text-2xl font-black text-white">{stats.earned}</span>
                     </div>
                 </div>

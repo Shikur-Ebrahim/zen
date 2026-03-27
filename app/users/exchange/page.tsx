@@ -66,7 +66,7 @@ export default function ExchangePage() {
         return () => unsubscribe();
     }, [router]);
 
-    // Update ETB preview when coin amount changes
+    // Update ETB preview when birr amount changes
     useEffect(() => {
         const amount = parseFloat(coinAmount) || 0;
         setEtbPreview(amount * exchangeRate);
@@ -80,12 +80,12 @@ export default function ExchangePage() {
 
         // Validation
         if (amount < 100) {
-            setError("Minimum exchange amount is 100 Coins");
+            setError("Minimum exchange amount is 100 Birr");
             return;
         }
 
         if (amount > (userData.teamIncome || 0)) {
-            setError("Insufficient Coin balance");
+            setError("Insufficient Birr balance");
             return;
         }
 
@@ -112,7 +112,7 @@ export default function ExchangePage() {
             setCoinAmount("");
 
         } catch (error) {
-            console.error("Error exchanging coins:", error);
+            console.error("Error exchanging birr:", error);
             setError("Failed to process exchange. Please try again.");
         } finally {
             setExchanging(false);
@@ -147,7 +147,7 @@ export default function ExchangePage() {
                 {/* Available Balance Card */}
                 <div className="bg-white rounded-[1.5rem] p-6 shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
-                        <span className="text-xs font-medium text-slate-400 block mb-1">Available Coins</span>
+                        <span className="text-xs font-medium text-slate-400 block mb-1">Available Birr</span>
                         <div className="flex items-center gap-2">
                             <Coins size={20} className="text-amber-500" />
                             <span className="text-2xl font-bold text-slate-900">{Number(userData?.teamIncome || 0).toLocaleString()}</span>
@@ -165,7 +165,7 @@ export default function ExchangePage() {
                         <div>
                             <span className="text-xs font-medium text-blue-100 block mb-1">Exchange Rate</span>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl font-bold">1 Coin</span>
+                                <span className="text-2xl font-bold">1 Birr</span>
                                 <span className="text-blue-200">=</span>
                                 <span className="text-2xl font-bold">{exchangeRate} ETB</span>
                             </div>
@@ -193,7 +193,7 @@ export default function ExchangePage() {
                                     placeholder="0"
                                 />
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">
-                                    COINS
+                                    BIRR
                                 </div>
                             </div>
                         </div>
@@ -244,7 +244,7 @@ export default function ExchangePage() {
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-2">Exchange Successful</h3>
                         <p className="text-sm text-slate-500 mb-6">
-                            You have successfully exchanged <span className="font-bold text-slate-800">{exchangedCoins} Coins</span> for <span className="font-bold text-slate-800">{exchangedETB} ETB</span>.
+                            You have successfully exchanged <span className="font-bold text-slate-800">{exchangedCoins} Birr</span> for <span className="font-bold text-slate-800">{exchangedETB} ETB</span>.
                         </p>
                         <button
                             onClick={() => setShowSuccess(false)}

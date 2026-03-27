@@ -497,13 +497,13 @@ function WelcomeContent() {
                                     {/* Action: Exchange */}
                                     <motion.button
                                         whileTap={{ scale: 0.97 }}
-                                        onClick={() => router.push("/users/exchange")}
+                                        onClick={() => router.push("/users/team")}
                                         className="bg-[#F5F5F5] rounded-[2rem] p-4 flex flex-col items-center justify-center gap-3 border border-white shadow-lg transition-all hover:translate-y-[-2px] active:scale-95"
                                     >
                                         <div className="w-12 h-12 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-600">
-                                            <ArrowLeftRight size={24} />
+                                            <Users size={24} />
                                         </div>
-                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Exchange</span>
+                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Team</span>
                                     </motion.button>
                                 </div>
                             </section>

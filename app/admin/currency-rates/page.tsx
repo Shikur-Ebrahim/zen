@@ -16,7 +16,7 @@ export default function AdminCurrencyRates() {
     });
     const [rates, setRates] = useState({
         usdRate: 0.017, // 1 ETB = x USD
-        coinRate: 0.5,  // 1 Coin = x ETB
+        coinRate: 0.5,  // 1 Birr = x ETB
         starRate: 2.0   // 1 Star = x ETB
     });
     const [showSuccess, setShowSuccess] = useState(false);
@@ -52,7 +52,7 @@ export default function AdminCurrencyRates() {
                 lastUpdated: Date.now()
             });
 
-            // Create notifications for all users if Coin or Star rates changed
+            // Create notifications for all users if Birr or Star rates changed
             const coinChanged = rates.coinRate !== previousRates.coinRate;
             const starChanged = rates.starRate !== previousRates.starRate;
 
@@ -68,7 +68,7 @@ export default function AdminCurrencyRates() {
                                 userId: userDoc.id,
                                 type: "rate_update",
                                 asset: "coin",
-                                message: `Coin rate updated to ${rates.coinRate} ETB`,
+                                message: `Birr rate updated to ${rates.coinRate} ETB`,
                                 newRate: rates.coinRate,
                                 oldRate: previousRates.coinRate,
                                 createdAt: Timestamp.now(),
@@ -172,21 +172,21 @@ export default function AdminCurrencyRates() {
 
                         <hr className="border-slate-100" />
 
-                        {/* Coin -> ETB Section */}
+                        {/* Birr -> ETB Section */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                                     <Coins size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-slate-900">Coin Value</h3>
-                                    <p className="text-sm text-slate-500">Set the value of 1 Coin in ETB</p>
+                                    <h3 className="font-bold text-slate-900">Birr Value</h3>
+                                    <p className="text-sm text-slate-500">Set the value of 1 Birr in ETB</p>
                                 </div>
                             </div>
 
                             <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <span className="font-bold text-slate-400">1 Coin =</span>
+                                    <span className="font-bold text-slate-400">1 Birr =</span>
                                     <input
                                         type="number"
                                         step="0.01"
