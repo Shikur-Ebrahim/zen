@@ -115,8 +115,7 @@ export default function AuthForm() {
                 let inviterData = {
                     inviterA: "",
                     inviterB: "",
-                    inviterC: "",
-                    inviterD: ""
+                    inviterC: ""
                 };
 
                 const searchParams = new URLSearchParams(window.location.search);
@@ -151,7 +150,6 @@ export default function AuthForm() {
                         inviterData.inviterA = foundInviter.uid;
                         inviterData.inviterB = foundInviter.inviterA || "";
                         inviterData.inviterC = foundInviter.inviterB || "";
-                        inviterData.inviterD = foundInviter.inviterC || "";
                     }
                 }
 
@@ -175,15 +173,13 @@ export default function AuthForm() {
                     inviterA: inviterData.inviterA,
                     inviterB: inviterData.inviterB,
                     inviterC: inviterData.inviterC,
-                    inviterD: inviterData.inviterD,
                     createdAt: new Date().toISOString(),
                 });
 
                 const invitersToUpdate = [
                     { uid: inviterData.inviterA, level: "Level A" },
                     { uid: inviterData.inviterB, level: "Level B" },
-                    { uid: inviterData.inviterC, level: "Level C" },
-                    { uid: inviterData.inviterD, level: "Level D" }
+                    { uid: inviterData.inviterC, level: "Level C" }
                 ].filter(i => i.uid);
 
                 for (const inviter of invitersToUpdate) {

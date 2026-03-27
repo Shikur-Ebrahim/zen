@@ -10,7 +10,9 @@ import {
     doc,
     setDoc,
     deleteDoc,
-    orderBy
+    orderBy,
+    getDocs,
+    getDoc
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -47,6 +49,8 @@ export default function UserBankPage() {
         accountNumber: "",
         bankLogoUrl: ""
     });
+
+    const normalizeAccountNumber = (value: string) => value.replace(/\s+/g, "");
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -103,8 +107,35 @@ export default function UserBankPage() {
 
         setSubmitting(true);
         try {
+            const normalizedAccountNumber = normalizeAccountNumber(formData.accountNumber);
+
+            // Read admin-controlled duplicate bind limit (fallback: 3)
+            const withdrawalSettingsSnap = await getDoc(doc(db, "GlobalSettings", "withdrawal"));
+            const duplicateBindLimit = Math.max(
+                1,
+                Number(withdrawalSettingsSnap.exists()
+                    ? withdrawalSettingsSnap.data().duplicateBankAccountBindLimit ?? 3
+                    : 3)
+            );
+
+            // Count how many different users already bound this same account number
+            const bankSnapshot = await getDocs(collection(db, "Bank"));
+            const sameAccountBoundByOtherUsers = bankSnapshot.docs.filter((bankDoc) => {
+                const data = bankDoc.data() as any;
+                const existingNormalized = normalizeAccountNumber(
+                    data.accountNumberNormalized || data.accountNumber || ""
+                );
+                return existingNormalized === normalizedAccountNumber && data.uid !== user.uid;
+            }).length;
+
+            if (sameAccountBoundByOtherUsers >= duplicateBindLimit) {
+                toast.error("This account is max level just able to bind");
+                return;
+            }
+
             await setDoc(doc(db, "Bank", user.uid), {
                 ...formData,
+                accountNumberNormalized: normalizedAccountNumber,
                 uid: user.uid,
                 phoneNumber: userData?.phoneNumber || "",
                 status: "verified",

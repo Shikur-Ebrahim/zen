@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { ChevronLeft, Copy, CheckCircle2, Share2, Sparkles, Gift, Users, Wallet, Coins } from "lucide-react";
+import { ChevronLeft, Copy, CheckCircle2, Share2, Sparkles, Gift, Users, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 export default function InvitePage() {
@@ -150,8 +150,8 @@ export default function InvitePage() {
                     </div>
 
                     <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-5 border border-white/10 flex flex-col items-center text-center group hover:bg-white/10 transition-all duration-300">
-                        <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-3 text-emerald-400 group-hover:scale-110 transition-transform">
-                            <Coins size={22} />
+                        <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <span className="text-xl font-black text-emerald-400 select-none">ብር</span>
                         </div>
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Total Earned (Birr)</span>
                         <span className="text-2xl font-black text-white">{stats.earned}</span>

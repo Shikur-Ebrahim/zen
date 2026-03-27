@@ -115,20 +115,18 @@ export default function RechargeVerificationPage() {
 
                 // 2. Fetch Referral Settings (Dynamic)
                 const settingsSnap = await transaction.get(doc(db, "settings", "referral"));
-                const defaults = { levelA: 12, levelB: 7, levelC: 4, levelD: 2 };
+                const defaults = { levelA: 12, levelB: 7, levelC: 4 };
                 const dbRates = settingsSnap.exists() ? settingsSnap.data() : {};
                 const rates = { ...defaults, ...dbRates };
 
                 const pctA = Number(rates.levelA) / 100;
                 const pctB = Number(rates.levelB) / 100;
                 const pctC = Number(rates.levelC) / 100;
-                const pctD = Number(rates.levelD) / 100;
 
                 const inviterUids = [
                     { uid: userData.inviterA, pct: pctA },
                     { uid: userData.inviterB, pct: pctB },
-                    { uid: userData.inviterC, pct: pctC },
-                    { uid: userData.inviterD, pct: pctD }
+                    { uid: userData.inviterC, pct: pctC }
                 ].filter(i => i.uid);
 
                 const inviterRefs = inviterUids.map(i => ({
@@ -181,7 +179,7 @@ export default function RechargeVerificationPage() {
                             }
 
                             // Notification
-                            const levelLabels = ["Level A", "Level B", "Level C", "Level D"];
+                            const levelLabels = ["Level A", "Level B", "Level C"];
                             const notifRef = doc(collection(db, "UserNotifications"));
                             transaction.set(notifRef, {
                                 userId: snap.id,
@@ -251,7 +249,7 @@ export default function RechargeVerificationPage() {
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 overflow-x-hidden relative flex">
             {/* Confirmation Modal */}
             {confirmAction && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6 transition-all">
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-100 flex items-center justify-center p-6 transition-all">
                     <div className="w-full max-w-sm bg-white rounded-[2.5rem] p-8 shadow-2xl space-y-8 border border-white/40">
                         <div className="flex flex-col items-center text-center space-y-4">
                             <div className={`w-20 h-20 rounded-3xl flex items-center justify-center ${confirmAction.type === 'verify' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600'} shadow-sm`}>
@@ -321,7 +319,7 @@ export default function RechargeVerificationPage() {
                 <div className="p-4 lg:p-10 space-y-6 max-w-4xl mx-auto w-full">
                     {/* Financial Summary Dashboard */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gradient-to-br from-emerald-100/50 to-white/50 backdrop-blur-3xl border border-emerald-100/50 p-6 rounded-[2.5rem] shadow-[0_15px_30px_-10px_rgba(16,185,129,0.1)] flex flex-col gap-1 relative overflow-hidden group">
+                        <div className="bg-linear-to-br from-emerald-100/50 to-white/50 backdrop-blur-3xl border border-emerald-100/50 p-6 rounded-[2.5rem] shadow-[0_15px_30px_-10px_rgba(16,185,129,0.1)] flex flex-col gap-1 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-125 group-hover:rotate-12 transition-all duration-700">
                                 <CheckCircle2 size={60} className="text-emerald-500" />
                             </div>
@@ -334,7 +332,7 @@ export default function RechargeVerificationPage() {
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-blue-100/50 to-white/50 backdrop-blur-3xl border border-blue-100/50 p-6 rounded-[2.5rem] shadow-[0_15px_30px_-10px_rgba(37,99,235,0.1)] flex flex-col gap-1 relative overflow-hidden group">
+                        <div className="bg-linear-to-br from-blue-100/50 to-white/50 backdrop-blur-3xl border border-blue-100/50 p-6 rounded-[2.5rem] shadow-[0_15px_30px_-10px_rgba(37,99,235,0.1)] flex flex-col gap-1 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700">
                                 <Clock size={60} className="text-blue-500" />
                             </div>
@@ -358,7 +356,7 @@ export default function RechargeVerificationPage() {
                             placeholder="Search (phone or FT)..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-16 pl-14 pr-6 bg-white/50 backdrop-blur-3xl border border-slate-200/60 rounded-[2rem] focus:outline-none focus:border-blue-500/50 focus:ring-8 focus:ring-blue-500/5 transition-all duration-300 text-sm font-bold shadow-xl shadow-slate-200/50 placeholder:text-slate-400 placeholder:font-black"
+                            className="w-full h-16 pl-14 pr-6 bg-white/50 backdrop-blur-3xl border border-slate-200/60 rounded-4xl focus:outline-none focus:border-blue-500/50 focus:ring-8 focus:ring-blue-500/5 transition-all duration-300 text-sm font-bold shadow-xl shadow-slate-200/50 placeholder:text-slate-400 placeholder:font-black"
                         />
                     </div>
 
@@ -369,8 +367,8 @@ export default function RechargeVerificationPage() {
                                     key={recharge.id}
                                     className={`relative group rounded-[3rem] p-0.5 transition-all duration-700 hover:scale-[1.01] active:scale-[0.99]
                                         ${recharge.status === 'verified'
-                                            ? 'bg-gradient-to-br from-emerald-100/50 via-emerald-50/20 to-emerald-100/50 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.1)]'
-                                            : 'bg-gradient-to-br from-blue-100/50 via-slate-50/20 to-blue-100/50 shadow-[0_20px_50px_-12px_rgba(37,99,235,0.1)]'}
+                                            ? 'bg-linear-to-br from-emerald-100/50 via-emerald-50/20 to-emerald-100/50 shadow-[0_20px_50px_-12px_rgba(16,185,129,0.1)]'
+                                            : 'bg-linear-to-br from-blue-100/50 via-slate-50/20 to-blue-100/50 shadow-[0_20px_50px_-12px_rgba(37,99,235,0.1)]'}
                                     `}
                                 >
                                     <div className="bg-white/80 backdrop-blur-3xl rounded-[2.9rem] p-8 lg:p-10 relative overflow-hidden h-full border border-white/40">
@@ -460,8 +458,8 @@ export default function RechargeVerificationPage() {
                                 </div>
                             ))
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-32 space-y-6 bg-gradient-to-b from-white/50 to-slate-50/20 backdrop-blur-3xl border border-dashed border-slate-200 rounded-[4rem] group hover:border-blue-300/50 transition-all duration-700">
-                                <div className="w-24 h-24 bg-white shadow-2xl shadow-slate-200 rounded-[2rem] flex items-center justify-center text-slate-300 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 border border-slate-50">
+                            <div className="flex flex-col items-center justify-center py-32 space-y-6 bg-linear-to-b from-white/50 to-slate-50/20 backdrop-blur-3xl border border-dashed border-slate-200 rounded-[4rem] group hover:border-blue-300/50 transition-all duration-700">
+                                <div className="w-24 h-24 bg-white shadow-2xl shadow-slate-200 rounded-4xl flex items-center justify-center text-slate-300 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 border border-slate-50">
                                     <ShieldCheck size={40} className="group-hover:text-blue-500 transition-colors" />
                                 </div>
                                 <div className="flex flex-col items-center gap-1">

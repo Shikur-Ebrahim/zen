@@ -96,7 +96,8 @@ export default function AdminUnlinkAccount() {
         try {
             await updateDoc(doc(db, "Bank", id), {
                 holderName: editForm.holderName,
-                accountNumber: editForm.accountNumber
+                accountNumber: editForm.accountNumber,
+                accountNumberNormalized: editForm.accountNumber.replace(/\s+/g, "")
             });
             toast.success("Bank account updated successfully");
             setEditingId(null);

@@ -41,6 +41,7 @@ export default function WithdrawalSettingsPage() {
         startTime: "08:00",
         endTime: "17:00",
         frequency: 1,
+        duplicateBankAccountBindLimit: 3,
     });
 
     useEffect(() => {
@@ -69,6 +70,7 @@ export default function WithdrawalSettingsPage() {
                     startTime: data.startTime ?? "08:00",
                     endTime: data.endTime ?? "17:00",
                     frequency: data.frequency ?? 1,
+                    duplicateBankAccountBindLimit: data.duplicateBankAccountBindLimit ?? 3,
                 });
             }
         } catch (error) {
@@ -86,6 +88,10 @@ export default function WithdrawalSettingsPage() {
         }
         if (settings.minAmount >= settings.maxAmount) {
             toast.error("Minimum amount must be less than maximum amount");
+            return;
+        }
+        if (!Number.isFinite(settings.duplicateBankAccountBindLimit) || settings.duplicateBankAccountBindLimit < 1) {
+            toast.error("Duplicate bank account bind limit must be at least 1");
             return;
         }
 
@@ -220,6 +226,31 @@ export default function WithdrawalSettingsPage() {
                                 <p className="text-[10px] font-bold text-slate-400 px-2 leading-relaxed">
                                     Set how many days a user must wait between withdrawals. Reset occurs at 0:00 (midnight).
                                     <br />1 = Once per calendar day, 2 = Once every 2 calendar days, etc.
+                                </p>
+                            </div>
+
+                            {/* Duplicate Bank Account Bind Limit */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 px-1">
+                                    <div className="w-1.5 h-4 bg-indigo-600 rounded-full"></div>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Same Account Number Bind Limit</label>
+                                </div>
+                                <div className="relative group">
+                                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors">
+                                        <Settings size={24} />
+                                    </div>
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        value={settings.duplicateBankAccountBindLimit}
+                                        onChange={(e) => setSettings(prev => ({ ...prev, duplicateBankAccountBindLimit: Number(e.target.value) }))}
+                                        placeholder="e.g. 3"
+                                        className="w-full h-20 pl-16 pr-8 bg-slate-50 border-2 border-slate-50 rounded-3xl focus:outline-none focus:border-indigo-500/20 focus:bg-white transition-all text-2xl font-black tracking-tighter"
+                                    />
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-400 px-2 leading-relaxed">
+                                    Controls how many different user accounts can bind the same bank account number.
+                                    <br />Example: 3 means the same account number can be linked by up to 3 users only.
                                 </p>
                             </div>
 

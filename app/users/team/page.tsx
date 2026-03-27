@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { ChevronLeft, Users, Trophy, Wallet, UserCircle, Search, Layers, Star, Coins, Loader2 } from "lucide-react";
+import { ChevronLeft, Users, Trophy, Wallet, UserCircle, Search, Layers, Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface TeamMember {
@@ -21,24 +21,23 @@ interface TeamData {
     A: TeamMember[];
     B: TeamMember[];
     C: TeamMember[];
-    D: TeamMember[];
 }
 
 export default function TeamPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
-    const [activeTab, setActiveTab] = useState<'all' | 'A' | 'B' | 'C' | 'D'>('A');
-    const [teamData, setTeamData] = useState<TeamData>({ A: [], B: [], C: [], D: [] });
+    const [activeTab, setActiveTab] = useState<'A' | 'B' | 'C'>('A');
+    const [teamData, setTeamData] = useState<TeamData>({ A: [], B: [], C: [] });
     const [stats, setStats] = useState({
         totalMembers: 0,
         totalCommission: 0,
         totalTeamRecharge: 0,
         todayJoined: 0,
-        levelCounts: { A: 0, B: 0, C: 0, D: 0 },
-        levelAssets: { A: 0, B: 0, C: 0, D: 0 }
+        levelCounts: { A: 0, B: 0, C: 0 },
+        levelAssets: { A: 0, B: 0, C: 0 }
     });
-    const [rates, setRates] = useState({ levelA: 12, levelB: 7, levelC: 4, levelD: 2 });
+    const [rates, setRates] = useState({ levelA: 12, levelB: 7, levelC: 4 });
 
     useEffect(() => {
         setMounted(true);
@@ -55,15 +54,14 @@ export default function TeamPage() {
             try {
                 // 1. Fetch Dynamic Settings
                 const settingsSnap = await getDoc(doc(db, "settings", "referral"));
-                const fetchedRates = settingsSnap.exists() ? settingsSnap.data() : { levelA: 12, levelB: 7, levelC: 4, levelD: 2 };
+                const fetchedRates = settingsSnap.exists() ? settingsSnap.data() : { levelA: 12, levelB: 7, levelC: 4 };
                 setRates(fetchedRates as any);
 
-                // 2. Fetch all 4 levels in parallel using fetched rates
+                // 2. Fetch 3 levels in parallel using fetched rates
                 const levels = [
                     { key: 'inviterA', pct: (fetchedRates.levelA || 12) / 100, label: 'A' },
                     { key: 'inviterB', pct: (fetchedRates.levelB || 7) / 100, label: 'B' },
-                    { key: 'inviterC', pct: (fetchedRates.levelC || 4) / 100, label: 'C' },
-                    { key: 'inviterD', pct: (fetchedRates.levelD || 2) / 100, label: 'D' }
+                    { key: 'inviterC', pct: (fetchedRates.levelC || 4) / 100, label: 'C' }
                 ];
 
                 const promises = levels.map(async (level) => {
@@ -94,8 +92,8 @@ export default function TeamPage() {
                 let teamRecharge = 0;
                 let todayCount = 0;
 
-                const levelCounts = { A: 0, B: 0, C: 0, D: 0 };
-                const levelAssets = { A: 0, B: 0, C: 0, D: 0 };
+                const levelCounts = { A: 0, B: 0, C: 0 };
+                const levelAssets = { A: 0, B: 0, C: 0 };
 
                 // Get today's date string
                 const todayStr = new Date().toISOString().split('T')[0];
@@ -150,7 +148,6 @@ export default function TeamPage() {
         { id: 'A', label: 'Level 1', pct: `${rates.levelA}%` },
         { id: 'B', label: 'Level 2', pct: `${rates.levelB}%` },
         { id: 'C', label: 'Level 3', pct: `${rates.levelC}%` },
-        { id: 'D', label: 'Level 4', pct: `${rates.levelD}%` },
     ];
 
     const formatPhone = (phone: string) => {
@@ -167,9 +164,7 @@ export default function TeamPage() {
         );
     }
 
-    const currentMembers = activeTab === 'all'
-        ? [...teamData.A, ...teamData.B, ...teamData.C, ...teamData.D]
-        : teamData[activeTab];
+    const currentMembers = teamData[activeTab];
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 pb-32 font-sans selection:bg-indigo-500/30">
@@ -265,9 +260,9 @@ export default function TeamPage() {
                                     <p className="text-4xl sm:text-3xl font-black text-white tabular-nums leading-none tracking-tight">
                                         {stats.totalCommission.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                     </p>
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-amber-400/20 blur-md opacity-40 animate-pulse"></div>
-                                        <Coins size={36} className="text-amber-500 fill-amber-500/20 drop-shadow-[0_4px_4px_rgba(245,158,11,0.2)] animate-[bounce_3s_infinite]" strokeWidth={2.5} />
+                                    <div className="relative flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-amber-400/20 blur-md opacity-40 animate-pulse rounded-full"></div>
+                                        <span className="relative text-2xl font-black text-amber-500 drop-shadow-[0_4px_4px_rgba(245,158,11,0.35)] animate-[bounce_3s_infinite] select-none">ብር</span>
                                     </div>
                                 </div>
                             </div>
@@ -358,7 +353,7 @@ export default function TeamPage() {
                             >
                                 <div className="w-12 h-12 shrink-0 rounded-2xl overflow-hidden border border-white/10 relative bg-slate-800">
                                     <img
-                                        src={encodeURI(`/level ${member.level === 'A' ? 1 : member.level === 'B' ? 2 : member.level === 'C' ? 3 : 4}.jpg`)}
+                                        src={encodeURI(`/level ${member.level === 'A' ? 1 : member.level === 'B' ? 2 : 3}.jpg`)}
                                         alt="Avatar"
                                         className="w-full h-full object-cover"
                                     />

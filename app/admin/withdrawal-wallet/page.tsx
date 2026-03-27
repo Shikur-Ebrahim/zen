@@ -626,6 +626,7 @@ function WithdrawalCard({ item, isPending, verifying, setConfirmAction, copyToCl
                     const bankDocRef = doc(db, "Bank", bankSnap.docs[0].id);
                     transaction.update(bankDocRef, {
                         accountNumber: editedAccountNumber,
+                        accountNumberNormalized: editedAccountNumber.replace(/\s+/g, ""),
                         holderName: editedHolderName
                     });
                 }
